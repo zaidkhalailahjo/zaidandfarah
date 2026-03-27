@@ -1,62 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>لعبتي البسيطة</title>
+  <title>موقع تفاعلي بسيط</title>
   <style>
-    body { margin: 0; overflow: hidden; background: black; }
-    canvas { display: block; }
-    #score { position: absolute; color: white; top: 10px; left: 10px; font-size: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: white;
+      transition: background-color 0.5s;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 22px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
-  <div id="score">Score: 0</div>
-  <canvas id="gameCanvas"></canvas>
+  <h1>مرحبًا بك في موقعي التفاعلي</h1>
+  <button id="colorButton">غيّر لون الخلفية</button>
+  <div id="message"></div>
 
   <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const button = document.getElementById('colorButton');
+    const message = document.getElementById('message');
+    const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6'];
+    let currentIndex = 0;
 
-    let score = 0;
-
-    // الكرة
-    const ball = { x: 50, y: 50, r: 20, dx: 3, dy: 2 };
-
-    function drawBall() {
-      ctx.beginPath();
-      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
-      ctx.fillStyle = "red";
-      ctx.fill();
-      ctx.closePath();
-    }
-
-    function update() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // حركة الكرة
-      ball.x += ball.dx;
-      ball.y += ball.dy;
-
-      // ارتداد الكرة عن الجدار
-      if(ball.x + ball.r > canvas.width || ball.x - ball.r < 0) ball.dx *= -1;
-      if(ball.y + ball.r > canvas.height || ball.y - ball.r < 0) ball.dy *= -1;
-
-      drawBall();
-      requestAnimationFrame(update);
-    }
-
-    update();
-
-    // عداد نقاط عند النقر على الكرة
-    canvas.addEventListener("click", function(e){
-      const dist = Math.sqrt((e.clientX - ball.x)**2 + (e.clientY - ball.y)**2);
-      if(dist < ball.r){
-        score++;
-        document.getElementById("score").innerText = "Score: " + score;
-        ball.dx += 0.5; // تزيد السرعة تدريجياً
-        ball.dy += 0.5;
-      }
+    button.addEventListener('click', () => {
+      // تغيير لون الخلفية
+      document.body.style.backgroundColor = colors[currentIndex];
+      // عرض رسالة
+      message.textContent = `تم تغيير اللون إلى: ${colors[currentIndex]}`;
+      // تحديث الفهرس للون التالي
+      currentIndex = (currentIndex + 1) % colors.length;
     });
   </script>
 </body>
