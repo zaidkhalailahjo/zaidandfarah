@@ -186,22 +186,22 @@
         import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection, query, writeBatch, runTransaction, getDocs, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const initialProductsData = [
-            { id: '21', name: 'شاورما عادي', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: '01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 20, calories: 550 },
-            { id: '22', name: 'شاورما سوبر', price: 2.60, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: '01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 20, calories: 750 },
-            { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, currency: 'د.أ', category: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png', productionDate: '6/6/2025', expiryDate: '6/6/2028', ingredients: 'قاعدة صمغ، مواد تحلية، نكهات نعناع.', stock: 2, calories: 5 }, 
-            { id: '19', name: 'بسكوت ستارز', price: 0.10, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png', productionDate: '10/10/2025', expiryDate: '9/10/2026', ingredients: 'دقيق القمح، سكر، زيت نباتي.', stock: 1, calories: 170 },
-            { id: '18', name: 'بسكوت مانيكس', price: 0.05, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png', productionDate: '1/11/2025', expiryDate: '1/12/2026', ingredients: 'دقيق القمح، زيت نباتي، كاكاو.', stock: 1, calories: 94 },
-            { id: '17', name: 'قهوة العميد 2/1', price: 0.25, currency: 'د.أ', category: 'قهوة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png', productionDate: '1/10/2025', expiryDate: '1/3/2027', ingredients: 'قهوة سريعة الذوبان، كريمة.', stock: 3, calories: 0 },
-            { id: '16', name: 'شوكلاتة بريك تايم', price: 0.10, currency: 'د.أ', category: 'شوكولاتة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__17_-removebg-preview.png', productionDate: '16.9.2025', expiryDate: '10.2.2027', ingredients: 'سكر، حليب، كاكاو.', stock: 4, calories: 85 },
-            { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, currency: 'د.أ', category: 'شوكولاتة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png', productionDate: '16.9.2025', expiryDate: '15.2.2027', ingredients: 'سكر، كاكاو، مصل الحليب.', stock: 8, calories: 93 },
-            { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/IMG-7394_370x370-removebg-preview.png', productionDate: '3.11.2025', expiryDate: '2.6.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 1, calories: 524 },
-            { id: '12', name: 'شيبس روكي', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png', productionDate: '23.10.2025', expiryDate: '23.4.2026', ingredients: 'بطاطا، زيت، ملح.', stock: 1, calories: 51 },
-            { id: '9', name: 'شيبس سناك ميكس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png', productionDate: '13.10.2025', expiryDate: '12.7.2026', ingredients: 'زيت، بابريكا، ملح.', stock: 0, calories: 488 },
-            { id: '11', name: 'شيبس كانتينا', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/JOR-6251040001050_800x.webp', productionDate: '13.10.2025', expiryDate: '13.4.2026', ingredients: 'ذرة، زيت، نكهة.', stock: 0, calories: 50 },
-            { id: '13', name: 'شيبس بينج رينج', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '18.8.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 0, calories: 470 },
-            { id: '8', name: 'شيبس تريتوس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__16_-removebg-preview.png', productionDate: '23.9.2025', expiryDate: '23.3.2026', ingredients: 'ذرة، زيت، نكهة حلوة.', stock: 0, calories: 58 },
-            { id: '10', name: 'شيبس شبابيك', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/blackfridayoffers-2023-10-10T174155.525_800x-removebg-preview.png', productionDate: '28.10.2025', expiryDate: '28.4.2026', ingredients: 'قمح، نشا، حامض حار.', stock: 0, calories: 52 },  
-            { id: '14', name: 'شيبس ريلاكس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '16.8.2026', ingredients: 'قمح، نشا، زيت.', stock: 0, calories: 470 }, 
+            { id: '21', name: 'شاورما عادي', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 9999, calories: 550 },
+            { id: '22', name: 'شاورما سوبر', price: 2.60, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 9999, calories: 750 },
+            { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, currency: 'د.أ', category: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png', productionDate: '6/6/2025', expiryDate: '6/6/2028', ingredients: 'قاعدة صمغ، مواد تحلية، نكهات نعناع.', stock: 9999, calories: 5 }, 
+            { id: '19', name: 'بسكوت ستارز', price: 0.10, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png', productionDate: '10/10/2025', expiryDate: '9/10/2026', ingredients: 'دقيق القمح، سكر، زيت نباتي.', stock: 9999, calories: 170 },
+            { id: '18', name: 'بسكوت مانيكس', price: 0.05, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png', productionDate: '1/11/2025', expiryDate: '1/12/2026', ingredients: 'دقيق القمح، زيت نباتي، كاكاو.', stock: 9999, calories: 94 },
+            { id: '17', name: 'قهوة العميد 2/1', price: 0.25, currency: 'د.أ', category: 'قهوة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png', productionDate: '1/10/2025', expiryDate: '1/3/2027', ingredients: 'قهوة سريعة الذوبان، كريمة.', stock: 9999, calories: 0 },
+            { id: '16', name: 'شوكلاتة بريك تايم', price: 0.10, currency: 'د.أ', category: 'شوكولاتة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__17_-removebg-preview.png', productionDate: '16.9.2025', expiryDate: '10.2.2027', ingredients: 'سكر، حليب، كاكاو.', stock: 9999, calories: 85 },
+            { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, currency: 'د.أ', category: 'شوكولاتة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png', productionDate: '16.9.2025', expiryDate: '15.2.2027', ingredients: 'سكر، كاكاو، مصل الحليب.', stock: 9999, calories: 93 },
+            { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/IMG-7394_370x370-removebg-preview.png', productionDate: '3.11.2025', expiryDate: '2.6.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 9999, calories: 524 },
+            { id: '12', name: 'شيبس روكي', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png', productionDate: '23.10.2025', expiryDate: '23.4.2026', ingredients: 'بطاطا، زيت، ملح.', stock: 9999, calories: 51 },
+            { id: '9', name: 'شيبس سناك ميكس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png', productionDate: '13.10.2025', expiryDate: '12.7.2026', ingredients: 'زيت، بابريكا، ملح.', stock: 9999, calories: 488 },
+            { id: '11', name: 'شيبس كانتينا', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/JOR-6251040001050_800x.webp', productionDate: '13.10.2025', expiryDate: '13.4.2026', ingredients: 'ذرة، زيت، نكهة.', stock: 9999, calories: 50 },
+            { id: '13', name: 'شيبس بينج رينج', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '18.8.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 9999, calories: 470 },
+            { id: '8', name: 'شيبس تريتوس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__16_-removebg-preview.png', productionDate: '23.9.2025', expiryDate: '23.3.2026', ingredients: 'ذرة، زيت، نكهة حلوة.', stock: 9999, calories: 58 },
+            { id: '10', name: 'شيبس شبابيك', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/blackfridayoffers-2023-10-10T174155.525_800x-removebg-preview.png', productionDate: '28.10.2025', expiryDate: '28.4.2026', ingredients: 'قمح، نشا، حامض حار.', stock: 9999, calories: 52 },  
+            { id: '14', name: 'شيبس ريلاكس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '16.8.2026', ingredients: 'قمح، نشا، زيت.', stock: 9999, calories: 470 }, 
         ];
 
         const CATEGORIES = ['الكل', 'المطاعم', 'شيبس', 'شوكولاتة', 'قهوة', 'بسكويت', 'علكة']; 
@@ -347,9 +347,8 @@
         const addToCart = async (product) => {
             if (!appState.isAuthReady) return showToast("انتظر قليلاً...", 'error');
             const liveProd = appState.products.find(p => p.id === product.id) || product; 
-            if (liveProd.stock <= 0) return showToast("نفذت الكمية!", 'error');
             const current = appState.cart[product.id]?.quantity || 0;
-            if (current + 1 > liveProd.stock) return showToast(`المتاح ${liveProd.stock} فقط`, 'error');
+            
             const itemToSave = { product: liveProd, quantity: current + 1 };
             if (appState.db === 'LOCAL') { appState.cart[product.id] = itemToSave; saveLocalCart(); updateCartUI(); }
             else if (appState.db) { await setDoc(doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, product.id), itemToSave, { merge: true }); }
@@ -359,9 +358,8 @@
         const updateCartItem = async (prodId, delta) => {
             if (!appState.isAuthReady) return;
             const item = appState.cart[prodId]; if (!item) return;
-            const liveProd = appState.products.find(p => p.id === prodId) || item.product;
             const newQty = item.quantity + delta;
-            if (newQty > liveProd.stock) return showToast(`المتاح ${liveProd.stock} فقط`, 'error');
+            
             if (appState.db === 'LOCAL') { if (newQty <= 0) delete appState.cart[prodId]; else appState.cart[prodId].quantity = newQty; saveLocalCart(); updateCartUI(); }
             else { const ref = doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, prodId); if (newQty <= 0) await deleteDoc(ref); else await updateDoc(ref, { quantity: newQty }); }
         };
@@ -373,9 +371,6 @@
                 let localStock = loadLocalStock();
                 for (const item of Object.values(appState.cart)) {
                     const s = localStock[item.product.id]?.stock || 0;
-                    if (s < item.quantity) {
-                        return { success: false, message: `نعتذر، الكمية المتوفرة من ${item.product.name} هي ${s} فقط.` };
-                    }
                     localStock[item.product.id].stock = s - item.quantity;
                 }
                 localStorage.setItem(LS_STOCK_KEY, JSON.stringify(localStock));
@@ -392,20 +387,11 @@
                     const snapshots = await Promise.all(
                         cartItems.map(item => transaction.get(doc(appState.db, STOCK_PATH, item.product.id)))
                     );
-                    
-                    snapshots.forEach((snap, idx) => {
-                        const productData = snap.data();
-                        const currentStock = snap.exists() ? productData.stock : 0;
-                        const requestedQty = cartItems[idx].quantity;
-                        
-                        if (currentStock < requestedQty) {
-                            throw new Error(`LOW_STOCK:${cartItems[idx].product.name}:${currentStock}`);
-                        }
-                    });
 
                     snapshots.forEach((snap, idx) => {
                         const item = cartItems[idx];
-                        const newStock = snap.data().stock - item.quantity;
+                        const currentStock = snap.exists() ? snap.data().stock : 0;
+                        const newStock = currentStock - item.quantity;
                         transaction.update(doc(appState.db, STOCK_PATH, item.product.id), { stock: newStock });
                         transaction.delete(doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, item.product.id));
                     });
@@ -413,10 +399,6 @@
                 return { success: true };
             } catch (e) {
                 console.error("Transaction failed: ", e);
-                if (e.message.startsWith('LOW_STOCK:')) {
-                    const [_, name, stock] = e.message.split(':');
-                    return { success: false, message: `عذراً، نفذت كمية ${name}. المتبقي: ${stock}` };
-                }
                 return { success: false, message: "حدث خطأ أثناء معالجة الطلب، يرجى المحاولة لاحقاً." };
             }
         };
@@ -436,7 +418,7 @@
                 if (els.grid) {
                     els.grid.innerHTML = `
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center justify-center hover:shadow-lg transition-shadow cursor-pointer" onclick="window.openRestaurant('مطعم سلمة')">
-                            <img src="images (19).jpeg" class="h-32 w-32 object-contain mb-4 rounded-full border-4 border-gray-50">
+                            <img src="https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg" class="h-32 w-32 object-contain mb-4 rounded-full border-4 border-gray-50">
                             <h3 class="font-bold text-[#002d74] text-xl">مطعم سلمة</h3>
                             <p class="text-sm text-gray-500 mt-2">شاورما ووجبات سريعة</p>
                         </div>
@@ -456,8 +438,6 @@
                 return (appState.category === 'الكل' || p.category === appState.category) && (p.name && p.name.includes(appState.search));
             });
             
-            filtered.sort((a, b) => (a.stock === 0) - (b.stock === 0));
-            
             if (!filtered.length) { 
                 if (els.grid) els.grid.innerHTML = ''; 
                 if (els.empty) els.empty.classList.remove('hidden'); 
@@ -470,7 +450,7 @@
                 if (appState.category === 'المطاعم' && appState.currentRestaurant) {
                     backHtml = `
                     <div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 relative">
-                        <img src="images (19).jpeg" class="h-16 w-16 object-contain rounded-full border-2 border-gray-100 shadow-sm" alt="شعار المطعم">
+                        <img src="https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg" class="h-16 w-16 object-contain rounded-full border-2 border-gray-100 shadow-sm" alt="شعار المطعم">
                         <div>
                             <h2 class="text-2xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2>
                             <p class="text-gray-500 text-sm font-medium">قائمة الوجبات</p>
@@ -483,14 +463,12 @@
                 }
 
                 els.grid.innerHTML = backHtml + filtered.map(p => {
-                    const isOut = p.stock === 0;
+                    const isOut = false; // جعل جميع المنتجات متوفرة دائماً
                     const cartItem = appState.cart[p.id];
                     const qtyInCart = cartItem ? cartItem.quantity : 0;
 
                     let actionHtml = '';
-                    if (isOut && qtyInCart === 0) {
-                        actionHtml = `<span class="text-red-500 font-bold text-sm bg-red-100 px-3 py-1 rounded-full">نفذت</span>`;
-                    } else if (qtyInCart > 0) {
+                    if (qtyInCart > 0) {
                         // أزرار التحكم بالكمية في حال كان المنتج مضافاً للسلة
                         actionHtml = `
                             <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1 border border-gray-200" onclick="event.stopPropagation();">
@@ -508,8 +486,8 @@
                         `;
                     }
 
-                    return `<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col hover:shadow-md transition-shadow cursor-pointer" onclick="${isOut && qtyInCart === 0 ? '' : `window.openDetails('${p.id}')`}">
-                        <img src="${p.image}" class="h-40 object-contain mb-4 ${isOut && qtyInCart === 0 ? 'grayscale opacity-50' : ''}">
+                    return `<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col hover:shadow-md transition-shadow cursor-pointer" onclick="window.openDetails('${p.id}')">
+                        <img src="${p.image}" class="h-40 object-contain mb-4">
                         <h3 class="font-bold text-gray-800 mb-2">${p.name}</h3>
                         <div class="mt-auto flex justify-between items-center w-full">
                             <span class="font-bold text-orange-600 text-lg">${p.price.toFixed(2)} د.أ</span>
@@ -641,7 +619,7 @@
 
                 const originalText = waBtn.innerHTML;
                 waBtn.disabled = true;
-                waBtn.innerHTML = "جاري التأكد من المخزون...";
+                waBtn.innerHTML = "جاري التأكد وتجهيز الطلب...";
 
                 const result = await processOrder();
                 
