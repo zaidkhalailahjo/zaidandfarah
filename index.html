@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>موقع تفاعلي بسيط</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: white;
+      transition: background-color 0.5s;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 22px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>مرحبًا بك في موقعي التفاعلي</h1>
+  <button id="colorButton">غيّر لون الخلفية</button>
+  <div id="message"></div>
+
+  <script>
+    const button = document.getElementById('colorButton');
+    const message = document.getElementById('message');
+    const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6'];
+    let currentIndex = 0;
+
+    button.addEventListener('click', () => {
+      // تغيير لون الخلفية
+      document.body.style.backgroundColor = colors[currentIndex];
+      // عرض رسالة
+      message.textContent = `تم تغيير اللون إلى: ${colors[currentIndex]}`;
+      // تحديث الفهرس للون التالي
+      currentIndex = (currentIndex + 1) % colors.length;
+    });
+  </script>
+</body>
+</html>
