@@ -1,5 +1,63 @@
 <!DOCTYPE html>
 <html>
-  <head><title>Welcome</title></head>
-  <body><h1>مرحبا بك في موقعي</h1></body>
+<head>
+  <title>لعبتي البسيطة</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: black; }
+    canvas { display: block; }
+    #score { position: absolute; color: white; top: 10px; left: 10px; font-size: 20px; }
+  </style>
+</head>
+<body>
+  <div id="score">Score: 0</div>
+  <canvas id="gameCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let score = 0;
+
+    // الكرة
+    const ball = { x: 50, y: 50, r: 20, dx: 3, dy: 2 };
+
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
+      ctx.fillStyle = "red";
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function update() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // حركة الكرة
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      // ارتداد الكرة عن الجدار
+      if(ball.x + ball.r > canvas.width || ball.x - ball.r < 0) ball.dx *= -1;
+      if(ball.y + ball.r > canvas.height || ball.y - ball.r < 0) ball.dy *= -1;
+
+      drawBall();
+      requestAnimationFrame(update);
+    }
+
+    update();
+
+    // عداد نقاط عند النقر على الكرة
+    canvas.addEventListener("click", function(e){
+      const dist = Math.sqrt((e.clientX - ball.x)**2 + (e.clientY - ball.y)**2);
+      if(dist < ball.r){
+        score++;
+        document.getElementById("score").innerText = "Score: " + score;
+        ball.dx += 0.5; // تزيد السرعة تدريجياً
+        ball.dy += 0.5;
+      }
+    });
+  </script>
+</body>
 </html>
