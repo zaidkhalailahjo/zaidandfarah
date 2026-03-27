@@ -29,12 +29,12 @@
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen text-gray-800">
 
-    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     <header class="bg-orange-600 text-white shadow-lg sticky top-0 z-40">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <div class="bg-white p-2 rounded-full text-orange-600 font-bold text-xl">S</div>
+                <img src="WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" alt="فرح سناكس" class="h-10 w-auto object-contain bg-white rounded-xl p-1" onerror="this.outerHTML='<div class=\'bg-white p-2 rounded-full text-orange-600 font-bold text-xl\'>F</div>'">
                 <h1 class="text-2xl font-bold">فرح سناكس</h1>
             </div>
             
@@ -58,7 +58,7 @@
     <div class="bg-orange-100 py-8 px-4 text-center">
         <h2 class="text-3xl md:text-5xl font-extrabold text-gray-800 mb-2">ألذ وأشهر أصناف السناكات!</h2>
         <p class="text-gray-600 text-lg">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
-        <div id="offline-mode-alert" class="mt-4 p-2 bg-yellow-200 text-yellow-800 rounded-lg font-bold hidden"></div>
+        <div id="offline-mode-alert" class="mt-4 p-2 bg-yellow-200 text-yellow-800 rounded-lg font-bold hidden">وضع عدم الاتصال بالإنترنت</div>
     </div>
 
     <div class="container mx-auto px-4 py-6">
@@ -74,7 +74,7 @@
     </main>
 
     <footer class="bg-gray-800 text-white py-6 text-center text-sm mt-auto">
-        <p>© 2024 سناكس ماركت - جميع الحقوق محفوظة</p>
+        <p>© 2024 فرح سناكس - جميع الحقوق محفوظة</p>
     </footer>
 
     <div class="fixed bottom-4 left-4 z-50">
@@ -134,9 +134,9 @@
             </div>
             <div class="p-6 space-y-5">
                 <div class="space-y-2">
-                    <label class="block text-lg font-bold text-gray-800">الاسم (مطلوب - 3 أحرف على الأقل)</label>
-                    <input type="text" id="customer-name" placeholder="أدخل اسمك الكريم" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-500">
-                    <p id="name-error" class="text-red-500 text-sm hidden flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> الاسم قصير جداً</p>
+                    <label class="block text-lg font-bold text-gray-800">الاسم (مطلوب - أحرف فقط)</label>
+                    <input type="text" id="customer-name" placeholder="أدخل اسمك الكريم" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-500 transition-colors" oninput="this.value = this.value.replace(/[0-9]/g, '')">
+                    <p id="name-error" class="text-red-600 text-sm hidden flex items-center gap-1 font-semibold mt-1"><i data-lucide="alert-triangle" class="w-4 h-4"></i> يرجى إدخال اسم صحيح (3 أحرف على الأقل)!</p>
                 </div>
                 <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
                     <p class="text-3xl font-extrabold text-orange-600" id="contact-total-display">0.00</p>
@@ -186,6 +186,8 @@
         import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection, query, writeBatch, runTransaction, getDocs, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const initialProductsData = [
+            { id: '21', name: 'شاورما عادي', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: '01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 20, calories: 550 },
+            { id: '22', name: 'شاورما سوبر', price: 2.60, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: '01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 20, calories: 750 },
             { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, currency: 'د.أ', category: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png', productionDate: '6/6/2025', expiryDate: '6/6/2028', ingredients: 'قاعدة صمغ، مواد تحلية، نكهات نعناع.', stock: 2, calories: 5 }, 
             { id: '19', name: 'بسكوت ستارز', price: 0.10, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png', productionDate: '10/10/2025', expiryDate: '9/10/2026', ingredients: 'دقيق القمح، سكر، زيت نباتي.', stock: 1, calories: 170 },
             { id: '18', name: 'بسكوت مانيكس', price: 0.05, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png', productionDate: '1/11/2025', expiryDate: '1/12/2026', ingredients: 'دقيق القمح، زيت نباتي، كاكاو.', stock: 1, calories: 94 },
@@ -202,7 +204,7 @@
             { id: '14', name: 'شيبس ريلاكس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '16.8.2026', ingredients: 'قمح، نشا، زيت.', stock: 0, calories: 470 }, 
         ];
 
-        const CATEGORIES = ['الكل', 'شيبس', 'شوكولاتة', 'قهوة', 'بسكويت', 'علكة']; 
+        const CATEGORIES = ['الكل', 'المطاعم', 'شيبس', 'شوكولاتة', 'قهوة', 'بسكويت', 'علكة']; 
         const COUPONS = { 'فرح10': 0.10, '00000000002': 0.20 }; 
         const MIN_PURCHASE = 1.00;
         const ADMIN_PASS = '452011';
@@ -218,6 +220,7 @@
             products: initialProductsData,
             cart: {}, 
             category: 'الكل',
+            currentRestaurant: null,
             search: '',
             appliedCoupon: null,
             adminPendingChanges: {},
@@ -281,7 +284,10 @@
                 if (!hasConfig) {
                     appState.db = 'LOCAL'; appState.isAuthReady = true;
                     mergeProductsAndStock(loadLocalStock()); appState.cart = loadLocalCart();
-                    document.getElementById('offline-mode-alert').classList.remove('hidden');
+                    
+                    const offlineAlert = document.getElementById('offline-mode-alert');
+                    if (offlineAlert) offlineAlert.classList.remove('hidden');
+                    
                     updateCartUI(); return; 
                 }
                 const app = initializeApp(config);
@@ -299,7 +305,8 @@
             } catch (e) {
                 appState.db = 'LOCAL'; appState.isAuthReady = true;
                 mergeProductsAndStock(loadLocalStock()); appState.cart = loadLocalCart();
-                document.getElementById('offline-mode-alert').classList.remove('hidden');
+                const offlineAlert = document.getElementById('offline-mode-alert');
+                if (offlineAlert) offlineAlert.classList.remove('hidden');
                 updateCartUI();
             }
         };
@@ -319,7 +326,14 @@
         const els = {
             grid: document.getElementById('products-grid'), loader: document.getElementById('loading-indicator'),
             empty: document.getElementById('empty-state'), cats: document.getElementById('categories-container'),
-            cartCount: document.getElementById('cart-count'), modals: { product: document.getElementById('product-modal'), cart: document.getElementById('cart-modal'), contact: document.getElementById('contact-modal'), adminAuth: document.getElementById('admin-auth-modal'), adminPanel: document.getElementById('admin-panel-modal') },
+            cartCount: document.getElementById('cart-count'), 
+            modals: { 
+                product: document.getElementById('product-modal'), 
+                cart: document.getElementById('cart-modal'), 
+                contact: document.getElementById('contact-modal'), 
+                adminAuth: document.getElementById('admin-auth-modal'), 
+                adminPanel: document.getElementById('admin-panel-modal') 
+            },
             inputs: { searchDesk: document.getElementById('desktop-search'), searchMob: document.getElementById('mobile-search') }
         };
 
@@ -352,34 +366,43 @@
             else { const ref = doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, prodId); if (newQty <= 0) await deleteDoc(ref); else await updateDoc(ref, { quantity: newQty }); }
         };
 
-        // FIXED TRANSACTION LOGIC
         const processOrder = async () => {
-            if (!Object.keys(appState.cart).length) return false;
+            if (!Object.keys(appState.cart).length) return { success: false, message: "السلة فارغة" };
+            
             if (appState.db === 'LOCAL') {
                 let localStock = loadLocalStock();
                 for (const item of Object.values(appState.cart)) {
                     const s = localStock[item.product.id]?.stock || 0;
-                    if (s < item.quantity) return false;
+                    if (s < item.quantity) {
+                        return { success: false, message: `نعتذر، الكمية المتوفرة من ${item.product.name} هي ${s} فقط.` };
+                    }
                     localStock[item.product.id].stock = s - item.quantity;
                 }
                 localStorage.setItem(LS_STOCK_KEY, JSON.stringify(localStock));
-                appState.cart = {}; saveLocalCart(); mergeProductsAndStock(localStock);
-                return true;
+                appState.cart = {}; 
+                saveLocalCart(); 
+                mergeProductsAndStock(localStock);
+                return { success: true };
             } 
+
             try {
                 await runTransaction(appState.db, async (transaction) => {
                     const cartItems = Object.values(appState.cart);
-                    // 1. ALL READS FIRST
-                    const readTasks = cartItems.map(item => transaction.get(doc(appState.db, STOCK_PATH, item.product.id)));
-                    const snapshots = await Promise.all(readTasks);
                     
-                    // 2. LOGIC CHECK
+                    const snapshots = await Promise.all(
+                        cartItems.map(item => transaction.get(doc(appState.db, STOCK_PATH, item.product.id)))
+                    );
+                    
                     snapshots.forEach((snap, idx) => {
-                        const stock = snap.exists() ? snap.data().stock : 0;
-                        if (stock < cartItems[idx].quantity) throw new Error("Stock low");
+                        const productData = snap.data();
+                        const currentStock = snap.exists() ? productData.stock : 0;
+                        const requestedQty = cartItems[idx].quantity;
+                        
+                        if (currentStock < requestedQty) {
+                            throw new Error(`LOW_STOCK:${cartItems[idx].product.name}:${currentStock}`);
+                        }
                     });
 
-                    // 3. ALL WRITES AFTER
                     snapshots.forEach((snap, idx) => {
                         const item = cartItems[idx];
                         const newStock = snap.data().stock - item.quantity;
@@ -387,91 +410,330 @@
                         transaction.delete(doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, item.product.id));
                     });
                 });
-                return true;
-            } catch (e) { console.error(e); return false; }
+                return { success: true };
+            } catch (e) {
+                console.error("Transaction failed: ", e);
+                if (e.message.startsWith('LOW_STOCK:')) {
+                    const [_, name, stock] = e.message.split(':');
+                    return { success: false, message: `عذراً، نفذت كمية ${name}. المتبقي: ${stock}` };
+                }
+                return { success: false, message: "حدث خطأ أثناء معالجة الطلب، يرجى المحاولة لاحقاً." };
+            }
         };
 
         const renderCategories = () => {
-            els.cats.innerHTML = CATEGORIES.map(c => `<button class="px-6 py-2 rounded-full whitespace-nowrap font-medium ${appState.category === c ? 'bg-orange-600 text-white' : 'bg-white text-gray-600 border'}" onclick="window.setCategory('${c}')">${c}</button>`).join('');
+            if (els.cats) {
+                els.cats.innerHTML = CATEGORIES.map(c => `<button class="px-6 py-2 rounded-full whitespace-nowrap font-medium ${appState.category === c ? 'bg-orange-600 text-white' : 'bg-white text-gray-600 border'}" onclick="window.setCategory('${c}')">${c}</button>`).join('');
+            }
         };
 
         const renderProducts = () => {
-            els.loader.classList.add('hidden');
-            let filtered = appState.products.filter(p => (appState.category === 'الكل' || p.category === appState.category) && (p.name && p.name.includes(appState.search)));
+            if (els.loader) els.loader.classList.add('hidden');
+            
+            // التعامل مع واجهة بطاقات المطاعم الرئيسية
+            if (appState.category === 'المطاعم' && !appState.currentRestaurant && !appState.search) {
+                if (els.empty) els.empty.classList.add('hidden');
+                if (els.grid) {
+                    els.grid.innerHTML = `
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center justify-center hover:shadow-lg transition-shadow cursor-pointer" onclick="window.openRestaurant('مطعم سلمة')">
+                            <img src="images (19).jpeg" class="h-32 w-32 object-contain mb-4 rounded-full border-4 border-gray-50">
+                            <h3 class="font-bold text-[#002d74] text-xl">مطعم سلمة</h3>
+                            <p class="text-sm text-gray-500 mt-2">شاورما ووجبات سريعة</p>
+                        </div>
+                    `;
+                }
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            let filtered = appState.products.filter(p => {
+                if (p.hideFromAll && appState.category === 'الكل') return false;
+                if (appState.category === 'المطاعم' && appState.currentRestaurant) {
+                    return p.restaurant === appState.currentRestaurant && (p.name && p.name.includes(appState.search));
+                } else if (appState.category === 'المطاعم') {
+                    return p.category === 'المطاعم' && (p.name && p.name.includes(appState.search));
+                }
+                return (appState.category === 'الكل' || p.category === appState.category) && (p.name && p.name.includes(appState.search));
+            });
+            
             filtered.sort((a, b) => (a.stock === 0) - (b.stock === 0));
-            if (!filtered.length) { els.grid.innerHTML = ''; els.empty.classList.remove('hidden'); return; }
-            els.empty.classList.add('hidden');
-            els.grid.innerHTML = filtered.map(p => {
-                const isOut = p.stock === 0;
-                return `<div class="bg-white rounded-xl shadow-sm border p-4 flex flex-col hover:shadow-lg cursor-pointer" onclick="${isOut ? '' : `window.openDetails('${p.id}')`}">
-                    <img src="${p.image}" class="h-40 object-contain mb-4 ${isOut ? 'grayscale' : ''}">
-                    <h3 class="font-bold mb-1">${p.name}</h3>
-                    <div class="mt-auto flex justify-between items-center">
-                        <span class="font-bold text-orange-600">${p.price.toFixed(2)} د.أ</span>
-                        <button class="bg-gray-900 text-white p-2 rounded-full" onclick="event.stopPropagation(); window.addItem('${p.id}')" ${isOut ? 'disabled' : ''}>${isOut ? 'نفذت' : '<i data-lucide="shopping-cart" class="w-4 h-4"></i>'}</button>
-                    </div>
-                </div>`;
-            }).join('');
-            lucide.createIcons();
+            
+            if (!filtered.length) { 
+                if (els.grid) els.grid.innerHTML = ''; 
+                if (els.empty) els.empty.classList.remove('hidden'); 
+                return; 
+            }
+            if (els.empty) els.empty.classList.add('hidden');
+            
+            if (els.grid) {
+                let backHtml = '';
+                if (appState.category === 'المطاعم' && appState.currentRestaurant) {
+                    backHtml = `
+                    <div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 relative">
+                        <img src="images (19).jpeg" class="h-16 w-16 object-contain rounded-full border-2 border-gray-100 shadow-sm" alt="شعار المطعم">
+                        <div>
+                            <h2 class="text-2xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2>
+                            <p class="text-gray-500 text-sm font-medium">قائمة الوجبات</p>
+                        </div>
+                        <button class="mr-auto bg-gray-50 px-4 py-2 rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 border border-gray-200" onclick="window.setCategory('المطاعم')">
+                            <span class="font-bold text-sm text-gray-700 hidden sm:block">رجوع للمطاعم</span>
+                            <i data-lucide="arrow-right" class="w-5 h-5 text-gray-700"></i>
+                        </button>
+                    </div>`;
+                }
+
+                els.grid.innerHTML = backHtml + filtered.map(p => {
+                    const isOut = p.stock === 0;
+                    const cartItem = appState.cart[p.id];
+                    const qtyInCart = cartItem ? cartItem.quantity : 0;
+
+                    let actionHtml = '';
+                    if (isOut && qtyInCart === 0) {
+                        actionHtml = `<span class="text-red-500 font-bold text-sm bg-red-100 px-3 py-1 rounded-full">نفذت</span>`;
+                    } else if (qtyInCart > 0) {
+                        // أزرار التحكم بالكمية في حال كان المنتج مضافاً للسلة
+                        actionHtml = `
+                            <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1 border border-gray-200" onclick="event.stopPropagation();">
+                                <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#00839b] font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.updateQty('${p.id}', 1)">+</button>
+                                <span class="font-bold text-gray-800 min-w-[1.25rem] text-center">${qtyInCart}</span>
+                                <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-red-500 font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.updateQty('${p.id}', -1)">-</button>
+                            </div>
+                        `;
+                    } else {
+                        // زر الإضافة للسلة الاعتيادي باللون الكحلي
+                        actionHtml = `
+                            <button class="bg-[#002d74] text-white p-2.5 rounded-full hover:scale-105 transition-transform shadow-md" onclick="event.stopPropagation(); window.addItem('${p.id}')">
+                                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                            </button>
+                        `;
+                    }
+
+                    return `<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col hover:shadow-md transition-shadow cursor-pointer" onclick="${isOut && qtyInCart === 0 ? '' : `window.openDetails('${p.id}')`}">
+                        <img src="${p.image}" class="h-40 object-contain mb-4 ${isOut && qtyInCart === 0 ? 'grayscale opacity-50' : ''}">
+                        <h3 class="font-bold text-gray-800 mb-2">${p.name}</h3>
+                        <div class="mt-auto flex justify-between items-center w-full">
+                            <span class="font-bold text-orange-600 text-lg">${p.price.toFixed(2)} د.أ</span>
+                            <div class="flex-shrink-0">
+                                ${actionHtml}
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+            if (window.lucide) lucide.createIcons();
         };
 
         const updateCartUI = () => {
             const items = Object.values(appState.cart);
-            els.cartCount.textContent = items.reduce((s, i) => s + i.quantity, 0);
-            els.cartCount.classList.toggle('hidden', els.cartCount.textContent == '0');
+            if (els.cartCount) {
+                els.cartCount.textContent = items.reduce((s, i) => s + i.quantity, 0);
+                els.cartCount.classList.toggle('hidden', els.cartCount.textContent == '0');
+            }
             const totals = calculateTotals();
-            document.getElementById('cart-items-container').innerHTML = items.length ? items.map(item => `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border">
-                <div><p class="font-bold">${item.product.name}</p><p class="text-sm">${item.product.price.toFixed(2)} د.أ</p></div>
-                <div class="flex items-center gap-2">
-                    <button onclick="window.updateQty('${item.product.id}', -1)" class="w-8 h-8 border rounded-full">-</button>
-                    <span>${item.quantity}</span>
-                    <button onclick="window.updateQty('${item.product.id}', 1)" class="w-8 h-8 border rounded-full">+</button>
-                </div>
-            </div>`).join('') : '<p class="text-center py-4">السلة فارغة</p>';
-            document.getElementById('cart-subtotal').innerText = totals.subtotal.toFixed(2);
-            document.getElementById('cart-total').innerText = totals.total.toFixed(2);
+            const container = document.getElementById('cart-items-container');
+            if (container) {
+                container.innerHTML = items.length ? items.map(item => `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border">
+                    <div><p class="font-bold">${item.product.name}</p><p class="text-sm">${item.product.price.toFixed(2)} د.أ</p></div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="window.updateQty('${item.product.id}', -1)" class="w-8 h-8 border rounded-full">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="window.updateQty('${item.product.id}', 1)" class="w-8 h-8 border rounded-full">+</button>
+                    </div>
+                </div>`).join('') : '<p class="text-center py-4">السلة فارغة</p>';
+            }
+            const subtotalEl = document.getElementById('cart-subtotal');
+            if (subtotalEl) subtotalEl.innerText = totals.subtotal.toFixed(2);
+            
+            const totalEl = document.getElementById('cart-total');
+            if (totalEl) totalEl.innerText = totals.total.toFixed(2);
+            
+            // إعادة رسم المنتجات لتحديث شكل السلة على البطاقات
+            renderProducts();
         };
 
-        window.setCategory = (c) => { appState.category = c; renderApp(); };
+        window.setCategory = (c) => { appState.category = c; appState.currentRestaurant = null; renderApp(); };
+        window.openRestaurant = (name) => { appState.currentRestaurant = name; renderProducts(); };
         window.addItem = (id) => addToCart(appState.products.find(p => p.id === id));
         window.updateQty = (id, d) => updateCartItem(id, d);
         window.openDetails = (id) => {
             const p = appState.products.find(x => x.id === id); if (!p) return;
-            document.getElementById('product-modal-body').innerHTML = `<div class="p-6">
-                <img src="${p.image}" class="h-60 w-full object-contain mb-4">
-                <h2 class="text-2xl font-bold">${p.name}</h2>
-                <p class="text-orange-600 font-bold text-xl my-2">${p.price.toFixed(2)} د.أ</p>
-                <p class="text-gray-600 mb-4">${p.ingredients}</p>
-                <button onclick="window.addItem('${p.id}')" class="w-full bg-orange-600 text-white py-3 rounded-xl font-bold">إضافة للسلة</button>
-            </div>`;
+            const modalBody = document.getElementById('product-modal-body');
+            if (modalBody) {
+                modalBody.innerHTML = `<div class="p-6 text-right">
+                    <img src="${p.image}" class="h-48 w-full object-contain mb-6 rounded-lg">
+                    <h2 class="text-3xl font-bold text-[#002d74] mb-2">${p.name}</h2>
+                    <p class="text-orange-600 font-extrabold text-2xl mb-4">${p.price.toFixed(2)} د.أ</p>
+                    <p class="text-gray-700 text-lg mb-8 leading-relaxed">${p.ingredients}</p>
+                    <button onclick="window.addItem('${p.id}'); window.toggleModal('product', false);" class="w-full bg-[#00839b] hover:bg-[#002d74] transition-colors text-white py-3 rounded-xl font-bold text-lg shadow-md">إضافة للسلة</button>
+                </div>`;
+            }
             toggleModal('product', true);
         };
 
-        const toggleModal = (n, s) => { const e = els.modals[n]; if (s) e.classList.remove('hidden'); setTimeout(() => { if (s) e.classList.add('active'); else { e.classList.remove('active'); setTimeout(() => e.classList.add('hidden'), 300); }}, 10); };
-        document.querySelectorAll('.close-modal').forEach(b => b.onclick = (e) => toggleModal(e.target.closest('.modal').id.replace('-modal',''), false));
-        document.getElementById('cart-btn').onclick = () => toggleModal('cart', true);
-        document.getElementById('checkout-btn').onclick = () => { toggleModal('cart', false); document.getElementById('contact-total-display').innerText = calculateTotals().total.toFixed(2) + ' د.أ'; toggleModal('contact', true); };
+        const toggleModal = (n, s) => { 
+            const e = els.modals[n]; 
+            if (!e) return;
+            if (s) e.classList.remove('hidden'); 
+            setTimeout(() => { 
+                if (s) e.classList.add('active'); 
+                else { 
+                    e.classList.remove('active'); 
+                    setTimeout(() => e.classList.add('hidden'), 300); 
+                }
+            }, 10); 
+        };
+        window.toggleModal = toggleModal;
 
+        // Attach event listeners safely
+        document.querySelectorAll('.close-modal').forEach(b => {
+            b.onclick = (e) => toggleModal(e.target.closest('.modal').id.replace('-modal',''), false);
+        });
+
+        const cartBtn = document.getElementById('cart-btn');
+        if (cartBtn) cartBtn.onclick = () => toggleModal('cart', true);
+
+        const checkoutBtn = document.getElementById('checkout-btn');
+        if (checkoutBtn) {
+            checkoutBtn.onclick = () => { 
+                toggleModal('cart', false); 
+                const totalDisplay = document.getElementById('contact-total-display');
+                if (totalDisplay) totalDisplay.innerText = calculateTotals().total.toFixed(2) + ' د.أ'; 
+                toggleModal('contact', true); 
+            };
+        }
+
+        // تحديث رسالة الواتساب لتكون متوافقة تماماً وتظهر الخط العريض بوضوح
         const getOrderMsg = (enc = true, wa = true) => {
-            const t = calculateTotals(); const name = document.getElementById('customer-name').value.trim();
-            const b = (x) => wa ? `*${x}*` : x;
-            const items = Object.values(appState.cart).map(i => `${b('(' + i.quantity + ')')} ${i.product.name} - ${(i.quantity * i.product.price).toFixed(2)} د.أ`).join('\n');
-            let m = `${b('طلب جديد من سناكس ماركت')} 🛍️\n\n${b('👤 العميل:')} ${name}\n\n${b('📋 الطلبات:')}\n${items}\n\n${b('💰 المجموع:')} ${t.total.toFixed(2)} د.أ\n\nالرجاء التوصيل! 🚀`;
+            const t = calculateTotals(); 
+            const nameInput = document.getElementById('customer-name');
+            const name = nameInput ? nameInput.value.trim() : 'عميل غير معروف';
+            
+            // تجنب وضع النجمة بجوار مسافات أو أقواس لتفادي مشاكل واتساب
+            const items = Object.values(appState.cart).map(i => 
+                `🔸 ${i.product.name} (الكمية: *${i.quantity}*) ➖ *${(i.quantity * i.product.price).toFixed(2)}* د.أ`
+            ).join('\n');
+            
+            let m = `*طلب جديد من فرح سناكس* 🛍️\n\n` +
+                    `*العميل:* ${name} 👤\n` +
+                    `────────────────\n` +
+                    `*الطلبات:* 🛒\n${items}\n` +
+                    `────────────────\n` +
+                    `*المجموع الكلي:* *${t.total.toFixed(2)}* د.أ 💰\n\n` +
+                    `*الرجاء التوصيل!* 🚀 🚚`;
+                    
             return enc ? encodeURIComponent(m) : m;
         };
 
-        document.getElementById('wa-btn').onclick = async () => {
-            if (document.getElementById('customer-name').value.trim().length < 3) return;
-            if (await processOrder()) {
-                window.open(`https://wa.me/${WA_NUMBER.replace(/^0/, '962')}?text=${getOrderMsg()}`, '_blank');
-                toggleModal('contact', false); showToast("تم تأكيد الطلب!", 'success');
-            } else showToast("عذراً، نفذ المخزون!", 'error');
+        const waBtn = document.getElementById('wa-btn');
+        if (waBtn) {
+            waBtn.onclick = async () => {
+                const nameInput = document.getElementById('customer-name');
+                const nameError = document.getElementById('name-error');
+                
+                if (nameInput && nameInput.value.trim().length < 3) {
+                    if (nameError) nameError.classList.remove('hidden');
+                    nameInput.classList.add('border-red-500', 'ring-2', 'ring-red-500');
+                    return;
+                } else if (nameInput && nameError) {
+                    nameError.classList.add('hidden');
+                    nameInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500');
+                }
+
+                const originalText = waBtn.innerHTML;
+                waBtn.disabled = true;
+                waBtn.innerHTML = "جاري التأكد من المخزون...";
+
+                const result = await processOrder();
+                
+                if (result.success) {
+                    window.open(`https://wa.me/${WA_NUMBER.replace(/^0/, '962')}?text=${getOrderMsg()}`, '_blank');
+                    toggleModal('contact', false); 
+                    showToast("تم تأكيد الطلب بنجاح!", 'success');
+                } else {
+                    showToast(result.message, 'error');
+                }
+                
+                waBtn.disabled = false;
+                waBtn.innerHTML = originalText;
+            };
+        }
+
+        const messengerBtn = document.getElementById('messenger-btn');
+        if (messengerBtn) {
+            messengerBtn.onclick = async () => {
+                const nameInput = document.getElementById('customer-name');
+                const nameError = document.getElementById('name-error');
+                
+                if (nameInput && nameInput.value.trim().length < 3) {
+                    if (nameError) nameError.classList.remove('hidden');
+                    nameInput.classList.add('border-red-500', 'ring-2', 'ring-red-500');
+                    return;
+                }
+                
+                const result = await processOrder();
+                if (result.success) {
+                    // Copy text to clipboard
+                    try {
+                        await navigator.clipboard.writeText(getOrderMsg(false, false));
+                        showToast("تم نسخ الطلب! جاري فتح ماسنجر...", "success");
+                        setTimeout(() => {
+                             window.open(MESSENGER_URL, '_blank');
+                        }, 1000);
+                        toggleModal('contact', false);
+                    } catch (err) {
+                        // Fallback using document.execCommand if clipboard API fails
+                        const textArea = document.createElement("textarea");
+                        textArea.value = getOrderMsg(false, false);
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand("Copy");
+                        textArea.remove();
+                        showToast("تم نسخ الطلب! جاري فتح ماسنجر...", "success");
+                        setTimeout(() => {
+                             window.open(MESSENGER_URL, '_blank');
+                        }, 1000);
+                        toggleModal('contact', false);
+                    }
+                } else {
+                    showToast(result.message, 'error');
+                }
+            };
+        }
+
+        const adminTrigger = document.getElementById('admin-trigger-btn');
+        if (adminTrigger) {
+            adminTrigger.onclick = () => toggleModal('adminPanel', true);
+        }
+
+        // تفعيل وظيفة البحث المباشر
+        const handleSearch = (e) => {
+            appState.search = e.target.value.trim();
+            
+            // مزامنة حقلي البحث (سطح المكتب والجوال)
+            const deskInput = document.getElementById('desktop-search');
+            const mobInput = document.getElementById('mobile-search');
+            if (deskInput && e.target !== deskInput) deskInput.value = appState.search;
+            if (mobInput && e.target !== mobInput) mobInput.value = appState.search;
+            
+            renderProducts();
         };
 
+        const deskSearchNode = document.getElementById('desktop-search');
+        if (deskSearchNode) deskSearchNode.addEventListener('input', handleSearch);
+
+        const mobSearchNode = document.getElementById('mobile-search');
+        if (mobSearchNode) mobSearchNode.addEventListener('input', handleSearch);
+
         const renderApp = () => { renderCategories(); renderProducts(); };
+        
         const showToast = (m, t) => {
-            const el = document.createElement('div'); el.className = `p-4 rounded shadow-lg text-white ${t === 'success' ? 'bg-green-600' : 'bg-red-600'}`; el.textContent = m;
-            document.getElementById('toast-container').appendChild(el); setTimeout(() => el.remove(), 3000);
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const el = document.createElement('div'); 
+            el.className = `p-4 rounded shadow-lg text-white ${t === 'success' ? 'bg-green-600' : 'bg-red-600'}`; 
+            el.textContent = m;
+            container.appendChild(el); 
+            setTimeout(() => el.remove(), 3000);
         };
 
         initFirebase();
