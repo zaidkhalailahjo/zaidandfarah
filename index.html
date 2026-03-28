@@ -43,15 +43,23 @@
                 <i data-lucide="search" class="absolute left-3 top-2.5 text-gray-400 w-5 h-5"></i>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleModal('location', true)" class="hidden md:flex bg-black/20 hover:bg-black/30 px-3 py-2 rounded-full text-sm font-bold items-center gap-1 transition-colors border border-white/20">
+                    <i data-lucide="map-pin" class="w-4 h-4"></i>
+                    <span id="current-location-display">تحديد الموقع</span>
+                </button>
+
                 <div class="relative cursor-pointer hover:scale-105 transition-transform" id="cart-btn">
                     <i data-lucide="shopping-cart" class="w-8 h-8"></i>
                     <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-orange-600 hidden">0</span>
                 </div>
             </div>
         </div>
-        <div class="md:hidden px-4 pb-4">
-           <input type="text" id="mobile-search" placeholder="ابحث عن منتج..." class="w-full py-2 px-4 rounded-full text-gray-800 focus:outline-none">
+        <div class="md:hidden px-4 pb-4 flex gap-2">
+           <input type="text" id="mobile-search" placeholder="ابحث عن منتج..." class="w-full py-2 px-4 rounded-full text-gray-800 focus:outline-none flex-grow">
+           <button onclick="toggleModal('location', true)" class="bg-black/20 hover:bg-black/30 px-3 py-2 rounded-full text-sm font-bold flex items-center justify-center transition-colors border border-white/20 flex-shrink-0" title="تغيير الموقع">
+                <i data-lucide="map-pin" class="w-5 h-5"></i>
+            </button>
         </div>
     </header>
 
@@ -81,6 +89,24 @@
         <button id="admin-trigger-btn" class="w-12 h-12 bg-transparent hover:bg-green-500/20 rounded-full flex items-center justify-center transition-colors cursor-default" title="منطقة الإدارة">
             <i data-lucide="lock" class="w-4 h-4 text-transparent hover:text-green-500/50"></i>
         </button>
+    </div>
+
+    <!-- Location Selection Modal -->
+    <div id="location-modal" class="modal fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative p-8 text-center transform scale-95 transition-transform duration-300" id="location-modal-content">
+            <img src="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" alt="فرح سناكس" class="h-28 mx-auto mb-6 object-contain drop-shadow-sm">
+            <h2 class="text-2xl font-extrabold text-[#002d74] mb-3">أهلاً بك في فرح سناكس!</h2>
+            <p class="text-gray-600 mb-8 font-medium">الرجاء اختيار موقعك لنتمكن من عرض القائمة المتاحة لك للتوصيل.</p>
+            
+            <div class="space-y-4">
+                <button onclick="window.setLocation('البوليفارد')" class="w-full bg-[#00839b] text-white py-4 rounded-2xl font-bold text-xl hover:bg-[#002d74] transition-colors shadow-lg flex items-center justify-center gap-3">
+                    <i data-lucide="map-pin" class="w-6 h-6"></i> البوليفارد
+                </button>
+                <button onclick="window.setLocation('ضاحية الاستقلال')" class="w-full bg-[#00839b] text-white py-4 rounded-2xl font-bold text-xl hover:bg-[#002d74] transition-colors shadow-lg flex items-center justify-center gap-3">
+                    <i data-lucide="map-pin" class="w-6 h-6"></i> ضاحية الاستقلال
+                </button>
+            </div>
+        </div>
     </div>
 
     <div id="product-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -185,10 +211,22 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection, query, writeBatch, runTransaction, getDocs, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // إعداد المطاعم والخلفيات الخاصة بها
+        const RESTAURANTS = [
+            { name: 'مطعم سلمة', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg', desc: 'شاورما ووجبات سريعة', bg: 'bg-white' },
+            { name: 'الحموي', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/logo-12-1.png', desc: 'قهوة تركية ومشروبات', bg: 'bg-black' }
+        ];
+
         const initialProductsData = [
+            // منتجات مطعم سلمة
             { id: '21', name: 'شاورما عادي', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 9999, calories: 550 },
             { id: '22', name: 'شاورما سوبر', price: 2.60, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 9999, calories: 750 },
             { id: '23', name: 'ساندويشة شاورما صغير', price: 0.60, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/xxxxxxxxxx80-1024x1024.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'ساندويشة شاورما.', stock: 9999, calories: 350 },
+            
+            // منتجات الحموي
+            { id: '24', name: 'كاسة قهوة', price: 0.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'الحموي', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/cafe.jpeg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'قهوه تركية أصيلة ومميزة.', stock: 9999, calories: 10 },
+            
+            // باقي السناكات
             { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, currency: 'د.أ', category: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png', productionDate: '6/6/2025', expiryDate: '6/6/2028', ingredients: 'قاعدة صمغ، مواد تحلية، نكهات نعناع.', stock: 9999, calories: 5 }, 
             { id: '19', name: 'بسكوت ستارز', price: 0.10, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png', productionDate: '10/10/2025', expiryDate: '9/10/2026', ingredients: 'دقيق القمح، سكر، زيت نباتي.', stock: 9999, calories: 170 },
             { id: '18', name: 'بسكوت مانيكس', price: 0.05, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png', productionDate: '1/11/2025', expiryDate: '1/12/2026', ingredients: 'دقيق القمح، زيت نباتي، كاكاو.', stock: 9999, calories: 94 },
@@ -199,7 +237,7 @@
             { id: '12', name: 'شيبس روكي', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png', productionDate: '23.10.2025', expiryDate: '23.4.2026', ingredients: 'بطاطا، زيت، ملح.', stock: 9999, calories: 51 },
             { id: '9', name: 'شيبس سناك ميكس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png', productionDate: '13.10.2025', expiryDate: '12.7.2026', ingredients: 'زيت، بابريكا، ملح.', stock: 9999, calories: 488 },
             { id: '11', name: 'شيبس كانتينا', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/JOR-6251040001050_800x.webp', productionDate: '13.10.2025', expiryDate: '13.4.2026', ingredients: 'ذرة، زيت، نكهة.', stock: 9999, calories: 50 },
-            { id: '13', name: 'شيبس بينج رينج', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '18.8.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 9999, calories: 470 },
+            { id: '13', name: 'شيبس بینج رينج', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '18.8.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 9999, calories: 470 },
             { id: '8', name: 'شيبس تريتوس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__16_-removebg-preview.png', productionDate: '23.9.2025', expiryDate: '23.3.2026', ingredients: 'ذرة، زيت، نكهة حلوة.', stock: 9999, calories: 58 },
             { id: '10', name: 'شيبس شبابيك', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/blackfridayoffers-2023-10-10T174155.525_800x-removebg-preview.png', productionDate: '28.10.2025', expiryDate: '28.4.2026', ingredients: 'قمح، نشا، حامض حار.', stock: 9999, calories: 52 },  
             { id: '14', name: 'شيبس ريلاكس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '16.8.2026', ingredients: 'قمح، نشا، زيت.', stock: 9999, calories: 470 }, 
@@ -213,6 +251,7 @@
         const MESSENGER_URL = "https://m.me/zaid.khalaileh.2025";
         const LS_STOCK_KEY = 'snack_market_stock';
         const LS_CART_KEY = 'snack_market_cart';
+        const LS_LOCATION_KEY = 'snack_market_location';
 
         let appState = {
             db: null,
@@ -224,6 +263,7 @@
             currentRestaurant: null,
             search: '',
             appliedCoupon: null,
+            location: localStorage.getItem(LS_LOCATION_KEY) || null,
             adminPendingChanges: {},
             adminClickCount: 0
         };
@@ -289,7 +329,7 @@
                     const offlineAlert = document.getElementById('offline-mode-alert');
                     if (offlineAlert) offlineAlert.classList.remove('hidden');
                     
-                    updateCartUI(); return; 
+                    updateCartUI(); checkLocation(); return; 
                 }
                 const app = initializeApp(config);
                 appState.db = getFirestore(app);
@@ -301,14 +341,22 @@
                         appState.userId = user.uid;
                         initDataListeners(); initFirestoreStock(appState.db);
                     }
-                    appState.isAuthReady = true; renderProducts(); 
+                    appState.isAuthReady = true; checkLocation(); renderProducts(); 
                 });
             } catch (e) {
                 appState.db = 'LOCAL'; appState.isAuthReady = true;
                 mergeProductsAndStock(loadLocalStock()); appState.cart = loadLocalCart();
                 const offlineAlert = document.getElementById('offline-mode-alert');
                 if (offlineAlert) offlineAlert.classList.remove('hidden');
-                updateCartUI();
+                updateCartUI(); checkLocation();
+            }
+        };
+
+        const checkLocation = () => {
+            if (!appState.location) {
+                toggleModal('location', true);
+            } else {
+                document.getElementById('current-location-display').textContent = appState.location;
             }
         };
 
@@ -329,6 +377,7 @@
             empty: document.getElementById('empty-state'), cats: document.getElementById('categories-container'),
             cartCount: document.getElementById('cart-count'), 
             modals: { 
+                location: document.getElementById('location-modal'),
                 product: document.getElementById('product-modal'), 
                 cart: document.getElementById('cart-modal'), 
                 contact: document.getElementById('contact-modal'), 
@@ -404,42 +453,111 @@
             }
         };
 
+        window.setLocation = (loc) => {
+            appState.location = loc;
+            localStorage.setItem(LS_LOCATION_KEY, loc);
+            appState.category = 'الكل';
+            appState.currentRestaurant = null;
+            
+            document.getElementById('current-location-display').textContent = loc;
+            toggleModal('location', false);
+            renderApp();
+            showToast(`تم تعيين الموقع: ${loc}`, 'success');
+        };
+
         const renderCategories = () => {
             if (els.cats) {
-                els.cats.innerHTML = CATEGORIES.map(c => `<button class="px-6 py-2 rounded-full whitespace-nowrap font-medium ${appState.category === c ? 'bg-orange-600 text-white' : 'bg-white text-gray-600 border'}" onclick="window.setCategory('${c}')">${c}</button>`).join('');
+                let activeCategories = CATEGORIES;
+                if (appState.location === 'البوليفارد') {
+                    activeCategories = ['الكل', 'المطاعم']; // إظهار فئات المطاعم فقط في البوليفارد
+                }
+                els.cats.innerHTML = activeCategories.map(c => `<button class="px-6 py-2 rounded-full whitespace-nowrap font-medium ${appState.category === c ? 'bg-orange-600 text-white' : 'bg-white text-gray-600 border'}" onclick="window.setCategory('${c}')">${c}</button>`).join('');
             }
         };
 
         const renderProducts = () => {
             if (els.loader) els.loader.classList.add('hidden');
             
-            // التعامل مع واجهة بطاقات المطاعم الرئيسية
-            if (appState.category === 'المطاعم' && !appState.currentRestaurant && !appState.search) {
-                if (els.empty) els.empty.classList.add('hidden');
-                if (els.grid) {
-                    els.grid.innerHTML = `
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center justify-center hover:shadow-lg transition-shadow cursor-pointer" onclick="window.openRestaurant('مطعم سلمة')">
-                            <img src="https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg" class="h-32 w-32 object-contain mb-4 rounded-full border-4 border-gray-50">
-                            <h3 class="font-bold text-[#002d74] text-xl">مطعم سلمة</h3>
-                            <p class="text-sm text-gray-500 mt-2">شاورما ووجبات سريعة</p>
-                        </div>
-                    `;
-                }
-                if (window.lucide) lucide.createIcons();
-                return;
+            let contentHtml = '';
+            let backHtml = '';
+
+            // تصفية المطاعم المسموحة بناءً على الموقع
+            const allowedRestaurants = appState.location === 'البوليفارد' ? ['الحموي'] : ['مطعم سلمة'];
+            const visibleRestaurants = RESTAURANTS.filter(r => allowedRestaurants.includes(r.name));
+
+            // عرض رأس قائمة المطعم المحدد
+            if (appState.currentRestaurant) {
+                const currentRest = RESTAURANTS.find(r => r.name === appState.currentRestaurant);
+                backHtml = `
+                <div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 relative mb-4">
+                    <div class="h-16 w-16 rounded-full border-2 border-gray-100 shadow-sm overflow-hidden flex items-center justify-center ${currentRest ? currentRest.bg : 'bg-white'}">
+                        <img src="${currentRest ? currentRest.image : ''}" class="max-h-full max-w-full object-contain ${currentRest && currentRest.bg === 'bg-black' ? 'p-1' : ''}" alt="شعار المطعم">
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2>
+                        <p class="text-gray-500 text-sm font-medium">قائمة الوجبات</p>
+                    </div>
+                    <button class="mr-auto bg-gray-50 px-4 py-2 rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 border border-gray-200" onclick="window.setCategory('${appState.category}')">
+                        <span class="font-bold text-sm text-gray-700 hidden sm:block">رجوع</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5 text-gray-700"></i>
+                    </button>
+                </div>`;
             }
 
-            let filtered = appState.products.filter(p => {
-                if (p.hideFromAll && appState.category === 'الكل') return false;
-                if (appState.category === 'المطاعم' && appState.currentRestaurant) {
-                    return p.restaurant === appState.currentRestaurant && (p.name && p.name.includes(appState.search));
-                } else if (appState.category === 'المطاعم') {
-                    return p.category === 'المطاعم' && (p.name && p.name.includes(appState.search));
+            // عرض بطاقات المطاعم في قسم "الكل" أو "المطاعم" إذا لم يتم تحديد مطعم
+            if (!appState.currentRestaurant && !appState.search && (appState.category === 'الكل' || appState.category === 'المطاعم')) {
+                const restCards = visibleRestaurants.map(r => `
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center justify-center hover:shadow-lg transition-shadow cursor-pointer" onclick="window.openRestaurant('${r.name}')">
+                        <div class="h-32 w-32 mb-4 rounded-full border-4 border-gray-50 shadow-sm flex items-center justify-center overflow-hidden ${r.bg}">
+                            <img src="${r.image}" class="max-h-full max-w-full object-contain ${r.bg === 'bg-black' ? 'p-3' : ''}">
+                        </div>
+                        <h3 class="font-bold text-[#002d74] text-xl">${r.name}</h3>
+                        <p class="text-sm text-gray-500 mt-2">${r.desc}</p>
+                    </div>
+                `).join('');
+                
+                contentHtml += restCards;
+                
+                if (appState.category === 'المطاعم') {
+                    if (els.grid) els.grid.innerHTML = contentHtml;
+                    if (els.empty) els.empty.classList.add('hidden');
+                    if (window.lucide) lucide.createIcons();
+                    return;
                 }
-                return (appState.category === 'الكل' || p.category === appState.category) && (p.name && p.name.includes(appState.search));
+            }
+
+            // تصفية المنتجات
+            let filtered = appState.products.filter(p => {
+                // 1. فلترة بناء على الموقع المختار
+                if (appState.location === 'البوليفارد') {
+                    // في البوليفارد نظهر الحموي فقط
+                    if (p.restaurant !== 'الحموي') return false; 
+                } else if (appState.location === 'ضاحية الاستقلال') {
+                    // في ضاحية الاستقلال نظهر كل شيء ما عدا الحموي
+                    if (p.restaurant === 'الحموي') return false; 
+                }
+
+                // 2. فلترة البحث والفئات
+                const matchesSearch = p.name && p.name.includes(appState.search);
+                
+                if (appState.currentRestaurant) {
+                    return p.restaurant === appState.currentRestaurant && matchesSearch;
+                }
+                
+                if (appState.search) {
+                    return (appState.category === 'الكل' || p.category === appState.category) && matchesSearch;
+                }
+                
+                if (appState.category === 'الكل') {
+                    return !p.hideFromAll; // يخفي منتجات المطاعم من القائمة العادية لتبقى بداخل المطعم فقط
+                } else if (appState.category === 'المطاعم') {
+                    return false; // لأننا عرضنا بطاقات المطاعم أعلاه
+                } else {
+                    return p.category === appState.category;
+                }
             });
             
-            if (!filtered.length) { 
+            if (!filtered.length && !contentHtml && !backHtml) { 
                 if (els.grid) els.grid.innerHTML = ''; 
                 if (els.empty) els.empty.classList.remove('hidden'); 
                 return; 
@@ -447,30 +565,12 @@
             if (els.empty) els.empty.classList.add('hidden');
             
             if (els.grid) {
-                let backHtml = '';
-                if (appState.category === 'المطاعم' && appState.currentRestaurant) {
-                    backHtml = `
-                    <div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 relative">
-                        <img src="https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg" class="h-16 w-16 object-contain rounded-full border-2 border-gray-100 shadow-sm" alt="شعار المطعم">
-                        <div>
-                            <h2 class="text-2xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2>
-                            <p class="text-gray-500 text-sm font-medium">قائمة الوجبات</p>
-                        </div>
-                        <button class="mr-auto bg-gray-50 px-4 py-2 rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 border border-gray-200" onclick="window.setCategory('المطاعم')">
-                            <span class="font-bold text-sm text-gray-700 hidden sm:block">رجوع للمطاعم</span>
-                            <i data-lucide="arrow-right" class="w-5 h-5 text-gray-700"></i>
-                        </button>
-                    </div>`;
-                }
-
-                els.grid.innerHTML = backHtml + filtered.map(p => {
-                    const isOut = false; // جعل جميع المنتجات متوفرة دائماً
+                contentHtml += filtered.map(p => {
                     const cartItem = appState.cart[p.id];
                     const qtyInCart = cartItem ? cartItem.quantity : 0;
 
                     let actionHtml = '';
                     if (qtyInCart > 0) {
-                        // أزرار التحكم بالكمية في حال كان المنتج مضافاً للسلة
                         actionHtml = `
                             <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1 border border-gray-200" onclick="event.stopPropagation();">
                                 <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#00839b] font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.updateQty('${p.id}', 1)">+</button>
@@ -479,7 +579,6 @@
                             </div>
                         `;
                     } else {
-                        // زر الإضافة للسلة الاعتيادي باللون الكحلي
                         actionHtml = `
                             <button class="bg-[#002d74] text-white p-2.5 rounded-full hover:scale-105 transition-transform shadow-md" onclick="event.stopPropagation(); window.addItem('${p.id}')">
                                 <i data-lucide="shopping-cart" class="w-5 h-5"></i>
@@ -498,6 +597,8 @@
                         </div>
                     </div>`;
                 }).join('');
+                
+                els.grid.innerHTML = backHtml + contentHtml;
             }
             if (window.lucide) lucide.createIcons();
         };
@@ -586,6 +687,7 @@
             const t = calculateTotals(); 
             const nameInput = document.getElementById('customer-name');
             const name = nameInput ? nameInput.value.trim() : 'عميل غير معروف';
+            const locationText = appState.location ? appState.location : 'غير محدد';
             
             // تجنب وضع النجمة بجوار مسافات أو أقواس لتفادي مشاكل واتساب
             const items = Object.values(appState.cart).map(i => 
@@ -594,6 +696,7 @@
             
             let m = `*طلب جديد من فرح سناكس* 🛍️\n\n` +
                     `*العميل:* ${name} 👤\n` +
+                    `*الموقع:* ${locationText} 📍\n` +
                     `────────────────\n` +
                     `*الطلبات:* 🛒\n${items}\n` +
                     `────────────────\n` +
