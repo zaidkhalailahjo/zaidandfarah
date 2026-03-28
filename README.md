@@ -418,16 +418,26 @@
             if (!Object.keys(appState.cart).length) return { success: false, message: "السلة فارغة" };
             
             if (appState.db === 'LOCAL') {
-                let localStock = loadLocalStock();
-                for (const item of Object.values(appState.cart)) {
-                    const s = localStock[item.product.id]?.stock || 0;
-                    localStock[item.product.id].stock = s - item.quantity;
+                try {
+                    let localStock = loadLocalStock();
+                    for (const item of Object.values(appState.cart)) {
+                        if (!localStock[item.product.id]) {
+                            localStock[item.product.id] = { productId: item.product.id, stock: 9999 };
+                        }
+                        const s = localStock[item.product.id].stock || 9999;
+                        localStock[item.product.id].stock = s - item.quantity;
+                    }
+                    localStorage.setItem(LS_STOCK_KEY, JSON.stringify(localStock));
+                    appState.cart = {}; 
+                    saveLocalCart(); 
+                    mergeProductsAndStock(localStock);
+                    return { success: true };
+                } catch (e) {
+                    console.error("Local order error: ", e);
+                    appState.cart = {}; 
+                    saveLocalCart(); 
+                    return { success: true };
                 }
-                localStorage.setItem(LS_STOCK_KEY, JSON.stringify(localStock));
-                appState.cart = {}; 
-                saveLocalCart(); 
-                mergeProductsAndStock(localStock);
-                return { success: true };
             } 
 
             try {
@@ -755,7 +765,12 @@
                     return;
                 }
                 
+                const originalText = messengerBtn.innerHTML;
+                messengerBtn.disabled = true;
+                messengerBtn.innerHTML = "جاري التأكد وتجهيز الطلب...";
+
                 const result = await processOrder();
+                
                 if (result.success) {
                     // enc = false, wa = false 
                     // لإزالة النجمات (*) وتجهيز النص للنسخ المباشر
@@ -784,6 +799,9 @@
                 } else {
                     showToast(result.message, 'error');
                 }
+                
+                messengerBtn.disabled = false;
+                messengerBtn.innerHTML = originalText;
             };
         }
 
