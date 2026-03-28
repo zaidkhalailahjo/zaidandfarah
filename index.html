@@ -225,7 +225,8 @@
         const RESTAURANTS = [
             { name: 'مطعم سلمة', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg', desc: 'شاورما ووجبات سريعة', bg: 'bg-white' },
             { name: 'الحموي', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/logo-12-1.png', desc: 'قهوة تركية ومشروبات', bg: 'bg-black' },
-            { name: 'انكل اوساكا', image: 'https://uncleosaka.com/wp-content/uploads/2022/10/UncleOsaka.webp', desc: 'قهوة ومشروبات مميزة', bg: 'bg-white' }
+            { name: 'انكل اوساكا', image: 'https://uncleosaka.com/wp-content/uploads/2022/10/UncleOsaka.webp', desc: 'قهوة ومشروبات مميزة', bg: 'bg-white' },
+            { name: 'سناكات', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Gemini_Generated_Image_5h65xw5h65xw5h65.png', desc: 'شيبس، شوكولاتة، بسكويت', bg: 'bg-white' }
         ];
 
         const initialProductsData = [
@@ -243,31 +244,46 @@
             { id: '27', name: 'مشروبات اللاتيه', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromAll: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'اختر نكهة اللاتيه المفضلة لديك.', stock: 9999, calories: 200 },
             
             // خيارات انكل اوساكا (مخفية من القوائم الأساسية)
-            { id: 'osaka_1', name: 'Spanish latte', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
-            { id: 'osaka_2', name: 'Caramel Latte', price: 2.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
-            { id: 'osaka_3', name: 'Vanilla Latte', price: 2.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
-            { id: 'osaka_4', name: 'hazelnut latte', price: 2.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
-            { id: 'osaka_5', name: 'Pistachio Latte', price: 2.95, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
+            { id: 'osaka_1', name: 'Spanish latte', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', productionDate: 'طازج', expiryDate: 'يومي', stock: 9999 },
+            { id: 'osaka_2', name: 'Caramel Latte', price: 2.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', productionDate: 'طازج', expiryDate: 'يومي', stock: 9999 },
+            { id: 'osaka_3', name: 'Vanilla Latte', price: 2.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', productionDate: 'طازج', expiryDate: 'يومي', stock: 9999 },
+            { id: 'osaka_4', name: 'hazelnut latte', price: 2.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', productionDate: 'طازج', expiryDate: 'يومي', stock: 9999 },
+            { id: 'osaka_5', name: 'Pistachio Latte', price: 2.95, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', productionDate: 'طازج', expiryDate: 'يومي', stock: 9999 },
 
-            // باقي السناكات
-            { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, currency: 'د.أ', category: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png', productionDate: '6/6/2025', expiryDate: '6/6/2028', ingredients: 'قاعدة صمغ، مواد تحلية، نكهات نعناع.', stock: 9999, calories: 5 }, 
-            { id: '19', name: 'بسكوت ستارز', price: 0.10, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png', productionDate: '10/10/2025', expiryDate: '9/10/2026', ingredients: 'دقيق القمح، سكر، زيت نباتي.', stock: 9999, calories: 170 },
-            { id: '18', name: 'بسكوت مانيكس', price: 0.05, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png', productionDate: '1/11/2025', expiryDate: '1/12/2026', ingredients: 'دقيق القمح، زيت نباتي، كاكاو.', stock: 9999, calories: 94 },
-            { id: '17', name: 'قهوة العميد 2/1', price: 0.25, currency: 'د.أ', category: 'قهوة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png', productionDate: '1/10/2025', expiryDate: '1/3/2027', ingredients: 'قهوة سريعة الذوبان، كريمة.', stock: 9999, calories: 0 },
-            { id: '16', name: 'شوكلاتة بريك تايم', price: 0.10, currency: 'د.أ', category: 'شوكولاتة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__17_-removebg-preview.png', productionDate: '16.9.2025', expiryDate: '10.2.2027', ingredients: 'سكر، حليب، كاكاو.', stock: 9999, calories: 85 },
-            { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, currency: 'د.أ', category: 'شوكولاتة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png', productionDate: '16.9.2025', expiryDate: '15.2.2027', ingredients: 'سكر، كاكاو، مصل الحليب.', stock: 9999, calories: 93 },
-            { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/IMG-7394_370x370-removebg-preview.png', productionDate: '3.11.2025', expiryDate: '2.6.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 9999, calories: 524 },
-            { id: '12', name: 'شيبس روكي', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png', productionDate: '23.10.2025', expiryDate: '23.4.2026', ingredients: 'بطاطا، زيت، ملح.', stock: 9999, calories: 51 },
-            { id: '9', name: 'شيبس سناك ميكس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png', productionDate: '13.10.2025', expiryDate: '12.7.2026', ingredients: 'زيت، بابريكا، ملح.', stock: 9999, calories: 488 },
-            { id: '11', name: 'شيبس كانتينا', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/JOR-6251040001050_800x.webp', productionDate: '13.10.2025', expiryDate: '13.4.2026', ingredients: 'ذرة، زيت، نكهة.', stock: 9999, calories: 50 },
-            { id: '13', name: 'شيبس بینج رينج', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '18.8.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 9999, calories: 470 },
-            { id: '8', name: 'شيبس تريتوس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__16_-removebg-preview.png', productionDate: '23.9.2025', expiryDate: '23.3.2026', ingredients: 'ذرة، زيت، نكهة حلوة.', stock: 9999, calories: 58 },
-            { id: '10', name: 'شيبس شبابيك', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/blackfridayoffers-2023-10-10T174155.525_800x-removebg-preview.png', productionDate: '28.10.2025', expiryDate: '28.4.2026', ingredients: 'قمح، نشا، حامض حار.', stock: 9999, calories: 52 },  
-            { id: '14', name: 'شيبس ريلاكس', price: 0.10, currency: 'د.أ', category: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '16.8.2026', ingredients: 'قمح، نشا، زيت.', stock: 9999, calories: 470 }, 
+            // قائمة سناكات الجديدة
+            { id: '28', name: 'شنينه', price: 0.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'شنينه باردة ومنعشة.', stock: 9999, calories: 60 },
+            { id: 'shanina_1', name: 'شنينه 0.50', price: 0.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png', productionDate: 'طازج', expiryDate: 'يومي', stock: 9999 },
+            { id: 'shanina_2', name: 'شنينه 0.75', price: 0.75, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png', productionDate: 'طازج', expiryDate: 'يومي', stock: 9999 },
+            { id: 'shanina_3', name: 'شنينه 1.00', price: 1.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png', productionDate: 'طازج', expiryDate: 'يومي', stock: 9999 },
+            { id: 'shanina_4', name: 'شنينه 1.25', price: 1.25, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png', productionDate: 'طازج', expiryDate: 'يومي', stock: 9999 },
+            
+            { id: '29', name: 'بريك تايم الدائرية', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/download-removebg-preview.png', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'شوكولاتة بريك تايم.', stock: 9999, calories: 95 },
+            
+            { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png', productionDate: '6/6/2025', expiryDate: '6/6/2028', ingredients: 'قاعدة صمغ، مواد تحلية، نكهات نعناع.', stock: 9999, calories: 5 }, 
+            { id: '19', name: 'بسكوت ستارز', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png', productionDate: '10/10/2025', expiryDate: '9/10/2026', ingredients: 'دقيق القمح، سكر، زيت نباتي.', stock: 9999, calories: 170 },
+            { id: '18', name: 'بسكوت مانيكس', price: 0.05, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png', productionDate: '1/11/2025', expiryDate: '1/12/2026', ingredients: 'دقيق القمح، زيت نباتي، كاكاو.', stock: 9999, calories: 94 },
+            { id: '17', name: 'قهوة العميد 2/1', price: 0.25, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png', productionDate: '1/10/2025', expiryDate: '1/3/2027', ingredients: 'قهوة سريعة الذوبان، كريمة.', stock: 9999, calories: 0 },
+            { id: '16', name: 'شوكلاتة بريك تايم', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__17_-removebg-preview.png', productionDate: '16.9.2025', expiryDate: '10.2.2027', ingredients: 'سكر، حليب، كاكاو.', stock: 9999, calories: 85 },
+            { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png', productionDate: '16.9.2025', expiryDate: '15.2.2027', ingredients: 'سكر، كاكاو، مصل الحليب.', stock: 9999, calories: 93 },
+            { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/IMG-7394_370x370-removebg-preview.png', productionDate: '3.11.2025', expiryDate: '2.6.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 9999, calories: 524 },
+            { id: '12', name: 'شيبس روكي', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png', productionDate: '23.10.2025', expiryDate: '23.4.2026', ingredients: 'بطاطا، زيت، ملح.', stock: 9999, calories: 51 },
+            { id: '9', name: 'شيبس سناك ميكس', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png', productionDate: '13.10.2025', expiryDate: '12.7.2026', ingredients: 'زيت، بابريكا، ملح.', stock: 9999, calories: 488 },
+            { id: '11', name: 'شيبس كانتينا', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/JOR-6251040001050_800x.webp', productionDate: '13.10.2025', expiryDate: '13.4.2026', ingredients: 'ذرة، زيت، نكهة.', stock: 9999, calories: 50 },
+            { id: '13', name: 'شيبس بینج رينج', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '18.8.2026', ingredients: 'ذرة، زيت، نكهة جبنة.', stock: 9999, calories: 470 },
+            { id: '8', name: 'شيبس تريتوس', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__16_-removebg-preview.png', productionDate: '23.9.2025', expiryDate: '23.3.2026', ingredients: 'ذرة، زيت، نكهة حلوة.', stock: 9999, calories: 58 },
+            { id: '10', name: 'شيبس شبابيك', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/blackfridayoffers-2023-10-10T174155.525_800x-removebg-preview.png', productionDate: '28.10.2025', expiryDate: '28.4.2026', ingredients: 'قمح، نشا، حامض حار.', stock: 9999, calories: 52 },  
+            { id: '14', name: 'شيبس ريلاكس', price: 0.10, currency: 'د.أ', category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png', productionDate: '17.11.2025', expiryDate: '16.8.2026', ingredients: 'قمح، نشا، زيت.', stock: 9999, calories: 470 }, 
         ];
 
         const CATEGORIES = ['الكل', 'المطاعم', 'شيبس', 'شوكولاتة', 'قهوة', 'بسكويت', 'علكة']; 
-        const COUPONS = { 'فرح10': 0.10, '00000000002': 0.20 }; 
+        
+        // إعداد أكواد الخصم والأنواع الخاصة بها
+        const COUPONS = { 
+            'فرح10': { type: 'percent', val: 0.10 }, 
+            'سلسبيل': { type: 'fixed', val: 0.60 },
+            'سلسبيل1': { type: 'percent', val: 1.00 } // يخصم 100% من المجموع
+        }; 
+
         const MIN_PURCHASE = 1.00;
         const ADMIN_PASS = '452011';
         const WA_NUMBER = "0790166389";
@@ -301,13 +317,13 @@
                 if (stockJson) return JSON.parse(stockJson);
             } catch (e) { console.error(e); }
             const defaultStock = {};
-            initialProductsData.forEach(p => defaultStock[p.id] = { productId: p.id, stock: p.stock, productionDate: p.productionDate, expiryDate: p.expiryDate });
+            initialProductsData.forEach(p => defaultStock[p.id] = { productId: p.id, stock: p.stock, productionDate: p.productionDate || 'غير محدد', expiryDate: p.expiryDate || 'غير محدد' });
             return defaultStock;
         };
 
         const saveLocalStock = () => {
             const stockMap = {};
-            appState.products.forEach(p => stockMap[p.id] = { productId: p.id, stock: p.stock, productionDate: p.productionDate, expiryDate: p.expiryDate });
+            appState.products.forEach(p => stockMap[p.id] = { productId: p.id, stock: p.stock, productionDate: p.productionDate || 'غير محدد', expiryDate: p.expiryDate || 'غير محدد' });
             localStorage.setItem(LS_STOCK_KEY, JSON.stringify(stockMap));
         };
 
@@ -320,7 +336,7 @@
         const mergeProductsAndStock = (stockMap) => {
             appState.products = initialProductsData.map(p => {
                 const live = stockMap[p.id];
-                return { ...p, stock: live ? live.stock : p.stock, productionDate: live?.productionDate || p.productionDate, expiryDate: live?.expiryDate || p.expiryDate };
+                return { ...p, stock: live ? live.stock : p.stock, productionDate: live?.productionDate || p.productionDate || 'غير محدد', expiryDate: live?.expiryDate || p.expiryDate || 'غير محدد' };
             });
             renderApp();
         };
@@ -333,7 +349,7 @@
                     const batch = writeBatch(db);
                     initialProductsData.forEach(p => {
                         const ref = doc(db, STOCK_PATH, p.id);
-                        batch.set(ref, { productId: p.id, stock: p.stock, productionDate: p.productionDate, expiryDate: p.expiryDate });
+                        batch.set(ref, { productId: p.id, stock: p.stock, productionDate: p.productionDate || 'غير محدد', expiryDate: p.expiryDate || 'غير محدد' });
                     });
                     await batch.commit();
                 }
@@ -409,7 +425,17 @@
         const calculateTotals = () => {
             const items = Object.values(appState.cart);
             const subtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-            let discount = appState.appliedCoupon ? subtotal * appState.appliedCoupon.discount : 0;
+            
+            let discount = 0;
+            if (appState.appliedCoupon) {
+                if (appState.appliedCoupon.type === 'percent') {
+                    discount = subtotal * appState.appliedCoupon.val;
+                } else if (appState.appliedCoupon.type === 'fixed') {
+                    discount = appState.appliedCoupon.val;
+                }
+            }
+            if (discount > subtotal) discount = subtotal;
+
             const deliveryFee = items.length > 0 ? 0.10 : 0.00;
             return { subtotal, discount, deliveryFee, total: subtotal - discount + deliveryFee };
         };
@@ -453,7 +479,7 @@
                     let localStock = loadLocalStock();
                     for (const [pId, qty] of Object.entries(groupedQuantities)) {
                         if (!localStock[pId]) {
-                            localStock[pId] = { productId: pId, stock: 9999 };
+                            localStock[pId] = { productId: pId, stock: 9999, productionDate: 'غير محدد', expiryDate: 'غير محدد' };
                         }
                         localStock[pId].stock -= qty;
                     }
@@ -528,7 +554,7 @@
             let backHtml = '';
 
             // تصفية المطاعم المسموحة بناءً على الموقع
-            const allowedRestaurants = appState.location === 'البوليفارد' ? ['الحموي', 'انكل اوساكا'] : ['مطعم سلمة'];
+            const allowedRestaurants = appState.location === 'البوليفارد' ? ['الحموي', 'انكل اوساكا'] : ['مطعم سلمة', 'سناكات'];
             const visibleRestaurants = RESTAURANTS.filter(r => allowedRestaurants.includes(r.name));
 
             // عرض رأس قائمة المطعم المحدد
@@ -541,7 +567,7 @@
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2>
-                        <p class="text-gray-500 text-sm font-medium">قائمة الوجبات</p>
+                        <p class="text-gray-500 text-sm font-medium">${currentRest ? currentRest.desc : 'قائمة الطلبات'}</p>
                     </div>
                     <button class="mr-auto bg-gray-50 px-4 py-2 rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 border border-gray-200" onclick="window.setCategory('${appState.category}')">
                         <span class="font-bold text-sm text-gray-700 hidden sm:block">رجوع</span>
@@ -578,7 +604,7 @@
 
                 // 1. فلترة بناء على الموقع المختار
                 if (appState.location === 'البوليفارد') {
-                    // في البوليفارد نظهر الحموي وانكل اوساكا فقط ولا نظهر المطاعم الأخرى أو السناكات العادية
+                    // في البوليفارد نظهر الحموي وانكل اوساكا فقط 
                     if (p.restaurant !== 'الحموي' && p.restaurant !== 'انكل اوساكا') return false; 
                 } else if (appState.location === 'ضاحية الاستقلال') {
                     // في ضاحية الاستقلال نظهر كل شيء ما عدا الحموي وانكل اوساكا
@@ -601,7 +627,7 @@
                 } else if (appState.category === 'المطاعم') {
                     return false; // لأننا عرضنا بطاقات المطاعم أعلاه
                 } else {
-                    return p.category === appState.category;
+                    return p.category === appState.category && !p.hideFromAll;
                 }
             });
             
@@ -625,13 +651,17 @@
                         Object.keys(appState.cart).forEach(k => {
                             if (k.startsWith('osaka_')) qtyInCart += appState.cart[k].quantity;
                         });
+                    } else if (p.id === '28') {
+                        Object.keys(appState.cart).forEach(k => {
+                            if (k.startsWith('shanina_')) qtyInCart += appState.cart[k].quantity;
+                        });
                     } else {
                         qtyInCart = appState.cart[p.id] ? appState.cart[p.id].quantity : 0;
                     }
 
                     let actionHtml = '';
                     if (qtyInCart > 0) {
-                        if (p.id === '24' || p.id === '27') {
+                        if (p.id === '24' || p.id === '27' || p.id === '28') {
                             actionHtml = `
                                 <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1 border border-gray-200" onclick="event.stopPropagation();">
                                     <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#00839b] font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.addItem('${p.id}')">+</button>
@@ -659,7 +689,7 @@
                         <img src="${p.image}" class="h-40 object-contain mb-4">
                         <h3 class="font-bold text-gray-800 mb-2">${p.name}</h3>
                         <div class="mt-auto flex justify-between items-center w-full">
-                            <span class="font-bold text-orange-600 text-lg">${p.price.toFixed(2)} د.أ</span>
+                            <span class="font-bold text-orange-600 text-lg">${p.price > 0 ? p.price.toFixed(2) + ' د.أ' : 'خيارات'}</span>
                             <div class="flex-shrink-0">
                                 ${actionHtml}
                             </div>
@@ -764,6 +794,38 @@
             toggleModal('product', true);
         };
 
+        window.openShaninaOptions = () => {
+            const p = appState.products.find(x => x.id === '28');
+            if (!p) return;
+            const modalBody = document.getElementById('product-modal-body');
+            if (modalBody) {
+                modalBody.innerHTML = `<div class="p-6 text-right">
+                    <img src="${p.image}" class="h-48 w-full object-contain mb-6 rounded-lg">
+                    <h2 class="text-3xl font-bold text-[#002d74] mb-2">${p.name}</h2>
+                    <p class="text-gray-700 text-lg mb-6 font-bold">الرجاء اختيار الحجم/السعر:</p>
+                    <div class="space-y-3 mb-4" dir="rtl">
+                        <button onclick="window.addItem('shanina_1'); window.toggleModal('product', false);" class="w-full flex justify-between items-center bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] px-5 py-3 rounded-xl font-bold text-lg border border-gray-200">
+                            <span>شنينه 0.50</span>
+                            <span>0.50 د.أ</span>
+                        </button>
+                        <button onclick="window.addItem('shanina_2'); window.toggleModal('product', false);" class="w-full flex justify-between items-center bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] px-5 py-3 rounded-xl font-bold text-lg border border-gray-200">
+                            <span>شنينه 0.75</span>
+                            <span>0.75 د.أ</span>
+                        </button>
+                        <button onclick="window.addItem('shanina_3'); window.toggleModal('product', false);" class="w-full flex justify-between items-center bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] px-5 py-3 rounded-xl font-bold text-lg border border-gray-200">
+                            <span>شنينه 1.00</span>
+                            <span>1.00 د.أ</span>
+                        </button>
+                        <button onclick="window.addItem('shanina_4'); window.toggleModal('product', false);" class="w-full flex justify-between items-center bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] px-5 py-3 rounded-xl font-bold text-lg border border-gray-200">
+                            <span>شنينه 1.25</span>
+                            <span>1.25 د.أ</span>
+                        </button>
+                    </div>
+                </div>`;
+            }
+            toggleModal('product', true);
+        };
+
         window.addToCartWithOption = (id, option) => {
             const p = appState.products.find(x => x.id === id);
             addToCart(p, option);
@@ -777,6 +839,8 @@
                 window.openCoffeeOptions();
             } else if (id === '27') {
                 window.openOsakaOptions();
+            } else if (id === '28') {
+                window.openShaninaOptions();
             } else {
                 addToCart(appState.products.find(p => p.id === id));
             }
@@ -789,6 +853,10 @@
             }
             if (id === '27') {
                 window.openOsakaOptions();
+                return;
+            }
+            if (id === '28') {
+                window.openShaninaOptions();
                 return;
             }
             const p = appState.products.find(x => x.id === id); if (!p) return;
@@ -826,6 +894,37 @@
 
         const cartBtn = document.getElementById('cart-btn');
         if (cartBtn) cartBtn.onclick = () => toggleModal('cart', true);
+
+        // تفعيل أزرار الخصم 
+        const applyCouponBtn = document.getElementById('apply-coupon-btn');
+        if (applyCouponBtn) {
+            applyCouponBtn.onclick = () => {
+                const code = document.getElementById('coupon-input').value.trim();
+                const msg = document.getElementById('coupon-message');
+                
+                // إزالة المسافات للتحقق بدقة
+                const normalizedCode = code.replace(/\s+/g, '');
+                
+                const availableCoupons = {
+                    'فرح10': { type: 'percent', val: 0.10 },
+                    'سلسبيل': { type: 'fixed', val: 0.60 },
+                    'سلسبيل1': { type: 'percent', val: 1.00 }
+                };
+
+                if (availableCoupons[normalizedCode]) {
+                    appState.appliedCoupon = availableCoupons[normalizedCode];
+                    msg.textContent = 'تم تطبيق الكود بنجاح!';
+                    msg.className = 'text-sm font-medium p-2 rounded-lg text-green-600 bg-green-50 block';
+                    msg.classList.remove('hidden');
+                } else {
+                    appState.appliedCoupon = null;
+                    msg.textContent = 'كود الخصم غير صالح';
+                    msg.className = 'text-sm font-medium p-2 rounded-lg text-red-600 bg-red-50 block';
+                    msg.classList.remove('hidden');
+                }
+                updateCartUI();
+            };
+        }
 
         // إضافة حدث تحديد الموقع عبر GPS
         const getLocationBtn = document.getElementById('get-location-btn');
@@ -879,9 +978,15 @@
         const checkoutBtn = document.getElementById('checkout-btn');
         if (checkoutBtn) {
             checkoutBtn.onclick = () => { 
+                const totals = calculateTotals();
+                if (totals.subtotal < 1.00) {
+                    showToast("يجب أن يكون أقل شيء للطلب 1 دينار", "error");
+                    return;
+                }
+
                 toggleModal('cart', false); 
                 const totalDisplay = document.getElementById('contact-total-display');
-                if (totalDisplay) totalDisplay.innerText = calculateTotals().total.toFixed(2) + ' د.أ'; 
+                if (totalDisplay) totalDisplay.innerText = totals.total.toFixed(2) + ' د.أ'; 
                 
                 // إعادة تعيين زر الموقع الدقيق في كل مرة يفتح فيها العميل نافذة الشراء
                 appState.exactLocationLink = null;
