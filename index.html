@@ -692,7 +692,7 @@
             };
         }
 
-        // دالة إنشاء رسالة الطلب مع خيار تحديد دعم تغميق الخط
+        // دالة إنشاء رسالة الطلب مع خيار تحديد دعم تغميق الخط وإظهار الإيموجي
         const getOrderMsg = (enc = true, wa = true) => {
             const t = calculateTotals(); 
             const nameInput = document.getElementById('customer-name');
@@ -701,19 +701,21 @@
             
             // دالة مساعدة لتغميق الخط فقط إذا كان wa = true
             const b = (text) => wa ? `*${text}*` : text;
+            // دالة مساعدة لإظهار الإيموجي فقط إذا كان wa = true (واتساب) وإخفائها للماسنجر
+            const e = (emoji) => wa ? ` ${emoji}` : '';
             
             const items = Object.values(appState.cart).map(i => 
                 `🔸 ${i.product.name} (الكمية: ${b(i.quantity)}) ➖ ${b((i.quantity * i.product.price).toFixed(2))} د.أ`
             ).join('\n');
             
-            let m = `${b('طلب جديد من فرح سناكس')} 🛍️\n\n` +
-                    `${b('العميل:')} ${name} 👤\n` +
-                    `${b('الموقع:')} ${locationText} 📍\n` +
+            let m = `${b('طلب جديد من فرح سناكس')}${e('🛍️')}\n\n` +
+                    `${b('العميل:')} ${name}${e('👤')}\n` +
+                    `${b('الموقع:')} ${locationText}${e('📍')}\n` +
                     `────────────────\n` +
-                    `${b('الطلبات:')} 🛒\n${items}\n` +
+                    `${b('الطلبات:')}${e('🛒')}\n${items}\n` +
                     `────────────────\n` +
-                    `${b('المجموع الكلي:')} ${b(t.total.toFixed(2))} د.أ 💰\n\n` +
-                    `${b('الرجاء التوصيل!')} 🚀 🚚`;
+                    `${b('المجموع الكلي:')} ${b(t.total.toFixed(2))} د.أ${e('💰')}\n\n` +
+                    `${b('الرجاء التوصيل!')}${e('🚀 🚚')}`;
                     
             return enc ? encodeURIComponent(m) : m;
         };
@@ -737,11 +739,14 @@
                 waBtn.disabled = true;
                 waBtn.innerHTML = "جاري التأكد وتجهيز الطلب...";
 
+                // تخزين محتوى الرسالة قبل تفريغ السلة بواسطة processOrder
+                const finalMessage = getOrderMsg(true, true);
+
                 const result = await processOrder();
                 
                 if (result.success) {
-                    // wa = true هنا لأننا نرسل إلى الواتساب
-                    window.open(`https://wa.me/${WA_NUMBER.replace(/^0/, '962')}?text=${getOrderMsg(true, true)}`, '_blank');
+                    // فتح الرابط باستخدام الرسالة المخزنة مسبقاً
+                    window.open(`https://wa.me/${WA_NUMBER.replace(/^0/, '962')}?text=${finalMessage}`, '_blank');
                     toggleModal('contact', false); 
                     showToast("تم تأكيد الطلب بنجاح!", 'success');
                 } else {
@@ -769,15 +774,15 @@
                 messengerBtn.disabled = true;
                 messengerBtn.innerHTML = "جاري التأكد وتجهيز الطلب...";
 
+                // تخزين محتوى الرسالة قبل تفريغ السلة 
+                // enc = false لعدم تشفير الـ URL، و wa = false لإزالة علامات النجمة (*) والإيموجي
+                const finalMessage = getOrderMsg(false, false);
+
                 const result = await processOrder();
                 
                 if (result.success) {
-                    // enc = false, wa = false 
-                    // لإزالة النجمات (*) وتجهيز النص للنسخ المباشر
-                    const plainMessage = getOrderMsg(false, false);
-                    
                     try {
-                        await navigator.clipboard.writeText(plainMessage);
+                        await navigator.clipboard.writeText(finalMessage);
                         showToast("تم نسخ الطلب! جاري فتح ماسنجر...", "success");
                         setTimeout(() => {
                              window.open(MESSENGER_URL, '_blank');
@@ -785,7 +790,7 @@
                         toggleModal('contact', false);
                     } catch (err) {
                         const textArea = document.createElement("textarea");
-                        textArea.value = plainMessage;
+                        textArea.value = finalMessage;
                         document.body.appendChild(textArea);
                         textArea.select();
                         document.execCommand("Copy");
