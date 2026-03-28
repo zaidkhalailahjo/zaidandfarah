@@ -682,26 +682,28 @@
             };
         }
 
-        // تحديث رسالة الواتساب لتكون متوافقة تماماً وتظهر الخط العريض بوضوح
+        // دالة إنشاء رسالة الطلب مع خيار تحديد دعم تغميق الخط
         const getOrderMsg = (enc = true, wa = true) => {
             const t = calculateTotals(); 
             const nameInput = document.getElementById('customer-name');
             const name = nameInput ? nameInput.value.trim() : 'عميل غير معروف';
             const locationText = appState.location ? appState.location : 'غير محدد';
             
-            // تجنب وضع النجمة بجوار مسافات أو أقواس لتفادي مشاكل واتساب
+            // دالة مساعدة لتغميق الخط فقط إذا كان wa = true
+            const b = (text) => wa ? `*${text}*` : text;
+            
             const items = Object.values(appState.cart).map(i => 
-                `🔸 ${i.product.name} (الكمية: *${i.quantity}*) ➖ *${(i.quantity * i.product.price).toFixed(2)}* د.أ`
+                `🔸 ${i.product.name} (الكمية: ${b(i.quantity)}) ➖ ${b((i.quantity * i.product.price).toFixed(2))} د.أ`
             ).join('\n');
             
-            let m = `*طلب جديد من فرح سناكس* 🛍️\n\n` +
-                    `*العميل:* ${name} 👤\n` +
-                    `*الموقع:* ${locationText} 📍\n` +
+            let m = `${b('طلب جديد من فرح سناكس')} 🛍️\n\n` +
+                    `${b('العميل:')} ${name} 👤\n` +
+                    `${b('الموقع:')} ${locationText} 📍\n` +
                     `────────────────\n` +
-                    `*الطلبات:* 🛒\n${items}\n` +
+                    `${b('الطلبات:')} 🛒\n${items}\n` +
                     `────────────────\n` +
-                    `*المجموع الكلي:* *${t.total.toFixed(2)}* د.أ 💰\n\n` +
-                    `*الرجاء التوصيل!* 🚀 🚚`;
+                    `${b('المجموع الكلي:')} ${b(t.total.toFixed(2))} د.أ 💰\n\n` +
+                    `${b('الرجاء التوصيل!')} 🚀 🚚`;
                     
             return enc ? encodeURIComponent(m) : m;
         };
@@ -728,7 +730,8 @@
                 const result = await processOrder();
                 
                 if (result.success) {
-                    window.open(`https://wa.me/${WA_NUMBER.replace(/^0/, '962')}?text=${getOrderMsg()}`, '_blank');
+                    // wa = true هنا لأننا نرسل إلى الواتساب
+                    window.open(`https://wa.me/${WA_NUMBER.replace(/^0/, '962')}?text=${getOrderMsg(true, true)}`, '_blank');
                     toggleModal('contact', false); 
                     showToast("تم تأكيد الطلب بنجاح!", 'success');
                 } else {
@@ -754,18 +757,20 @@
                 
                 const result = await processOrder();
                 if (result.success) {
-                    // Copy text to clipboard
+                    // enc = false, wa = false 
+                    // لإزالة النجمات (*) وتجهيز النص للنسخ المباشر
+                    const plainMessage = getOrderMsg(false, false);
+                    
                     try {
-                        await navigator.clipboard.writeText(getOrderMsg(false, false));
+                        await navigator.clipboard.writeText(plainMessage);
                         showToast("تم نسخ الطلب! جاري فتح ماسنجر...", "success");
                         setTimeout(() => {
                              window.open(MESSENGER_URL, '_blank');
                         }, 1000);
                         toggleModal('contact', false);
                     } catch (err) {
-                        // Fallback using document.execCommand if clipboard API fails
                         const textArea = document.createElement("textarea");
-                        textArea.value = getOrderMsg(false, false);
+                        textArea.value = plainMessage;
                         document.body.appendChild(textArea);
                         textArea.select();
                         document.execCommand("Copy");
