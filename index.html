@@ -165,7 +165,7 @@
                 </div>
                 
                 <div class="space-y-2">
-                    <label class="block text-lg font-bold text-gray-800">الموقع الدقيق (اختياري)</label>
+                    <label class="block text-lg font-bold text-gray-800">الموقع الدقيق (مطلوب)</label>
                     <button id="get-location-btn" class="w-full flex items-center justify-center gap-2 py-3 border-2 border-[#00839b] text-[#00839b] rounded-lg font-bold hover:bg-[#00839b] hover:text-white transition-colors">
                         <i data-lucide="map-pin" class="w-5 h-5"></i>
                         <span id="get-location-text">اضغط لتحديد موقعك الحالي بدقة</span>
@@ -373,7 +373,7 @@
                 mergeProductsAndStock(stockMap); 
             });
             onSnapshot(query(collection(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`)), (snap) => {
-                const newCart = {}; snap.docs.forEach(d => { const data = d.data(); newCart[d.id] = { product: data.product, quantity: data.quantity }; });
+                const newCart = {}; snap.docs.forEach(d => { const data = d.data(); newCart[d.id] = { product: data.product, quantity: data.quantity, option: data.option }; });
                 appState.cart = newCart; updateCartUI();
             });
         };
@@ -400,38 +400,48 @@
             return { subtotal, discount, total: subtotal - discount };
         };
 
-        const addToCart = async (product) => {
+        const addToCart = async (product, option = null) => {
             if (!appState.isAuthReady) return showToast("انتظر قليلاً...", 'error');
             const liveProd = appState.products.find(p => p.id === product.id) || product; 
-            const current = appState.cart[product.id]?.quantity || 0;
             
-            const itemToSave = { product: liveProd, quantity: current + 1 };
-            if (appState.db === 'LOCAL') { appState.cart[product.id] = itemToSave; saveLocalCart(); updateCartUI(); }
-            else if (appState.db) { await setDoc(doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, product.id), itemToSave, { merge: true }); }
+            const cartKey = option ? `${product.id}_${option}` : product.id;
+            const current = appState.cart[cartKey]?.quantity || 0;
+            
+            const itemToSave = { product: liveProd, quantity: current + 1, option: option };
+            if (appState.db === 'LOCAL') { appState.cart[cartKey] = itemToSave; saveLocalCart(); updateCartUI(); }
+            else if (appState.db) { await setDoc(doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, cartKey), itemToSave, { merge: true }); }
             showToast(`تم إضافة ${product.name}`, 'success');
         };
 
-        const updateCartItem = async (prodId, delta) => {
+        const updateCartItem = async (cartKey, delta) => {
             if (!appState.isAuthReady) return;
-            const item = appState.cart[prodId]; if (!item) return;
+            const item = appState.cart[cartKey]; if (!item) return;
             const newQty = item.quantity + delta;
             
-            if (appState.db === 'LOCAL') { if (newQty <= 0) delete appState.cart[prodId]; else appState.cart[prodId].quantity = newQty; saveLocalCart(); updateCartUI(); }
-            else { const ref = doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, prodId); if (newQty <= 0) await deleteDoc(ref); else await updateDoc(ref, { quantity: newQty }); }
+            if (appState.db === 'LOCAL') { if (newQty <= 0) delete appState.cart[cartKey]; else appState.cart[cartKey].quantity = newQty; saveLocalCart(); updateCartUI(); }
+            else { const ref = doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, cartKey); if (newQty <= 0) await deleteDoc(ref); else await updateDoc(ref, { quantity: newQty }); }
         };
 
         const processOrder = async () => {
             if (!Object.keys(appState.cart).length) return { success: false, message: "السلة فارغة" };
             
+            // تجميع الكميات حسب معرف المنتج (بدون المواصفات) لخصمها من المخزون
+            const groupedQuantities = {};
+            for (const item of Object.values(appState.cart)) {
+                if (!groupedQuantities[item.product.id]) {
+                    groupedQuantities[item.product.id] = 0;
+                }
+                groupedQuantities[item.product.id] += item.quantity;
+            }
+
             if (appState.db === 'LOCAL') {
                 try {
                     let localStock = loadLocalStock();
-                    for (const item of Object.values(appState.cart)) {
-                        if (!localStock[item.product.id]) {
-                            localStock[item.product.id] = { productId: item.product.id, stock: 9999 };
+                    for (const [pId, qty] of Object.entries(groupedQuantities)) {
+                        if (!localStock[pId]) {
+                            localStock[pId] = { productId: pId, stock: 9999 };
                         }
-                        const s = localStock[item.product.id].stock || 9999;
-                        localStock[item.product.id].stock = s - item.quantity;
+                        localStock[pId].stock -= qty;
                     }
                     localStorage.setItem(LS_STOCK_KEY, JSON.stringify(localStock));
                     appState.cart = {}; 
@@ -448,18 +458,24 @@
 
             try {
                 await runTransaction(appState.db, async (transaction) => {
-                    const cartItems = Object.values(appState.cart);
+                    const productIds = Object.keys(groupedQuantities);
                     
                     const snapshots = await Promise.all(
-                        cartItems.map(item => transaction.get(doc(appState.db, STOCK_PATH, item.product.id)))
+                        productIds.map(pId => transaction.get(doc(appState.db, STOCK_PATH, pId)))
                     );
 
                     snapshots.forEach((snap, idx) => {
-                        const item = cartItems[idx];
+                        const pId = productIds[idx];
+                        const requestedQty = groupedQuantities[pId];
                         const currentStock = snap.exists() ? snap.data().stock : 0;
-                        const newStock = currentStock - item.quantity;
-                        transaction.update(doc(appState.db, STOCK_PATH, item.product.id), { stock: newStock });
-                        transaction.delete(doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, item.product.id));
+                        const newStock = currentStock - requestedQty;
+                        transaction.update(doc(appState.db, STOCK_PATH, pId), { stock: newStock });
+                    });
+                    
+                    // مسح السلة من الفايربيس
+                    const cartKeys = Object.keys(appState.cart);
+                    cartKeys.forEach(key => {
+                        transaction.delete(doc(appState.db, `artifacts/${APP_ID}/users/${appState.userId}/cartItems`, key));
                     });
                 });
                 return { success: true };
@@ -582,18 +598,35 @@
             
             if (els.grid) {
                 contentHtml += filtered.map(p => {
-                    const cartItem = appState.cart[p.id];
-                    const qtyInCart = cartItem ? cartItem.quantity : 0;
+                    let qtyInCart = 0;
+                    
+                    // حساب إجمالي الكميات للمنتج الواحد بغض النظر عن المواصفات
+                    if (p.id === '24') {
+                        Object.keys(appState.cart).forEach(k => {
+                            if (k.startsWith('24_') || k === '24') qtyInCart += appState.cart[k].quantity;
+                        });
+                    } else {
+                        qtyInCart = appState.cart[p.id] ? appState.cart[p.id].quantity : 0;
+                    }
 
                     let actionHtml = '';
                     if (qtyInCart > 0) {
-                        actionHtml = `
-                            <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1 border border-gray-200" onclick="event.stopPropagation();">
-                                <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#00839b] font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.updateQty('${p.id}', 1)">+</button>
-                                <span class="font-bold text-gray-800 min-w-[1.25rem] text-center">${qtyInCart}</span>
-                                <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-red-500 font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.updateQty('${p.id}', -1)">-</button>
-                            </div>
-                        `;
+                        if (p.id === '24') {
+                            actionHtml = `
+                                <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1 border border-gray-200" onclick="event.stopPropagation();">
+                                    <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#00839b] font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.addItem('${p.id}')">+</button>
+                                    <span class="font-bold text-gray-800 min-w-[1.25rem] text-center">${qtyInCart}</span>
+                                </div>
+                            `;
+                        } else {
+                            actionHtml = `
+                                <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1 border border-gray-200" onclick="event.stopPropagation();">
+                                    <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#00839b] font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.updateQty('${p.id}', 1)">+</button>
+                                    <span class="font-bold text-gray-800 min-w-[1.25rem] text-center">${qtyInCart}</span>
+                                    <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-red-500 font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.updateQty('${p.id}', -1)">-</button>
+                                </div>
+                            `;
+                        }
                     } else {
                         actionHtml = `
                             <button class="bg-[#002d74] text-white p-2.5 rounded-full hover:scale-105 transition-transform shadow-md" onclick="event.stopPropagation(); window.addItem('${p.id}')">
@@ -628,14 +661,19 @@
             const totals = calculateTotals();
             const container = document.getElementById('cart-items-container');
             if (container) {
-                container.innerHTML = items.length ? items.map(item => `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border">
-                    <div><p class="font-bold">${item.product.name}</p><p class="text-sm">${item.product.price.toFixed(2)} د.أ</p></div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="window.updateQty('${item.product.id}', -1)" class="w-8 h-8 border rounded-full">-</button>
-                        <span>${item.quantity}</span>
-                        <button onclick="window.updateQty('${item.product.id}', 1)" class="w-8 h-8 border rounded-full">+</button>
+                const cartEntries = Object.entries(appState.cart);
+                container.innerHTML = cartEntries.length ? cartEntries.map(([cartKey, item]) => `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border">
+                    <div>
+                        <p class="font-bold text-gray-800">${item.product.name} ${item.option ? `<span class="text-sm font-semibold text-[#00839b]">(${item.option})</span>` : ''}</p>
+                        <p class="text-sm text-gray-600">${item.product.price.toFixed(2)} د.أ</p>
                     </div>
-                </div>`).join('') : '<p class="text-center py-4">السلة فارغة</p>';
+                    <div class="flex items-center gap-2">
+                        <button onclick="window.updateQty('${cartKey}', -1)" class="w-8 h-8 border border-gray-300 rounded-full bg-white hover:bg-gray-100 font-bold text-gray-700">-</button>
+                        <span class="font-bold w-4 text-center">${item.quantity}</span>
+                        <button onclick="window.updateQty('${cartKey}', 1)" class="w-8 h-8 border border-gray-300 rounded-full bg-white hover:bg-gray-100 font-bold text-gray-700">+</button>
+                    </div>
+                </div>`).join('') : '<p class="text-center py-4 font-medium text-gray-500">السلة فارغة</p>';
             }
             const subtotalEl = document.getElementById('cart-subtotal');
             if (subtotalEl) subtotalEl.innerText = totals.subtotal.toFixed(2);
@@ -647,11 +685,47 @@
             renderProducts();
         };
 
+        window.openCoffeeOptions = () => {
+            const p = appState.products.find(x => x.id === '24');
+            if (!p) return;
+            const modalBody = document.getElementById('product-modal-body');
+            if (modalBody) {
+                modalBody.innerHTML = `<div class="p-6 text-right">
+                    <img src="${p.image}" class="h-48 w-full object-contain mb-6 rounded-lg">
+                    <h2 class="text-3xl font-bold text-[#002d74] mb-2">${p.name}</h2>
+                    <p class="text-orange-600 font-extrabold text-2xl mb-4">${p.price.toFixed(2)} د.أ</p>
+                    <p class="text-gray-700 text-lg mb-6 font-bold">الرجاء اختيار المواصفات:</p>
+                    <div class="space-y-3 mb-4">
+                        <button onclick="window.addToCartWithOption('24', 'سادة')" class="w-full bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] py-3 rounded-xl font-bold text-lg border border-gray-200">سادة</button>
+                        <button onclick="window.addToCartWithOption('24', 'حلوة')" class="w-full bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] py-3 rounded-xl font-bold text-lg border border-gray-200">حلوة</button>
+                        <button onclick="window.addToCartWithOption('24', 'عريحة')" class="w-full bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] py-3 rounded-xl font-bold text-lg border border-gray-200">عريحة</button>
+                    </div>
+                </div>`;
+            }
+            toggleModal('product', true);
+        };
+
+        window.addToCartWithOption = (id, option) => {
+            const p = appState.products.find(x => x.id === id);
+            addToCart(p, option);
+            toggleModal('product', false);
+        };
+
         window.setCategory = (c) => { appState.category = c; appState.currentRestaurant = null; renderApp(); };
         window.openRestaurant = (name) => { appState.currentRestaurant = name; renderProducts(); };
-        window.addItem = (id) => addToCart(appState.products.find(p => p.id === id));
-        window.updateQty = (id, d) => updateCartItem(id, d);
+        window.addItem = (id) => {
+            if (id === '24') {
+                window.openCoffeeOptions();
+            } else {
+                addToCart(appState.products.find(p => p.id === id));
+            }
+        };
+        window.updateQty = (cartKey, d) => updateCartItem(cartKey, d);
         window.openDetails = (id) => {
+            if (id === '24') {
+                window.openCoffeeOptions();
+                return;
+            }
             const p = appState.products.find(x => x.id === id); if (!p) return;
             const modalBody = document.getElementById('product-modal-body');
             if (modalBody) {
@@ -713,7 +787,7 @@
                         appState.exactLocationLink = `https://www.google.com/maps?q=${lat},${lng}`;
                         
                         textSpan.textContent = "تم تحديد الموقع بنجاح ✓";
-                        getLocationBtn.classList.remove('border-[#00839b]', 'text-[#00839b]', 'hover:bg-[#00839b]');
+                        getLocationBtn.classList.remove('border-[#00839b]', 'text-[#00839b]', 'hover:bg-[#00839b]', 'ring-2', 'ring-red-500');
                         getLocationBtn.classList.add('bg-green-500', 'text-white', 'border-green-500');
                         
                         statusP.textContent = "تم إرفاق رابط خرائط جوجل بطلبك.";
@@ -775,7 +849,7 @@
             const exactLocText = appState.exactLocationLink ? `\n${b('الموقع الدقيق (خرائط جوجل):')}\n${appState.exactLocationLink}\n` : '';
             
             const items = Object.values(appState.cart).map(i => 
-                `${wa ? '🔹' : '-'} ${i.product.name} (الكمية: ${b(i.quantity)}) ➖ ${b((i.quantity * i.product.price).toFixed(2))} د.أ`
+                `${wa ? '🔹' : '-'} ${i.product.name} ${i.option ? `(${i.option})` : ''} (الكمية: ${b(i.quantity)}) ➖ ${b((i.quantity * i.product.price).toFixed(2))} د.أ`
             ).join('\n');
             
             let m = `${e('✨')} ${b('طلب جديد من فرح سناكس')} ${e('✨')}\n\n` +
@@ -804,6 +878,17 @@
                 } else if (nameInput && nameError) {
                     nameError.classList.add('hidden');
                     nameInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500');
+                }
+
+                // التحقق من أن العميل قام بتحديد موقعه الدقيق (إجباري)
+                if (!appState.exactLocationLink) {
+                    showToast("يرجى تحديد موقعك الدقيق أولاً لإتمام الطلب!", "error");
+                    const locBtn = document.getElementById('get-location-btn');
+                    if (locBtn) {
+                        locBtn.classList.add('ring-2', 'ring-red-500');
+                        setTimeout(() => locBtn.classList.remove('ring-2', 'ring-red-500'), 2000);
+                    }
+                    return;
                 }
 
                 const originalText = waBtn.innerHTML;
@@ -838,6 +923,17 @@
                 if (nameInput && nameInput.value.trim().length < 3) {
                     if (nameError) nameError.classList.remove('hidden');
                     nameInput.classList.add('border-red-500', 'ring-2', 'ring-red-500');
+                    return;
+                }
+
+                // التحقق من أن العميل قام بتحديد موقعه الدقيق (إجباري)
+                if (!appState.exactLocationLink) {
+                    showToast("يرجى تحديد موقعك الدقيق أولاً لإتمام الطلب!", "error");
+                    const locBtn = document.getElementById('get-location-btn');
+                    if (locBtn) {
+                        locBtn.classList.add('ring-2', 'ring-red-500');
+                        setTimeout(() => locBtn.classList.remove('ring-2', 'ring-red-500'), 2000);
+                    }
                     return;
                 }
                 
