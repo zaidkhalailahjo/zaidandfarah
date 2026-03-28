@@ -33,9 +33,9 @@
 
     <header class="bg-orange-600 text-white shadow-lg sticky top-0 z-40">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <img src="WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" alt="فرح سناكس" class="h-10 w-auto object-contain bg-white rounded-xl p-1" onerror="this.outerHTML='<div class=\'bg-white p-2 rounded-full text-orange-600 font-bold text-xl\'>F</div>'">
-                <h1 class="text-2xl font-bold">فرح سناكس</h1>
+            <div class="flex items-center gap-3">
+                <img src="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" alt="فرح سناكس" class="h-16 md:h-20 w-auto object-contain bg-white rounded-2xl p-1.5 shadow-sm" onerror="this.outerHTML='<div class=\'bg-white p-2 rounded-full text-orange-600 font-bold text-2xl\'>F</div>'">
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">فرح سناكس</h1>
             </div>
             
             <div class="relative hidden md:block w-1/3">
@@ -188,6 +188,7 @@
         const initialProductsData = [
             { id: '21', name: 'شاورما عادي', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 9999, calories: 550 },
             { id: '22', name: 'شاورما سوبر', price: 2.60, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'يقدم مع بطاطا و مخلل و مايونيز و كاتشاب.', stock: 9999, calories: 750 },
+            { id: '23', name: 'ساندويشة شاورما صغير', price: 0.60, currency: 'د.أ', category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/xxxxxxxxxx80-1024x1024.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'ساندويشة شاورما.', stock: 9999, calories: 350 },
             { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, currency: 'د.أ', category: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png', productionDate: '6/6/2025', expiryDate: '6/6/2028', ingredients: 'قاعدة صمغ، مواد تحلية، نكهات نعناع.', stock: 9999, calories: 5 }, 
             { id: '19', name: 'بسكوت ستارز', price: 0.10, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png', productionDate: '10/10/2025', expiryDate: '9/10/2026', ingredients: 'دقيق القمح، سكر، زيت نباتي.', stock: 9999, calories: 170 },
             { id: '18', name: 'بسكوت مانيكس', price: 0.05, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png', productionDate: '1/11/2025', expiryDate: '1/12/2026', ingredients: 'دقيق القمح، زيت نباتي، كاكاو.', stock: 9999, calories: 94 },
