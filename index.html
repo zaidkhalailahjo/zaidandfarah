@@ -66,7 +66,6 @@
     <div class="bg-orange-100 py-8 px-4 text-center">
         <h2 class="text-3xl md:text-5xl font-extrabold text-gray-800 mb-2">ألذ وأشهر أصناف السناكات!</h2>
         <p class="text-gray-600 text-lg">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
-        <div id="offline-mode-alert" class="mt-4 p-2 bg-yellow-200 text-yellow-800 rounded-lg font-bold hidden">وضع عدم الاتصال بالإنترنت</div>
     </div>
 
     <div class="container mx-auto px-4 py-6">
@@ -326,9 +325,6 @@
                     appState.db = 'LOCAL'; appState.isAuthReady = true;
                     mergeProductsAndStock(loadLocalStock()); appState.cart = loadLocalCart();
                     
-                    const offlineAlert = document.getElementById('offline-mode-alert');
-                    if (offlineAlert) offlineAlert.classList.remove('hidden');
-                    
                     updateCartUI(); checkLocation(); return; 
                 }
                 const app = initializeApp(config);
@@ -346,8 +342,6 @@
             } catch (e) {
                 appState.db = 'LOCAL'; appState.isAuthReady = true;
                 mergeProductsAndStock(loadLocalStock()); appState.cart = loadLocalCart();
-                const offlineAlert = document.getElementById('offline-mode-alert');
-                if (offlineAlert) offlineAlert.classList.remove('hidden');
                 updateCartUI(); checkLocation();
             }
         };
