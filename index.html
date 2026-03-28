@@ -163,6 +163,16 @@
                     <input type="text" id="customer-name" placeholder="أدخل اسمك الكريم" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-500 transition-colors" oninput="this.value = this.value.replace(/[0-9]/g, '')">
                     <p id="name-error" class="text-red-600 text-sm hidden flex items-center gap-1 font-semibold mt-1"><i data-lucide="alert-triangle" class="w-4 h-4"></i> يرجى إدخال اسم صحيح (3 أحرف على الأقل)!</p>
                 </div>
+                
+                <div class="space-y-2">
+                    <label class="block text-lg font-bold text-gray-800">الموقع الدقيق (اختياري)</label>
+                    <button id="get-location-btn" class="w-full flex items-center justify-center gap-2 py-3 border-2 border-[#00839b] text-[#00839b] rounded-lg font-bold hover:bg-[#00839b] hover:text-white transition-colors">
+                        <i data-lucide="map-pin" class="w-5 h-5"></i>
+                        <span id="get-location-text">اضغط لتحديد موقعك الحالي بدقة</span>
+                    </button>
+                    <p id="location-status" class="text-sm hidden mt-1 font-semibold"></p>
+                </div>
+
                 <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
                     <p class="text-3xl font-extrabold text-orange-600" id="contact-total-display">0.00</p>
                     <p id="contact-coupon-note" class="text-sm font-semibold text-green-600 hidden"></p>
@@ -224,6 +234,7 @@
             
             // منتجات الحموي
             { id: '24', name: 'كاسة قهوة', price: 0.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'الحموي', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/cafe.jpeg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'قهوه تركية أصيلة ومميزة.', stock: 9999, calories: 10 },
+            { id: '25', name: 'Ice tea peach', price: 1.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'الحموي', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/pngtree-iced-tea-in-plastic-cup-with-ice-cubes-png-image_15236193-removebg-preview.png', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'شاي مثلج خوخ', stock: 9999, calories: 150 },
             
             // باقي السناكات
             { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, currency: 'د.أ', category: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png', productionDate: '6/6/2025', expiryDate: '6/6/2028', ingredients: 'قاعدة صمغ، مواد تحلية، نكهات نعناع.', stock: 9999, calories: 5 }, 
@@ -263,6 +274,7 @@
             search: '',
             appliedCoupon: null,
             location: localStorage.getItem(LS_LOCATION_KEY) || null,
+            exactLocationLink: null, // تخزين رابط خرائط جوجل الخاص بالعميل
             adminPendingChanges: {},
             adminClickCount: 0
         };
@@ -676,12 +688,74 @@
         const cartBtn = document.getElementById('cart-btn');
         if (cartBtn) cartBtn.onclick = () => toggleModal('cart', true);
 
+        // إضافة حدث تحديد الموقع عبر GPS
+        const getLocationBtn = document.getElementById('get-location-btn');
+        if (getLocationBtn) {
+            getLocationBtn.onclick = () => {
+                const textSpan = document.getElementById('get-location-text');
+                const statusP = document.getElementById('location-status');
+                
+                if (!navigator.geolocation) {
+                    statusP.textContent = "متصفحك لا يدعم تحديد الموقع.";
+                    statusP.className = "text-red-600 text-sm mt-2 font-semibold";
+                    statusP.classList.remove('hidden');
+                    return;
+                }
+
+                textSpan.textContent = "جاري تحديد الموقع...";
+                getLocationBtn.disabled = true;
+                getLocationBtn.classList.add('opacity-50');
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        appState.exactLocationLink = `https://www.google.com/maps?q=${lat},${lng}`;
+                        
+                        textSpan.textContent = "تم تحديد الموقع بنجاح ✓";
+                        getLocationBtn.classList.remove('border-[#00839b]', 'text-[#00839b]', 'hover:bg-[#00839b]');
+                        getLocationBtn.classList.add('bg-green-500', 'text-white', 'border-green-500');
+                        
+                        statusP.textContent = "تم إرفاق رابط خرائط جوجل بطلبك.";
+                        statusP.className = "text-green-600 text-sm mt-2 font-semibold";
+                        statusP.classList.remove('hidden');
+                        
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.classList.remove('opacity-50');
+                    },
+                    (error) => {
+                        textSpan.textContent = "فشل التحديد، حاول مجدداً";
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.classList.remove('opacity-50');
+                        
+                        statusP.textContent = "يرجى السماح للمتصفح بالوصول إلى موقعك.";
+                        statusP.className = "text-red-600 text-sm mt-2 font-semibold";
+                        statusP.classList.remove('hidden');
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            };
+        }
+
         const checkoutBtn = document.getElementById('checkout-btn');
         if (checkoutBtn) {
             checkoutBtn.onclick = () => { 
                 toggleModal('cart', false); 
                 const totalDisplay = document.getElementById('contact-total-display');
                 if (totalDisplay) totalDisplay.innerText = calculateTotals().total.toFixed(2) + ' د.أ'; 
+                
+                // إعادة تعيين زر الموقع الدقيق في كل مرة يفتح فيها العميل نافذة الشراء
+                appState.exactLocationLink = null;
+                const locBtn = document.getElementById('get-location-btn');
+                const locText = document.getElementById('get-location-text');
+                const locStatus = document.getElementById('location-status');
+                if (locBtn && locText && locStatus) {
+                    locText.textContent = "اضغط لتحديد موقعك الحالي بدقة";
+                    locBtn.className = "w-full flex items-center justify-center gap-2 py-3 border-2 border-[#00839b] text-[#00839b] rounded-lg font-bold hover:bg-[#00839b] hover:text-white transition-colors";
+                    locBtn.disabled = false;
+                    locStatus.classList.add('hidden');
+                }
+
                 toggleModal('contact', true); 
             };
         }
@@ -696,20 +770,23 @@
             // دالة مساعدة لتغميق الخط فقط إذا كان wa = true
             const b = (text) => wa ? `*${text}*` : text;
             // دالة مساعدة لإظهار الإيموجي فقط إذا كان wa = true (واتساب) وإخفائها للماسنجر
-            const e = (emoji) => wa ? ` ${emoji}` : '';
+            const e = (emoji) => wa ? `${emoji} ` : '';
+            
+            const exactLocText = appState.exactLocationLink ? `\n${b('الموقع الدقيق (خرائط جوجل):')}\n${appState.exactLocationLink}\n` : '';
             
             const items = Object.values(appState.cart).map(i => 
-                `🔸 ${i.product.name} (الكمية: ${b(i.quantity)}) ➖ ${b((i.quantity * i.product.price).toFixed(2))} د.أ`
+                `${wa ? '🔹' : '-'} ${i.product.name} (الكمية: ${b(i.quantity)}) ➖ ${b((i.quantity * i.product.price).toFixed(2))} د.أ`
             ).join('\n');
             
-            let m = `${b('طلب جديد من فرح سناكس')}${e('🛍️')}\n\n` +
-                    `${b('العميل:')} ${name}${e('👤')}\n` +
-                    `${b('الموقع:')} ${locationText}${e('📍')}\n` +
+            let m = `${e('✨')} ${b('طلب جديد من فرح سناكس')} ${e('✨')}\n\n` +
+                    `${e('🧑‍💼')} ${b('العميل:')} ${name}\n` +
+                    `${e('🗺️')} ${b('المنطقة:')} ${locationText}\n` +
+                    exactLocText +
                     `────────────────\n` +
-                    `${b('الطلبات:')}${e('🛒')}\n${items}\n` +
+                    `${e('🧾')} ${b('الطلبات:')}\n${items}\n` +
                     `────────────────\n` +
-                    `${b('المجموع الكلي:')} ${b(t.total.toFixed(2))} د.أ${e('💰')}\n\n` +
-                    `${b('الرجاء التوصيل!')}${e('🚀 🚚')}`;
+                    `${e('💳')} ${b('المجموع الكلي:')} ${b(t.total.toFixed(2))} د.أ\n\n` +
+                    `${e('🛵')} ${b('الرجاء التوصيل!')}`;
                     
             return enc ? encodeURIComponent(m) : m;
         };
