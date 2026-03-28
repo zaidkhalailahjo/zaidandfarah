@@ -223,7 +223,8 @@
         // إعداد المطاعم والخلفيات الخاصة بها
         const RESTAURANTS = [
             { name: 'مطعم سلمة', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg', desc: 'شاورما ووجبات سريعة', bg: 'bg-white' },
-            { name: 'الحموي', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/logo-12-1.png', desc: 'قهوة تركية ومشروبات', bg: 'bg-black' }
+            { name: 'الحموي', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/logo-12-1.png', desc: 'قهوة تركية ومشروبات', bg: 'bg-black' },
+            { name: 'انكل اوساكا', image: 'https://uncleosaka.com/wp-content/uploads/2022/10/UncleOsaka.webp', desc: 'قهوة ومشروبات مميزة', bg: 'bg-white' }
         ];
 
         const initialProductsData = [
@@ -236,6 +237,17 @@
             { id: '24', name: 'كاسة قهوة', price: 0.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'الحموي', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/cafe.jpeg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'قهوه تركية أصيلة ومميزة.', stock: 9999, calories: 10 },
             { id: '25', name: 'Ice tea peach', price: 1.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'الحموي', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/pngtree-iced-tea-in-plastic-cup-with-ice-cubes-png-image_15236193-removebg-preview.png', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'شاي مثلج خوخ', stock: 9999, calories: 150 },
             
+            // منتجات انكل اوساكا
+            { id: '26', name: 'قهوة لاتيه', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromAll: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/HOT-COFFEE.png', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'قهوة لاتيه ساخنة.', stock: 9999, calories: 150 },
+            { id: '27', name: 'مشروبات اللاتيه', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromAll: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', productionDate: 'طازج', expiryDate: 'يومي', ingredients: 'اختر نكهة اللاتيه المفضلة لديك.', stock: 9999, calories: 200 },
+            
+            // خيارات انكل اوساكا (مخفية من القوائم الأساسية)
+            { id: 'osaka_1', name: 'Spanish latte', price: 2.00, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
+            { id: 'osaka_2', name: 'Caramel Latte', price: 2.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
+            { id: 'osaka_3', name: 'Vanilla Latte', price: 2.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
+            { id: 'osaka_4', name: 'hazelnut latte', price: 2.50, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
+            { id: 'osaka_5', name: 'Pistachio Latte', price: 2.95, currency: 'د.أ', category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg', stock: 9999 },
+
             // باقي السناكات
             { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, currency: 'د.أ', category: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png', productionDate: '6/6/2025', expiryDate: '6/6/2028', ingredients: 'قاعدة صمغ، مواد تحلية، نكهات نعناع.', stock: 9999, calories: 5 }, 
             { id: '19', name: 'بسكوت ستارز', price: 0.10, currency: 'د.أ', category: 'بسكويت', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png', productionDate: '10/10/2025', expiryDate: '9/10/2026', ingredients: 'دقيق القمح، سكر، زيت نباتي.', stock: 9999, calories: 170 },
@@ -514,7 +526,7 @@
             let backHtml = '';
 
             // تصفية المطاعم المسموحة بناءً على الموقع
-            const allowedRestaurants = appState.location === 'البوليفارد' ? ['الحموي'] : ['مطعم سلمة'];
+            const allowedRestaurants = appState.location === 'البوليفارد' ? ['الحموي', 'انكل اوساكا'] : ['مطعم سلمة'];
             const visibleRestaurants = RESTAURANTS.filter(r => allowedRestaurants.includes(r.name));
 
             // عرض رأس قائمة المطعم المحدد
@@ -560,13 +572,15 @@
 
             // تصفية المنتجات
             let filtered = appState.products.filter(p => {
+                if (p.hideFromMenu) return false;
+
                 // 1. فلترة بناء على الموقع المختار
                 if (appState.location === 'البوليفارد') {
-                    // في البوليفارد نظهر الحموي فقط
-                    if (p.restaurant !== 'الحموي') return false; 
+                    // في البوليفارد نظهر الحموي وانكل اوساكا فقط ولا نظهر المطاعم الأخرى أو السناكات العادية
+                    if (p.restaurant !== 'الحموي' && p.restaurant !== 'انكل اوساكا') return false; 
                 } else if (appState.location === 'ضاحية الاستقلال') {
-                    // في ضاحية الاستقلال نظهر كل شيء ما عدا الحموي
-                    if (p.restaurant === 'الحموي') return false; 
+                    // في ضاحية الاستقلال نظهر كل شيء ما عدا الحموي وانكل اوساكا
+                    if (p.restaurant === 'الحموي' || p.restaurant === 'انكل اوساكا') return false; 
                 }
 
                 // 2. فلترة البحث والفئات
@@ -605,13 +619,17 @@
                         Object.keys(appState.cart).forEach(k => {
                             if (k.startsWith('24_') || k === '24') qtyInCart += appState.cart[k].quantity;
                         });
+                    } else if (p.id === '27') {
+                        Object.keys(appState.cart).forEach(k => {
+                            if (k.startsWith('osaka_')) qtyInCart += appState.cart[k].quantity;
+                        });
                     } else {
                         qtyInCart = appState.cart[p.id] ? appState.cart[p.id].quantity : 0;
                     }
 
                     let actionHtml = '';
                     if (qtyInCart > 0) {
-                        if (p.id === '24') {
+                        if (p.id === '24' || p.id === '27') {
                             actionHtml = `
                                 <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1 border border-gray-200" onclick="event.stopPropagation();">
                                     <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#00839b] font-bold shadow-sm hover:bg-gray-50 transition-colors" onclick="window.addItem('${p.id}')">+</button>
@@ -705,6 +723,42 @@
             toggleModal('product', true);
         };
 
+        window.openOsakaOptions = () => {
+            const p = appState.products.find(x => x.id === '27');
+            if (!p) return;
+            const modalBody = document.getElementById('product-modal-body');
+            if (modalBody) {
+                modalBody.innerHTML = `<div class="p-6 text-right">
+                    <img src="${p.image}" class="h-48 w-full object-contain mb-6 rounded-lg">
+                    <h2 class="text-3xl font-bold text-[#002d74] mb-2">${p.name}</h2>
+                    <p class="text-gray-700 text-lg mb-6 font-bold">الرجاء اختيار المشروب:</p>
+                    <div class="space-y-3 mb-4" dir="ltr">
+                        <button onclick="window.addItem('osaka_1'); window.toggleModal('product', false);" class="w-full flex justify-between items-center bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] px-5 py-3 rounded-xl font-bold text-lg border border-gray-200">
+                            <span>Spanish latte</span>
+                            <span>2.00</span>
+                        </button>
+                        <button onclick="window.addItem('osaka_2'); window.toggleModal('product', false);" class="w-full flex justify-between items-center bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] px-5 py-3 rounded-xl font-bold text-lg border border-gray-200">
+                            <span>Caramel Latte</span>
+                            <span>2.50</span>
+                        </button>
+                        <button onclick="window.addItem('osaka_3'); window.toggleModal('product', false);" class="w-full flex justify-between items-center bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] px-5 py-3 rounded-xl font-bold text-lg border border-gray-200">
+                            <span>Vanilla Latte</span>
+                            <span>2.50</span>
+                        </button>
+                        <button onclick="window.addItem('osaka_4'); window.toggleModal('product', false);" class="w-full flex justify-between items-center bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] px-5 py-3 rounded-xl font-bold text-lg border border-gray-200">
+                            <span>hazelnut latte</span>
+                            <span>2.50</span>
+                        </button>
+                        <button onclick="window.addItem('osaka_5'); window.toggleModal('product', false);" class="w-full flex justify-between items-center bg-gray-50 hover:bg-[#00839b] hover:text-white transition-colors text-[#002d74] px-5 py-3 rounded-xl font-bold text-lg border border-gray-200">
+                            <span>Pistachio Latte</span>
+                            <span>2.95</span>
+                        </button>
+                    </div>
+                </div>`;
+            }
+            toggleModal('product', true);
+        };
+
         window.addToCartWithOption = (id, option) => {
             const p = appState.products.find(x => x.id === id);
             addToCart(p, option);
@@ -716,6 +770,8 @@
         window.addItem = (id) => {
             if (id === '24') {
                 window.openCoffeeOptions();
+            } else if (id === '27') {
+                window.openOsakaOptions();
             } else {
                 addToCart(appState.products.find(p => p.id === id));
             }
@@ -724,6 +780,10 @@
         window.openDetails = (id) => {
             if (id === '24') {
                 window.openCoffeeOptions();
+                return;
+            }
+            if (id === '27') {
+                window.openOsakaOptions();
                 return;
             }
             const p = appState.products.find(x => x.id === id); if (!p) return;
