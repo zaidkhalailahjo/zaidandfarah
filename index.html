@@ -142,6 +142,7 @@
                 <div class="space-y-2 text-sm font-medium">
                     <div class="flex justify-between"><span class="text-gray-600">المجموع الفرعي:</span><span id="cart-subtotal" class="font-bold">0.00</span></div>
                     <div class="flex justify-between text-green-600"><span class="font-semibold">الخصم:</span><span id="cart-discount" class="font-bold">0.00</span></div>
+                    <div class="flex justify-between text-gray-600"><span class="font-semibold">سعر التوصيل:</span><span id="cart-delivery" class="font-bold">0.00</span></div>
                     <div class="flex justify-between pt-2 border-t text-lg"><span class="font-extrabold text-gray-800">الكلي:</span><span id="cart-total" class="font-extrabold text-orange-600">0.00</span></div>
                 </div>
                 <button id="checkout-btn" class="w-full mt-4 py-3 rounded-xl font-bold text-lg shadow-lg bg-orange-600 text-white hover:bg-orange-700 flex items-center justify-center gap-2">
@@ -409,7 +410,8 @@
             const items = Object.values(appState.cart);
             const subtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
             let discount = appState.appliedCoupon ? subtotal * appState.appliedCoupon.discount : 0;
-            return { subtotal, discount, total: subtotal - discount };
+            const deliveryFee = items.length > 0 ? 0.10 : 0.00;
+            return { subtotal, discount, deliveryFee, total: subtotal - discount + deliveryFee };
         };
 
         const addToCart = async (product, option = null) => {
@@ -695,6 +697,9 @@
             }
             const subtotalEl = document.getElementById('cart-subtotal');
             if (subtotalEl) subtotalEl.innerText = totals.subtotal.toFixed(2);
+
+            const deliveryEl = document.getElementById('cart-delivery');
+            if (deliveryEl) deliveryEl.innerText = totals.deliveryFee.toFixed(2);
             
             const totalEl = document.getElementById('cart-total');
             if (totalEl) totalEl.innerText = totals.total.toFixed(2);
@@ -919,8 +924,9 @@
                     `────────────────\n` +
                     `${e('🧾')} ${b('الطلبات:')}\n${items}\n` +
                     `────────────────\n` +
+                    `${e('🛵')} ${b('سعر التوصيل:')} ${b(t.deliveryFee.toFixed(2))} د.أ\n` +
                     `${e('💳')} ${b('المجموع الكلي:')} ${b(t.total.toFixed(2))} د.أ\n\n` +
-                    `${e('🛵')} ${b('الرجاء التوصيل!')}`;
+                    `${e('🚀')} ${b('الرجاء التوصيل!')}`;
                     
             return enc ? encodeURIComponent(m) : m;
         };
