@@ -979,7 +979,8 @@
         if (checkoutBtn) {
             checkoutBtn.onclick = () => { 
                 const totals = calculateTotals();
-                if (totals.subtotal < 1.00) {
+                const code = document.getElementById('coupon-input').value.trim().replace(/\s+/g, '');
+                if (appState.appliedCoupon && code === 'فرح10' && totals.subtotal < 1.00) {
                     showToast("يجب أن يكون أقل شيء للطلب 1 دينار", "error");
                     return;
                 }
