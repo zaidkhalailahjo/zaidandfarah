@@ -436,7 +436,9 @@
             
             const hasItems = items.length > 0 || (appState.customOrder && appState.customOrder.trim() !== '');
             const deliveryFee = hasItems ? 0.10 : 0.00;
-            const serviceFee = hasItems ? 0.15 : 0.00;
+            
+            const hasServiceFeeRestaurant = items.some(item => ['مطعم سلمة', 'الحموي', 'انكل اوساكا'].includes(item.product.restaurant));
+            const serviceFee = hasServiceFeeRestaurant ? 0.15 : 0.00;
 
             let discount = 0;
             if (appState.appliedCoupon) {
