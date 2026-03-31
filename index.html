@@ -80,11 +80,6 @@
                     <span class="hidden md:inline">طلباتي</span>
                 </button>
 
-                <button onclick="window.toggleModal('location', true)" class="hidden md:flex bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full text-sm font-bold items-center gap-1 transition-colors border border-white/20">
-                    <i data-lucide="map-pin" class="w-4 h-4"></i>
-                    <span id="current-location-display">تحديد الموقع</span>
-                </button>
-
                 <div class="relative cursor-pointer hover:scale-105 transition-transform bg-white/10 p-2 rounded-full" id="cart-btn" onclick="window.toggleModal('cart', true)">
                     <i data-lucide="shopping-cart" class="w-6 h-6"></i>
                     <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#002d74] hidden">0</span>
@@ -96,9 +91,6 @@
                <input type="text" id="mobile-search" placeholder="ابحث عن منتج..." class="w-full py-2.5 px-4 pr-10 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00839b] text-sm shadow-inner">
                <i data-lucide="search" class="absolute right-3 top-2.5 text-gray-400 w-5 h-5"></i>
            </div>
-           <button onclick="window.toggleModal('location', true)" class="bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full text-sm font-bold flex items-center justify-center transition-colors border border-white/20 flex-shrink-0">
-                <i data-lucide="map-pin" class="w-5 h-5"></i>
-            </button>
         </div>
     </header>
 
@@ -203,7 +195,7 @@
                 <i data-lucide="gift" class="w-10 h-10"></i>
             </div>
             <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">نقاط الولاء</h2>
-            <p class="text-gray-500 text-sm mb-4 font-medium">كل <span class="font-bold text-yellow-600">0.50 د.أ</span> يتم إنفاقها تمنحك نقطة واحدة في رصيدك!</p>
+            <p class="text-gray-500 text-sm mb-4 font-medium">كل <span class="font-bold text-[#002d74]">4 طلبات</span> مكتملة تمنحك <span class="font-bold text-yellow-600">10 نقاط</span> تلقائياً في رصيدك!</p>
             
             <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6">
                 <p class="text-sm font-bold text-gray-600 mb-1">رصيد نقاطك الحالي</p>
@@ -213,6 +205,32 @@
 
             <button id="convert-points-btn" onclick="window.convertPoints()" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:bg-[#005f73] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
                 <i data-lucide="refresh-cw" class="w-5 h-5"></i> تحويل 10 نقاط
+            </button>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="rating-modal" class="modal fixed inset-0 z-[160] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-8 text-center">
+            <button onclick="window.skipRating()" class="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <div class="w-20 h-20 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-yellow-100">
+                <i data-lucide="star" class="w-10 h-10 fill-current"></i>
+            </div>
+            <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">كيف كانت تجربتك؟</h2>
+            <p class="text-gray-500 text-sm mb-6 font-medium">لقد تم توصيل طلبك الأخير، يسعدنا تقييمك لخدمتنا!</p>
+            
+            <div class="flex justify-center gap-2 mb-6" dir="ltr">
+                <button onclick="window.setRating(1)" class="focus:outline-none"><i id="star-1" data-lucide="star" class="w-8 h-8 text-yellow-400 fill-yellow-400 transition-colors"></i></button>
+                <button onclick="window.setRating(2)" class="focus:outline-none"><i id="star-2" data-lucide="star" class="w-8 h-8 text-yellow-400 fill-yellow-400 transition-colors"></i></button>
+                <button onclick="window.setRating(3)" class="focus:outline-none"><i id="star-3" data-lucide="star" class="w-8 h-8 text-yellow-400 fill-yellow-400 transition-colors"></i></button>
+                <button onclick="window.setRating(4)" class="focus:outline-none"><i id="star-4" data-lucide="star" class="w-8 h-8 text-yellow-400 fill-yellow-400 transition-colors"></i></button>
+                <button onclick="window.setRating(5)" class="focus:outline-none"><i id="star-5" data-lucide="star" class="w-8 h-8 text-yellow-400 fill-yellow-400 transition-colors"></i></button>
+            </div>
+
+            <textarea id="rating-comment" placeholder="شاركنا رأيك أو ملاحظاتك (اختياري)" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-sm mb-4 bg-gray-50 font-medium" rows="3"></textarea>
+
+            <button id="submit-rating-btn" onclick="window.submitRating()" class="w-full bg-[#002d74] text-white py-3.5 rounded-xl font-bold shadow-lg hover:bg-blue-900 transition-colors text-lg">
+                إرسال التقييم
             </button>
         </div>
     </div>
@@ -291,23 +309,6 @@
          </div>
     </div>
 
-    <!-- Location Modal -->
-    <div id="location-modal" class="modal fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative p-8 text-center">
-            <img src="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" class="h-24 mx-auto mb-4 drop-shadow-sm">
-            <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">أهلاً بك في فرح سناكس!</h2>
-            <p class="text-gray-500 mb-6 text-sm">الرجاء اختيار موقعك لنتمكن من عرض القائمة المتاحة للتوصيل.</p>
-            <div class="space-y-3">
-                <button id="loc-blvd-btn" onclick="window.setLocation('البوليفارد')" class="hidden w-full bg-[#00839b] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#002d74] transition-colors shadow-md flex items-center justify-center gap-3">
-                    <i data-lucide="map-pin" class="w-5 h-5"></i> البوليفارد
-                </button>
-                <button onclick="window.setLocation('ضاحية الاستقلال')" class="w-full bg-[#00839b] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#002d74] transition-colors shadow-md flex items-center justify-center gap-3">
-                    <i data-lucide="map-pin" class="w-5 h-5"></i> ضاحية الاستقلال
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Product Details Modal -->
     <div id="product-modal" class="modal fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
         <div class="bg-gray-50 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto" id="product-modal-content">
@@ -369,10 +370,13 @@
                 </div>
 
                 <!-- تفاصيل العنوان المخفية تظهر بعد التحديد -->
-                <div id="address-details-sec" class="hidden grid grid-cols-3 gap-2">
-                    <input type="text" id="bldg-no" placeholder="العمارة" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
-                    <input type="text" id="floor-no" placeholder="الطابق" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
-                    <input type="text" id="apt-no" placeholder="الشقة" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
+                <div id="address-details-sec" class="hidden">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">العنوان بالتفصيل (إلزامي)</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="text" id="bldg-no" placeholder="العمارة *" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
+                        <input type="text" id="floor-no" placeholder="الطابق *" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
+                        <input type="text" id="apt-no" placeholder="الشقة *" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
+                    </div>
                 </div>
 
                 <!-- Payment Options -->
@@ -442,7 +446,7 @@
         const TELEGRAM_CHAT_ID = '7065245608'; 
 
         const sendTelegramNotification = async (title) => {
-            if(TELEGRAM_CHAT_ID === 'ضع_رقمك_هنا') return;
+            if(TELEGRAM_CHAT_ID === '7065245608') return;
             const text = `🔔 <b>${title}</b>\n\nالرابط:\nhttps://admin.farah-snacks.store/`;
             const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
             try {
@@ -499,28 +503,27 @@
             { id: '18', name: 'بسكوت مانيكس', price: 0.05, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png' },
             { id: '17', name: 'قهوة العميد 2/1', price: 0.25, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png' },
             { id: '16', name: 'شوكلاتة بريك تايم', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__17_-removebg-preview.png' },
-            { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png' },
+            { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445tdx6b2/IMG_6071-IDX-removebg-preview.png' },
             
             // تحديث صور الشيبس ومنتجات جديدة
-            { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/IMG-7394_370x370-removebg-preview.png' },
-            { id: '12', name: 'شيبس روكي', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png' },
-            { id: '9', name: 'شيبس سناك ميكس', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png' },
-            { id: '11', name: 'شيبس كانتينا', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/JOR-6251040001050_800x.webp' },
-            { id: '13', name: 'شيبس بینج رينج', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png' },
-            { id: '8', name: 'شيبس تريتوس', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__16_-removebg-preview.png' },
-            { id: '10', name: 'شيبس شبابيك', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/blackfridayoffers-2023-10-10T174155.525_800x-removebg-preview.png' },  
-            { id: '14', name: 'شيبس ريلاكس', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png' },
-            { id: '32', name: 'كيكة باندا', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/dDO9Oaz1v5uKg37U5G6O6ZfoizHABoS9OMoGJhnc-removebg-preview.png' },
-            { id: '33', name: 'ميني بوند كيك', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mini-pound-cake-776x743-removebg-preview.png' },
-            { id: '34', name: 'ماتريكس كولا', price: 0.25, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mfRuL349OzXVbDtDBh9xkcQYGeKuidxXO2ETxAXm-removebg-preview.png' },
-            { id: '35', name: 'شيبس بوشار', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/IMG-7377_800x-removebg-preview.png' },
-            { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' }
+            { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/IMG-7394_370x370-removebg-preview.png' },
+            { id: '12', name: 'شيبس روكي', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png' },
+            { id: '9', name: 'شيبس سناك ميكس', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/sd465465f4654dfs654-removebg-preview.png' },
+            { id: '11', name: 'شيبس كانتينا', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/JOR-6251040001050_800x.webp' },
+            { id: '13', name: 'شيبس بینج رينج', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png' },
+            { id: '8', name: 'شيبس تريتوس', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/images__16_-removebg-preview.png' },
+            { id: '10', name: 'شيبس شبابيك', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/blackfridayoffers-2023-10-10T174155.525_800x-removebg-preview.png' },  
+            { id: '14', name: 'شيبس ريلاكس', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/images__15_-removebg-preview.png' },
+            { id: '32', name: 'كيكة باندا', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/dDO9Oaz1v5uKg37U5G6O6ZfoizHABoS9OMoGJhnc-removebg-preview.png' },
+            { id: '33', name: 'ميني بوند كيك', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/mini-pound-cake-776x743-removebg-preview.png' },
+            { id: '34', name: 'ماتريكس كولا', price: 0.25, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/mfRuL349OzXVbDtDBh9xkcQYGeKuidxXO2ETxAXm-removebg-preview.png' },
+            { id: '35', name: 'شيبس بوشار', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/IMG-7377_800x-removebg-preview.png' },
+            { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' }
         ];
 
         const COUPONS = { 'راشد50': { type: 'fixed', val: 0.50 } }; 
 
         const LS_CART_KEY = 'snack_market_cart';
-        const LS_LOCATION_KEY = 'snack_market_location';
 
         let appState = {
             db: null, auth: null, user: null, profile: null,
@@ -530,7 +533,6 @@
             cart: {}, customOrder: '',
             category: 'الكل', currentRestaurant: null, search: '',
             appliedCoupon: null, appliedCouponCode: '',
-            location: localStorage.getItem(LS_LOCATION_KEY) || null,
             exactLocationLink: null, locationFailCount: 0, exactLocationBypassed: false,
             myOrders: [], feedback: [], currentFeedbackType: 'suggestion'
         };
@@ -557,14 +559,6 @@
 
         const loadLocalCart = () => { try { return JSON.parse(localStorage.getItem(LS_CART_KEY)) || {}; } catch (e) { return {}; } };
         const saveLocalCart = () => localStorage.setItem(LS_CART_KEY, JSON.stringify(appState.cart));
-
-        const checkLocation = () => {
-            if (!appState.location) {
-                window.setLocation('ضاحية الاستقلال');
-            } else {
-                document.getElementById('current-location-display').textContent = appState.location;
-            }
-        };
 
         const listenToProfile = () => {
             onSnapshot(doc(appState.db, PATH_PROFILES, appState.user.uid), (snap) => {
@@ -608,6 +602,13 @@
                 appState.myOrders = all.filter(o => o.uid === appState.user.uid && (o.createdAt?.toMillis ? o.createdAt.toMillis() : Date.now()) > ago).sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
                 window.renderMyOrders();
                 window.renderActiveOrderBanner();
+
+                // Check for unrated completed orders
+                const orderToRate = appState.myOrders.find(o => o.status === 'تم توصيل الطلب بنجاح' && !o.rated);
+                if(orderToRate && !document.getElementById('rating-modal').classList.contains('active')) {
+                    window.openRatingModal(orderToRate);
+                }
+
             }, (error) => console.log("Orders listen err"));
         };
 
@@ -664,7 +665,7 @@
                             appState.listenersInitialized = true;
                         }
                         listenToProfile(); listenToOrders(); listenToCart(); listenToFeedback();
-                        appState.isAuthReady = true; checkLocation(); renderProducts(); 
+                        appState.isAuthReady = true; renderProducts(); 
                     } else {
                         appState.profile = null; appState.cart = {}; updateAuthUI(); updateCartUI();
                         
@@ -674,14 +675,14 @@
                         document.getElementById('auth-close-btn').classList.add('hidden'); 
                         toggleModal('auth', true);
 
-                        appState.isAuthReady = true; checkLocation(); renderProducts(); 
+                        appState.isAuthReady = true; renderProducts(); 
                     }
                 });
             } catch (e) {
                 console.error("Firebase init err:", e);
                 appState.db = 'LOCAL'; appState.isAuthReady = true;
                 appState.cart = loadLocalCart();
-                updateCartUI(); checkLocation();
+                updateCartUI(); renderProducts();
             }
         };
 
@@ -779,6 +780,60 @@
             }
         };
 
+        // Rating Logic
+        let currentOrderToRate = null;
+        let currentRating = 5;
+
+        window.openRatingModal = (order) => {
+            currentOrderToRate = order;
+            currentRating = 5;
+            window.updateStarUI(5);
+            document.getElementById('rating-comment').value = '';
+            toggleModal('rating', true);
+        };
+
+        window.setRating = (stars) => {
+            currentRating = stars;
+            window.updateStarUI(stars);
+        };
+
+        window.updateStarUI = (stars) => {
+            for(let i=1; i<=5; i++) {
+                const starEl = document.getElementById('star-'+i);
+                if(i <= stars) {
+                    starEl.classList.remove('text-gray-300');
+                    starEl.classList.add('text-yellow-400', 'fill-yellow-400');
+                } else {
+                    starEl.classList.add('text-gray-300');
+                    starEl.classList.remove('text-yellow-400', 'fill-yellow-400');
+                }
+            }
+        };
+
+        window.skipRating = async () => {
+            if(!currentOrderToRate) return;
+            toggleModal('rating', false);
+            try { await updateDoc(doc(appState.db, PATH_ORDERS, currentOrderToRate.id), { rated: true }); } catch(e){}
+        };
+
+        window.submitRating = async () => {
+            if(!currentOrderToRate) return;
+            const comment = document.getElementById('rating-comment').value.trim();
+            const btn = document.getElementById('submit-rating-btn');
+            btn.disabled = true; btn.innerHTML = '<div class="loader mx-auto" style="width: 20px; height: 20px; border-top-color: white;"></div>';
+            
+            try {
+                await updateDoc(doc(appState.db, PATH_ORDERS, currentOrderToRate.id), { rated: true });
+                await addDoc(collection(appState.db, PATH_FEEDBACK), {
+                    uid: appState.user.uid, customerName: appState.profile?.name || 'بدون اسم', phone: appState.profile?.phone || '',
+                    type: 'rating', rating: currentRating, content: comment, orderId: currentOrderToRate.id, status: 'مغلق', createdAt: serverTimestamp()
+                });
+                showToast("شكراً لتقييمك!", "success");
+                toggleModal('rating', false);
+            } catch(e) { showToast("حدث خطأ", "error"); }
+            btn.disabled = false; btn.innerHTML = 'إرسال التقييم';
+        };
+
         window.openFeedback = () => {
             toggleModal('auth', false); window.renderFeedbackList();
             document.getElementById('feedback-form-sec').classList.add('hidden');
@@ -835,18 +890,18 @@
             container.innerHTML = sorted.map(f => {
                 const isResolved = f.status === 'تم حلها';
                 const statusColor = isResolved ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
-                const typeLabel = f.type === 'complaint' ? 'شكوى' : 'اقتراح';
+                const typeLabel = f.type === 'complaint' ? 'شكوى' : (f.type === 'rating' ? 'تقييم' : 'اقتراح');
                 return `<div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl mb-2 text-right relative">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="font-bold text-[#002d74] text-sm">${typeLabel}</span>
+                        <span class="font-bold text-[#002d74] text-sm">${typeLabel} ${f.rating ? `<i data-lucide="star" class="w-3 h-3 inline fill-yellow-400 text-yellow-400"></i> ${f.rating}` : ''}</span>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold px-3 py-1 rounded-full ${statusColor}">${f.status || 'يتم حلها'}</span>
+                            ${f.type !== 'rating' ? `<span class="text-xs font-bold px-3 py-1 rounded-full ${statusColor}">${f.status || 'يتم حلها'}</span>` : ''}
                             <button onclick="window.deleteFeedback('${f.id}')" class="text-red-500 hover:bg-red-100 p-1.5 rounded-lg transition-colors" title="حذف الرسالة">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600 line-clamp-2 font-medium">${f.content}</p>
+                    <p class="text-sm text-gray-600 line-clamp-2 font-medium">${f.content || 'بدون تعليق'}</p>
                 </div>`;
             }).join('');
             if(window.lucide) lucide.createIcons();
@@ -863,14 +918,9 @@
             return { subtotal: sub, discount, deliveryFee: delivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
-        window.setLocation = (loc) => {
-            appState.location = loc; localStorage.setItem(LS_LOCATION_KEY, loc); appState.category = 'الكل'; appState.currentRestaurant = null;
-            document.getElementById('current-location-display').textContent = loc; toggleModal('location', false); renderApp(); showToast(`الموقع: ${loc}`, 'success');
-        };
-
         const renderCategories = () => {
             const c = document.getElementById('categories-container'); if(!c) return;
-            const cats = appState.location === 'البوليفارد' ? ['الكل', 'المطاعم'] : CATEGORIES;
+            const cats = CATEGORIES;
             c.innerHTML = cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('');
         };
 
@@ -887,8 +937,7 @@
                 customOrderHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 mt-6 bg-[#f0f9fa] rounded-3xl border border-[#00839b]/20 p-5 shadow-sm"><h3 class="font-bold text-[#002d74] text-base mb-3 flex items-center gap-2"><i data-lucide="help-circle" class="w-5 h-5 text-[#00839b]"></i> هل الذي تبحث عنه غير موجود؟</h3><textarea id="custom-order-input" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00839b] outline-none text-sm mb-3" rows="2" placeholder="اكتب المنتج الذي تريده هنا...">${appState.customOrder}</textarea><button onclick="window.confirmCustomOrder()" class="w-full bg-[#00839b] text-white py-3 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-sm">تأكيد اختيار المنتج الإضافي للسلة</button></div>`;
             }
 
-            const allowedRest = appState.location === 'البوليفارد' ? ['الحموي', 'انكل اوساكا'] : ['مطعم سلمة', 'سناكات'];
-            const visibleRest = appState.restaurants.filter(r => allowedRest.includes(r.name));
+            const visibleRest = appState.restaurants;
 
             if (appState.currentRestaurant) {
                 const r = appState.restaurants.find(x => x.name === appState.currentRestaurant);
@@ -902,8 +951,6 @@
 
             let filtered = appState.products.filter(p => {
                 if (p.hideFromMenu) return false;
-                if (appState.location === 'البوليفارد' && p.restaurant !== 'الحموي' && p.restaurant !== 'انكل اوساكا') return false;
-                if (appState.location === 'ضاحية الاستقلال' && (p.restaurant === 'الحموي' || p.restaurant === 'انكل اوساكا')) return false;
                 const m = p.name.includes(appState.search);
                 if (appState.currentRestaurant) return p.restaurant === appState.currentRestaurant && m;
                 if (appState.search) return (appState.category === 'الكل' || p.category === appState.category) && m;
@@ -986,7 +1033,7 @@
                 msg.textContent = 'كود غير صحيح أو منتهي الصلاحية'; msg.className = 'text-xs text-red-600 bg-red-50 p-2 mt-2 rounded-lg block font-bold border border-red-200';
             }
             updateCartUI();
-            window.updateCheckoutTotal(); // if applied inside checkout, though it's in cart modal
+            window.updateCheckoutTotal(); // if applied inside checkout
         };
 
         const updateCartUI = () => {
@@ -1095,9 +1142,11 @@
             if(name.length < 3) return showToast("أدخل اسم صحيح", "error");
             if(!appState.exactLocationLink && !appState.exactLocationBypassed) return showToast("حدد الموقع أولاً", "error");
             
-            const bldg = document.getElementById('bldg-no').value.trim() || '-';
-            const floor = document.getElementById('floor-no').value.trim() || '-';
-            const apt = document.getElementById('apt-no').value.trim() || '-';
+            const bldg = document.getElementById('bldg-no').value.trim();
+            const floor = document.getElementById('floor-no').value.trim();
+            const apt = document.getElementById('apt-no').value.trim();
+            
+            if(!bldg || !floor || !apt) return showToast("الرجاء إدخال تفاصيل العنوان (عمارة، طابق، شقة)", "error");
             const fullAddress = `عمارة: ${bldg}، طابق: ${floor}، شقة: ${apt}`;
 
             const pay = document.querySelector('input[name="payment_method"]:checked').value;
@@ -1133,9 +1182,9 @@
                     const oRef = doc(collection(appState.db, PATH_ORDERS));
                     t.set(oRef, {
                         uid: appState.user.uid, customerName: name, phone: appState.profile.phone||'',
-                        location: appState.location, exactLocation: appState.exactLocationLink, addressDetails: fullAddress, customOrder: appState.customOrder,
+                        location: 'موقع محدد عبر الـ GPS', exactLocation: appState.exactLocationLink, addressDetails: fullAddress, customOrder: appState.customOrder,
                         items: Object.values(appState.cart), total: totals.total, deductedFromWallet: amountToDeduct, cashToCollect: cashRequired, fees: { delivery: totals.deliveryFee, service: totals.serviceFee, discount: totals.discount, coupon: appState.appliedCouponCode },
-                        paymentMethod: pay, status: 'بانتظار قبول الطلب', createdAt: serverTimestamp()
+                        paymentMethod: pay, status: 'بانتظار قبول الطلب', createdAt: serverTimestamp(), rated: false
                     });
                     if(amountToDeduct > 0) {
                         t.update(doc(appState.db, PATH_PROFILES, appState.user.uid), { balance: walletBal - amountToDeduct });
