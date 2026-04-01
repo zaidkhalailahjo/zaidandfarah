@@ -462,19 +462,21 @@
 
         // === TELEGRAM BOT CONFIGURATION ===
         const TELEGRAM_TOKEN = '7940542884:AAFq_Q0Y-rGJGyfyX3aBiiCgAAvME1vszF4';
-        const TELEGRAM_CHAT_ID = '6667539102'; 
+        const TELEGRAM_CHAT_IDS = ['7940542884', '6667539102']; 
 
         const sendTelegramNotification = async (title) => {
-            if(TELEGRAM_CHAT_ID === 'ضع_رقمك_هنا') return;
-            const text = `🔔 <b>${title}</b>\n\nالرابط:\nhttps://1.farah-snacks.store/`;
+            const text = `🔔 <b>${title}</b>\n\nالرابط:\nhttps://admin.farah-snacks.store/`;
             const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-            try {
-                await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'HTML' })
-                });
-            } catch(e) { console.error("Telegram error", e); }
+            
+            for (const chatId of TELEGRAM_CHAT_IDS) {
+                try {
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
+                    });
+                } catch(e) { console.error("Telegram error for chat " + chatId, e); }
+            }
         };
 
         // Initial Hardcoded Lists
