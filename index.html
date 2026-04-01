@@ -99,7 +99,7 @@
         <p class="text-gray-500 text-sm md:text-base">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
     </div>
 
-    <!-- Category container (now hidden by default on home screen, shown when inside a restaurant) -->
+    <!-- Category container -->
     <div class="container mx-auto px-4 py-4 hidden" id="category-wrapper">
         <div id="categories-container" class="flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth"></div>
     </div>
@@ -461,8 +461,8 @@
         const PATH_FEEDBACK = `artifacts/${APP_ID}/public/data/feedback`;
 
         // === TELEGRAM BOT CONFIGURATION ===
-        const TELEGRAM_TOKEN = '8763721643:AAFySvK6lMwmaPbf4w6es76sdNq_T_aG9xw';
-        const TELEGRAM_CHAT_ID = '7065245608'; 
+        const TELEGRAM_TOKEN = '7940542884:AAFq_Q0Y-rGJGyfyX3aBiiCgAAvME1vszF4';
+        const TELEGRAM_CHAT_ID = '6667539102'; 
 
         const sendTelegramNotification = async (title) => {
             if(TELEGRAM_CHAT_ID === 'ضع_رقمك_هنا') return;
@@ -1269,7 +1269,7 @@
                     Object.keys(appState.cart).forEach(k => t.delete(doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k)));
                 });
                 
-                // TELEGRAM NOTIFICATION (Domain Agnostic link)
+                // TELEGRAM NOTIFICATION
                 sendTelegramNotification('طلب جديد من فرح سناكس!');
 
                 appState.customOrder = ''; renderProducts(); toggleModal('checkout', false);
@@ -1299,7 +1299,6 @@
             toggleModal('cart', true);
         };
 
-        // UI Detail Mappers
         window.openZingerOptions = () => {
             document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png" class="h-40 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-6">سندويشة شاورما</h2><div class="space-y-3" dir="rtl"><button onclick="window.addItem('zinger_sand');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>سندويشة زنجر</span><span class="text-gray-500">1.50 د.أ</span></button><button onclick="window.addItem('zinger_meal');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>وجبة زنجر</span><span class="text-gray-500">2.50 د.أ</span></button></div></div>`;
             toggleModal('product', true);
@@ -1409,9 +1408,12 @@
         };
 
         const getStatusData = (status) => {
-            if(status.includes('قيد التحضير') || status.includes('تم قبول')) return { text: status, color: 'text-orange-500', bg: 'bg-orange-100', anim: 'anim-cooking', icon: '🍳' };
-            if(status.includes('في الطريق') || status.includes('قيد التوصيل') || status.includes('استلام')) return { text: status, color: 'text-blue-500', bg: 'bg-blue-100', anim: 'anim-driving', icon: '🛵' };
-            if(status.includes('تم توصيل الطلب بنجاح') || status.includes('تم التوصيل') || status.includes('تم التسليم')) return { text: 'تم توصيل الطلب بنجاح', color: 'text-green-500', bg: 'bg-green-100', anim: 'anim-done', icon: '✅' };
+            if(status === 'بانتظار قبول الطلب') return { text: 'جاري البحث عن مندوب', color: 'text-orange-500', bg: 'bg-orange-100', anim: 'animate-pulse', icon: '🔍' };
+            if(status === 'تم قبول الطلب') return { text: 'تم قبول الطلب', color: 'text-blue-500', bg: 'bg-blue-100', anim: 'anim-cooking', icon: '👨‍🍳' };
+            if(status === 'قيد التنفيذ') return { text: 'طلبك قيد التجهيز', color: 'text-orange-500', bg: 'bg-orange-100', anim: 'anim-cooking', icon: '🍳' };
+            if(status === 'تم استلام الطلب') return { text: 'المندوب في الطريق إليك', color: 'text-blue-500', bg: 'bg-blue-100', anim: 'anim-driving', icon: '🛵' };
+            if(status === 'تم توصيل الطلب بنجاح') return { text: 'تم التوصيل', color: 'text-green-500', bg: 'bg-green-100', anim: 'anim-done', icon: '✅' };
+            if(status === 'مرفوض') return { text: 'تم الإلغاء', color: 'text-red-500', bg: 'bg-red-100', anim: '', icon: '❌' };
             return { text: status, color: 'text-gray-500', bg: 'bg-gray-200', anim: '', icon: '⏳' };
         };
 
@@ -1444,7 +1446,7 @@
             if(!appState.myOrders.length) { container.innerHTML = '<div class="text-center py-10 text-gray-400"><i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 opacity-50"></i><p>لا توجد طلبات حديثة</p></div>'; if(window.lucide) lucide.createIcons(); return; }
             container.innerHTML = appState.myOrders.map(o => {
                 const s = getStatusData(o.status);
-                return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden cursor-pointer hover:border-[#00839b]/30 transition-colors flex flex-col" onclick="window.showMyOrderDetails('${o.id}')"><div class="flex justify-between items-center mb-3 border-b border-gray-50 pb-2"><span class="text-xs text-gray-400 font-bold">طلب #${o.id.substring(0,6)}</span><div class="flex items-center gap-2 px-3 py-1 rounded-full ${s.bg} ${s.color} text-xs font-bold"><span class="text-lg ${s.anim}">${s.icon}</span> ${s.text}</div></div><div class="text-xs space-y-1.5 mb-3 text-gray-600 font-medium">${o.items.map(i => `<div>${i.quantity}x ${i.product.name} ${i.option?`(${i.option})`:''}</div>`).join('')}</div><div class="flex justify-between items-center pt-2"><span class="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded text-gray-500">الدفع: ${o.paymentMethod==='wallet'?'محفظة':'كاش'}</span><span class="font-black text-[#002d74] text-lg">${o.total.toFixed(2)} د.أ</span></div></div>`;
+                return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden cursor-pointer hover:border-[#00839b]/30 transition-colors flex flex-col" onclick="window.showMyOrderDetails('${o.id}')"><div class="flex justify-between items-center mb-3 border-b border-gray-50 pb-2"><span class="text-xs text-gray-400 font-bold">طلب #${o.id.substring(0,6)}</span><div class="flex items-center gap-2 px-3 py-1 rounded-full ${s.bg} ${s.color} text-xs font-bold"><span class="text-lg ${s.anim}">${s.icon}</span> ${s.text}</div></div><div class="text-xs space-y-1.5 mb-3 text-gray-600 font-medium">${o.items.map(i => `<div class="${i.isAvailable === false ? 'line-through text-red-400' : ''}">${i.quantity}x ${i.product.name} ${i.option?`(${i.option})`:''}</div>`).join('')}</div><div class="flex justify-between items-center pt-2"><span class="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded text-gray-500">الدفع: ${o.paymentMethod==='wallet'?'محفظة':'كاش'}</span><span class="font-black text-[#002d74] text-lg">${o.total.toFixed(2)} د.أ</span></div></div>`;
             }).join('');
         };
 
@@ -1453,13 +1455,13 @@
             if(!o) return;
             
             const itemsHtml = o.items.map(i => `
-                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-gray-100 mb-2 shadow-sm">
-                    <img src="${i.product.image}" class="w-14 h-14 object-contain rounded-xl bg-gray-50 p-1">
+                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border ${i.isAvailable === false ? 'border-red-200 bg-red-50 opacity-60' : 'border-gray-100'} mb-2 shadow-sm">
+                    <img src="${i.product.image}" class="w-14 h-14 object-contain rounded-xl bg-gray-50 p-1 ${i.isAvailable === false ? 'grayscale' : ''}">
                     <div class="flex-grow">
-                        <p class="font-bold text-sm text-[#002d74]">${i.product.name} ${i.option ? `<span class="text-[#00839b]">(${i.option})</span>` : ''}</p>
+                        <p class="font-bold text-sm ${i.isAvailable === false ? 'text-gray-500 line-through' : 'text-[#002d74]'}">${i.product.name} ${i.option ? `<span class="text-[#00839b]">(${i.option})</span>` : ''} ${i.isAvailable === false ? '<span class="text-xs text-red-500 block mt-1">غير متوفر (تم حذفه من الفاتورة)</span>' : ''}</p>
                         <p class="text-xs text-gray-500 font-bold mt-1">الكمية: <span class="text-gray-800 bg-gray-100 px-2 py-0.5 rounded">${i.quantity}</span></p>
                     </div>
-                    <div class="font-black text-[#00839b] text-lg">${(i.quantity * i.product.price).toFixed(2)}</div>
+                    <div class="font-black ${i.isAvailable === false ? 'text-gray-400 line-through' : 'text-[#00839b]'} text-lg">${(i.quantity * i.product.price).toFixed(2)}</div>
                 </div>
             `).join('');
 
