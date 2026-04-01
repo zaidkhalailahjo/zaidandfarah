@@ -425,6 +425,20 @@
         </div>
     </div>
 
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-xs overflow-hidden shadow-2xl relative p-8 text-center">
+            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                <i data-lucide="check" class="w-12 h-12 text-green-500"></i>
+            </div>
+            <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">تم الإرسال بنجاح!</h2>
+            <p class="text-gray-500 text-sm mb-8 font-medium">لقد تم استلام طلبك وهو الآن قيد المراجعة. يمكنك متابعة حالته من قسم (طلباتي).</p>
+            <button onclick="window.toggleModal('success', false)" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-lg hover:bg-[#005f73] transition-colors text-lg">
+                حسناً
+            </button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -502,10 +516,9 @@
             // سناكات - مواد تموينية ومشروبات
             { id: '34', name: 'ماتريكس كولا', price: 0.25, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mfRuL349OzXVbDtDBh9xkcQYGeKuidxXO2ETxAXm-removebg-preview.png' },
             { id: '28', name: 'شنينه', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
-            { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
+            { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/catalog_yogert_Baladna+Yogurt+With+Cream+200gm-removebg-preview.png' },
             { id: '38', name: 'علبة لبن', price: 1.00, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D9%84%D8%A8%D9%86-removebg-preview.png' },
-            { id: '39', name: 'كرتونة البيض', price: 3.15, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
-            { id: '40', name: 'بيض بالحبة', price: 0.15, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
+            { id: '39', name: 'بيض', price: 0.15, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
 
             // سناكات - قهوة وعلكة
             { id: '17', name: 'قهوة العميد 2/1', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png' },
@@ -551,6 +564,14 @@
         const loadLocalCart = () => { try { return JSON.parse(localStorage.getItem(LS_CART_KEY)) || {}; } catch (e) { return {}; } };
         const saveLocalCart = () => localStorage.setItem(LS_CART_KEY, JSON.stringify(appState.cart));
 
+        const checkLocation = () => {
+            if (!appState.location) {
+                window.setLocation('ضاحية الاستقلال');
+            } else {
+                document.getElementById('current-location-display').textContent = appState.location;
+            }
+        };
+
         const listenToProfile = () => {
             onSnapshot(doc(appState.db, PATH_PROFILES, appState.user.uid), (snap) => {
                 if(snap.exists() && snap.data().phone && snap.data().name) {
@@ -594,7 +615,6 @@
                 window.renderMyOrders();
                 window.renderActiveOrderBanner();
 
-                // تحديث واجهة نقاط الولاء بناءً على الطلبات المكتملة
                 if(document.getElementById('loyalty-modal').classList.contains('active')) {
                     window.openLoyalty(); 
                 }
@@ -692,7 +712,7 @@
             if(name.length < 3) return showToast("أدخل اسم صحيح", "error");
             if(phone.length < 9) return showToast("أدخل رقم هاتف صحيح", "error");
             try {
-                await setDoc(doc(appState.db, PATH_PROFILES, appState.user.uid), { email: appState.user.email||'', name: name, phone: phone, balance: appState.profile?.balance||0, debt: appState.profile?.debt||0, points: appState.profile?.points||0 }, { merge: true });
+                await setDoc(doc(appState.db, PATH_PROFILES, appState.user.uid), { email: appState.user.email||'', name: name, phone: phone, balance: appState.profile?.balance||0, debt: appState.profile?.debt||0, points: appState.profile?.points||0, freeDelivery: appState.profile?.freeDelivery||false }, { merge: true });
                 showToast("تم الحفظ", "success"); toggleModal('auth', false);
             } catch(e) { showToast("حدث خطأ", "error"); }
         };
@@ -913,11 +933,15 @@
             const items = Object.values(appState.cart);
             const sub = items.reduce((sum, i) => sum + (i.product.price * i.quantity), 0);
             const hasItems = items.length > 0 || appState.customOrder.trim() !== '';
-            const delivery = hasItems ? 0.10 : 0;
+            
+            const isFreeDelivery = appState.profile?.freeDelivery || false;
+            const delivery = (hasItems && !isFreeDelivery) ? 0.10 : 0;
+            const originalDelivery = hasItems ? 0.10 : 0;
+
             const service = items.some(i => ['مطعم سلمة', 'الحموي', 'انكل اوساكا'].includes(i.product.restaurant)) ? 0.15 : 0;
             let discount = appState.appliedCoupon?.val || 0;
             if(discount > (sub + delivery + service)) discount = sub + delivery + service;
-            return { subtotal: sub, discount, deliveryFee: delivery, serviceFee: service, total: (sub + delivery + service) - discount };
+            return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
         const renderCategories = () => {
@@ -982,7 +1006,7 @@
             
             contentHtml += filtered.map(p => {
                 let qty = 0;
-                if (['24','27','28','31','zinger'].includes(p.id)) {
+                if (['24','27','28','31','zinger', '39'].includes(p.id)) {
                     Object.keys(appState.cart).forEach(k => { if(k.startsWith(p.id)) qty += appState.cart[k].quantity; });
                 } else qty = appState.cart[p.id]?.quantity || 0;
 
@@ -991,7 +1015,7 @@
                 
                 if (isOutOfStock) {
                      action = `<button disabled class="bg-gray-200 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 cursor-not-allowed" onclick="event.stopPropagation();"><i data-lucide="x" class="w-5 h-5"></i></button>`;
-                } else if (['24','27','28','31','zinger'].includes(p.id)) {
+                } else if (['24','27','28','31','zinger', '39'].includes(p.id)) {
                     action = `<button class="bg-[#002d74] w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md hover:scale-105 transition-transform" onclick="event.stopPropagation(); window.addItem('${p.id}')"><i data-lucide="plus" class="w-5 h-5"></i></button>`;
                 } else {
                     if (qty > 0) {
@@ -1030,7 +1054,15 @@
             if(id==='28') return window.openShaninaOptions();
             if(id==='31') return window.openPotatoOptions();
             if(id==='zinger') return window.openZingerOptions();
+            if(id==='39') return window.openEggsOptions();
             window.addToCartWithOption(id, null);
+        };
+
+        window.addToCartWithOptionDirect = async (p, opt, k) => {
+            const item = { product: p, quantity: 1, option: opt };
+            if (appState.db === 'LOCAL') { appState.cart[k] = item; saveLocalCart(); updateCartUI(); }
+            else { await setDoc(doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k), item); }
+            showToast(`تم الإضافة للسلة`, 'success');
         };
 
         window.addToCartWithOption = async (id, opt) => {
@@ -1041,6 +1073,21 @@
             if (appState.db === 'LOCAL') { appState.cart[k] = item; saveLocalCart(); updateCartUI(); }
             else { await setDoc(doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k), item); }
             toggleModal('product', false); showToast(`تم الإضافة للسلة`, 'success');
+        };
+
+        window.updateQtyAndRefreshModal = async (k, d) => {
+            let pId = '39';
+            let opt = k.includes('كرتونة') ? 'كرتونة بيض' : 'بيضة واحدة';
+            
+            if(!appState.cart[k] && d > 0) {
+                const p = appState.products.find(x => x.id === pId);
+                let price = opt === 'كرتونة بيض' ? 3.15 : 0.15;
+                const tempProduct = {...p, price: price}; 
+                await window.addToCartWithOptionDirect(tempProduct, opt, k);
+            } else {
+                await window.updateQty(k, d);
+            }
+            window.openEggsOptions();
         };
 
         window.updateQty = async (k, d) => {
@@ -1066,7 +1113,7 @@
                 msg.textContent = 'كود غير صحيح أو منتهي الصلاحية'; msg.className = 'text-xs text-red-600 bg-red-50 p-2 mt-2 rounded-lg block font-bold border border-red-200';
             }
             updateCartUI();
-            window.updateCheckoutTotal(); // if applied inside checkout
+            window.updateCheckoutTotal(); 
         };
 
         const updateCartUI = () => {
@@ -1092,11 +1139,14 @@
                 </div>`).join('') : '<p class="text-center py-8 font-bold text-gray-400 flex flex-col items-center gap-2"><i data-lucide="shopping-cart" class="w-8 h-8 opacity-50"></i> السلة فارغة</p>';
             
             const t = calculateTotals();
-            const elsIds = ['cart-subtotal', 'cart-discount', 'cart-delivery', 'cart-service', 'cart-total'];
-            const vals = [t.subtotal, t.discount, t.deliveryFee, t.serviceFee, t.total];
+            const elsIds = ['cart-subtotal', 'cart-discount', 'cart-service', 'cart-total'];
+            const vals = [t.subtotal, t.discount, t.serviceFee, t.total];
             elsIds.forEach((id, idx) => { const e = document.getElementById(id); if(e) e.textContent = vals[idx].toFixed(2) + ' د.أ'; });
             
-            // Sticky Cart Logic
+            document.getElementById('cart-delivery').innerHTML = t.isFreeDelivery && t.originalDelivery > 0 
+                ? `<span class="line-through text-red-400 mr-1 text-xs font-normal">0.10</span> <span class="text-green-600 font-bold">0.00 د.أ</span>` 
+                : t.deliveryFee.toFixed(2) + ' د.أ';
+
             const sticky = document.getElementById('sticky-cart');
             if (count > 0 || appState.customOrder.trim() !== '') {
                 sticky.classList.remove('hidden');
@@ -1210,7 +1260,7 @@
                     t.set(oRef, {
                         uid: appState.user.uid, customerName: name, phone: appState.profile.phone||'',
                         location: 'موقع محدد عبر الـ GPS', exactLocation: appState.exactLocationLink, addressDetails: fullAddress, customOrder: appState.customOrder,
-                        items: Object.values(appState.cart), total: totals.total, deductedFromWallet: amountToDeduct, cashToCollect: cashRequired, fees: { delivery: totals.deliveryFee, service: totals.serviceFee, discount: totals.discount, coupon: appState.appliedCouponCode },
+                        items: Object.values(appState.cart), total: totals.total, deductedFromWallet: amountToDeduct, cashToCollect: cashRequired, fees: { delivery: totals.deliveryFee, service: totals.serviceFee, discount: totals.discount, coupon: appState.appliedCouponCode, isFreeDelivery: totals.isFreeDelivery },
                         paymentMethod: pay, status: 'بانتظار قبول الطلب', createdAt: serverTimestamp(), rated: false
                     });
                     if(amountToDeduct > 0) {
@@ -1260,29 +1310,98 @@
             document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p.image}" class="h-40 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-6">${p.name}</h2><div class="space-y-3" dir="rtl"><button onclick="window.addToCartWithOption('24', 'سادة')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>قهوة سادة</span><span class="text-gray-500">${p.price.toFixed(2)} د.أ</span></button><button onclick="window.addToCartWithOption('24', 'حلوة')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>قهوة حلوة</span><span class="text-gray-500">${p.price.toFixed(2)} د.أ</span></button><button onclick="window.addToCartWithOption('24', 'سكر خفيف')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>سكر خفيف</span><span class="text-gray-500">${p.price.toFixed(2)} د.أ</span></button></div></div>`;
             toggleModal('product', true);
         };
+
         window.openOsakaOptions = () => {
             document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg" class="h-40 mx-auto mb-4 rounded-xl object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-6">انكل اوساكا</h2><div class="space-y-3" dir="ltr"><button onclick="window.addItem('osaka_1');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Spanish latte</span><span class="text-gray-500">2.00 د.أ</span></button><button onclick="window.addItem('osaka_2');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Caramel Latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_3');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Vanilla Latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_4');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Hazelnut latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_5');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Pistachio Latte</span><span class="text-gray-500">2.95 د.أ</span></button></div></div>`;
             toggleModal('product', true);
         };
+
         window.openShaninaOptions = () => {
             const p = appState.products.find(x => x.id === '28');
             document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-2">شنينه</h2><p class="text-sm font-bold text-gray-500 mb-6">الرجاء اختيار الحجم/السعر:</p><div class="space-y-3" dir="rtl"><button onclick="window.addItem('shanina_1');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>شنينه 0.50</span><span class="text-gray-500">0.50 د.أ</span></button><button onclick="window.addItem('shanina_2');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>شنينه 0.75</span><span class="text-gray-500">0.75 د.أ</span></button><button onclick="window.addItem('shanina_3');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>شنينه 1.00</span><span class="text-gray-500">1.00 د.أ</span></button><button onclick="window.addItem('shanina_4');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>شنينه 1.25</span><span class="text-gray-500">1.25 د.أ</span></button></div></div>`;
             toggleModal('product', true);
         };
+
         window.openPotatoOptions = () => {
             const p = appState.products.find(x => x.id === '31');
             document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-6">سندويشة بطاطا</h2><div class="space-y-3" dir="rtl"><button onclick="window.openPotatoCustomizations('potato_small')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>سندويشة صغيرة</span><span class="text-gray-500">0.40 د.أ</span></button><button onclick="window.openPotatoCustomizations('potato_large')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>سندويشة كبيرة</span><span class="text-gray-500">0.80 د.أ</span></button></div></div>`;
             toggleModal('product', true);
         };
+        
         window.openPotatoCustomizations = (id) => {
             document.getElementById('product-modal-body').innerHTML = `<div class="p-6"><h2 class="text-xl font-bold mb-4 text-[#002d74]">إضافات (اختياري)</h2><label class="flex items-center gap-3 mb-3 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm cursor-pointer hover:bg-gray-50"><input type="checkbox" id="no-ketchup" class="w-5 h-5 text-[#00839b] rounded focus:ring-[#00839b]"> <span class="font-bold text-gray-700">بدون كتشب</span></label><label class="flex items-center gap-3 mb-6 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm cursor-pointer hover:bg-gray-50"><input type="checkbox" id="no-mayo" class="w-5 h-5 text-[#00839b] rounded focus:ring-[#00839b]"> <span class="font-bold text-gray-700">بدون ميونيز</span></label><button onclick="window.confirmPotatoCart('${id}')" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-lg">إضافة للسلة</button></div>`;
         };
+
         window.confirmPotatoCart = (id) => {
             let o = []; if(document.getElementById('no-ketchup').checked) o.push('بدون كتشب'); if(document.getElementById('no-mayo').checked) o.push('بدون ميونيز');
             window.addToCartWithOption(id, o.length?o.join(' و '):null);
         };
+
+        window.openEggsOptions = () => {
+            const p = appState.products.find(x => x.id === '39');
+            const k1 = '39_كرتونة بيض';
+            const k2 = '39_بيضة واحدة';
+            const qty1 = appState.cart[k1]?.quantity || 0;
+            const qty2 = appState.cart[k2]?.quantity || 0;
+
+            document.getElementById('product-modal-body').innerHTML = `
+                <div class="p-6 text-center">
+                    <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
+                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">بيض</h2>
+                    <div class="space-y-3" dir="rtl">
+                        
+                        <div class="flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl shadow-sm">
+                            <div class="text-right">
+                                <span class="font-bold text-[#002d74] block text-sm">كرتونة بيض</span>
+                                <span class="text-gray-500 font-bold text-xs mt-1 block">3.15 د.أ</span>
+                            </div>
+                            ${qty1 > 0 ? 
+                                `<div class="flex items-center justify-between bg-[#f3f4f6] rounded-full w-[90px] h-[36px] p-1 border border-gray-200 shadow-inner">
+                                    <button onclick="window.updateQtyAndRefreshModal('${k1}', -1)" class="text-red-500 font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">-</button>
+                                    <span class="font-extrabold text-[#002d74] text-base">${qty1}</span>
+                                    <button onclick="window.updateQtyAndRefreshModal('${k1}', 1)" class="text-[#00839b] font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">+</button>
+                                </div>`
+                                : `<button onclick="window.updateQtyAndRefreshModal('${k1}', 1)" class="bg-[#00839b] text-white px-5 py-2 rounded-xl font-bold text-sm shadow-md hover:bg-[#005f73] transition-colors">إضافة</button>`
+                            }
+                        </div>
+
+                        <div class="flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl shadow-sm">
+                            <div class="text-right">
+                                <span class="font-bold text-[#002d74] block text-sm">بيضة واحدة</span>
+                                <span class="text-gray-500 font-bold text-xs mt-1 block">0.15 د.أ</span>
+                            </div>
+                            ${qty2 > 0 ? 
+                                `<div class="flex items-center justify-between bg-[#f3f4f6] rounded-full w-[90px] h-[36px] p-1 border border-gray-200 shadow-inner">
+                                    <button onclick="window.updateQtyAndRefreshModal('${k2}', -1)" class="text-red-500 font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">-</button>
+                                    <span class="font-extrabold text-[#002d74] text-base">${qty2}</span>
+                                    <button onclick="window.updateQtyAndRefreshModal('${k2}', 1)" class="text-[#00839b] font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">+</button>
+                                </div>`
+                                : `<button onclick="window.updateQtyAndRefreshModal('${k2}', 1)" class="bg-[#00839b] text-white px-5 py-2 rounded-xl font-bold text-sm shadow-md hover:bg-[#005f73] transition-colors">إضافة</button>`
+                            }
+                        </div>
+
+                    </div>
+                </div>`;
+            toggleModal('product', true);
+        };
+
+        window.updateQtyAndRefreshModal = async (k, d) => {
+            let pId = '39';
+            let opt = k.includes('كرتونة') ? 'كرتونة بيض' : 'بيضة واحدة';
+            
+            if(!appState.cart[k] && d > 0) {
+                const p = appState.products.find(x => x.id === pId);
+                let price = opt === 'كرتونة بيض' ? 3.15 : 0.15;
+                const tempProduct = {...p, price: price}; 
+                await window.addToCartWithOptionDirect(tempProduct, opt, k);
+            } else {
+                await window.updateQty(k, d);
+            }
+            window.openEggsOptions();
+        };
+
         window.openDetails = (id) => {
-            if(['24','27','28','31','zinger'].includes(id)) { window.addItem(id); return; }
+            if(['24','27','28','31','zinger', '39'].includes(id)) { window.addItem(id); return; }
             const p = appState.products.find(x => x.id === id); if(!p) return;
             document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p.image}" class="h-48 mx-auto mb-4 object-contain ${p.outOfStock ? 'opacity-50 grayscale' : ''}"><h2 class="text-2xl font-bold text-[#002d74] mb-2">${p.name}</h2><p class="font-black text-[#00839b] text-xl mb-4">${p.price.toFixed(2)} د.أ</p><p class="text-sm text-gray-500 mb-6 leading-relaxed">${p.ingredients||''}</p><button onclick="window.addItem('${id}');window.toggleModal('product',false)" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-lg flex justify-center items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> إضافة للسلة</button></div>`;
             toggleModal('product', true);
@@ -1352,6 +1471,11 @@
                 paymentDetailStr = `مخصوم: ${o.deductedFromWallet?.toFixed(2)} / كاش: ${o.cashToCollect?.toFixed(2)}`;
             }
 
+            let deliveryRowHtml = `<div class="flex justify-between text-gray-600"><span>سعر التوصيل:</span><span>+ ${(o.fees?.delivery||0).toFixed(2)} د.أ</span></div>`;
+            if(o.fees?.isFreeDelivery) {
+                deliveryRowHtml = `<div class="flex justify-between text-gray-600"><span>سعر التوصيل:</span><span><span class="line-through text-red-400 mr-1 text-xs font-normal">0.10</span> <span class="text-green-600 font-bold">+ 0.00 د.أ</span></span></div>`;
+            }
+
             const content = `
                 <div class="space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm text-center relative">
@@ -1369,7 +1493,7 @@
 
                     <div class="bg-[#f0f9fa] p-5 rounded-2xl border border-[#00839b]/20 shadow-sm text-sm space-y-3 font-medium">
                         <div class="flex justify-between text-gray-600"><span>سعر المنتجات:</span><span>${(o.total - (o.fees?.delivery||0) - (o.fees?.service||0) + (o.fees?.discount||0)).toFixed(2)} د.أ</span></div>
-                        <div class="flex justify-between text-gray-600"><span>سعر التوصيل:</span><span>+ ${(o.fees?.delivery||0).toFixed(2)} د.أ</span></div>
+                        ${deliveryRowHtml}
                         <div class="flex justify-between text-gray-600"><span>رسوم الخدمة:</span><span>+ ${(o.fees?.service||0).toFixed(2)} د.أ</span></div>
                         ${o.fees?.coupon ? `<div class="flex justify-between text-green-600 font-bold bg-green-50 p-2 rounded-lg mt-1"><span>خصم (${o.fees.coupon}):</span><span>- ${(o.fees?.discount||0).toFixed(2)} د.أ</span></div>` : ''}
                         <div class="flex justify-between border-t border-[#00839b]/20 pt-3 mt-2 font-black text-2xl text-[#002d74] items-center">
