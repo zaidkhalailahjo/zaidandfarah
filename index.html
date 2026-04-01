@@ -99,11 +99,12 @@
         <p class="text-gray-500 text-sm md:text-base">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
     </div>
 
-    <div class="container mx-auto px-4 py-4">
+    <!-- Category container (now hidden by default on home screen, shown when inside a restaurant) -->
+    <div class="container mx-auto px-4 py-4 hidden" id="category-wrapper">
         <div id="categories-container" class="flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth"></div>
     </div>
 
-    <main class="container mx-auto px-4 pb-32 flex-grow">
+    <main class="container mx-auto px-4 pb-32 flex-grow pt-4">
         <!-- Active Order Banner -->
         <div id="active-order-banner" class="hidden mb-6"></div>
 
@@ -136,7 +137,6 @@
     <!-- Auth Modal (Google Login) -->
     <div id="auth-modal" class="modal fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
         <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 text-center">
-            <!-- تمت إزالة زر الإغلاق ليكون التسجيل إجبارياً -->
             <button id="auth-close-btn" class="close-modal hidden absolute top-4 left-4 bg-gray-100 p-2 rounded-full hover:bg-gray-200 z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
             <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">مرحباً بك!</h2>
             <p class="text-gray-500 text-sm mb-6" id="auth-subtitle">يجب تسجيل الدخول لتتمكن من تصفح المنتجات والطلب.</p>
@@ -195,8 +195,19 @@
                 <i data-lucide="gift" class="w-10 h-10"></i>
             </div>
             <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">نقاط الولاء</h2>
-            <p class="text-gray-500 text-sm mb-4 font-medium">كل <span class="font-bold text-[#002d74]">4 طلبات</span> مكتملة تمنحك <span class="font-bold text-yellow-600">10 نقاط</span> تلقائياً في رصيدك!</p>
+            <p class="text-gray-500 text-sm mb-4 font-medium">لكل <span class="font-bold text-[#002d74]">4 طلبات</span> مكتملة تمنحك <span class="font-bold text-yellow-600">10 نقاط</span> تلقائياً في رصيدك!</p>
             
+            <!-- Progress Bar -->
+            <div class="mb-5 text-right px-2">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-bold text-gray-500">الطلبات المنجزة</span>
+                    <span class="text-xs font-bold text-[#00839b]" id="loyalty-progress-text">0 / 4</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="loyalty-progress-bar" class="bg-green-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
             <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6">
                 <p class="text-sm font-bold text-gray-600 mb-1">رصيد نقاطك الحالي</p>
                 <p class="text-4xl font-black text-yellow-600 mb-2" id="loyalty-current-points">0</p>
@@ -352,30 +363,39 @@
 
     <!-- Checkout Modal -->
     <div id="checkout-modal" class="modal fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6">
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 max-h-[90vh] overflow-y-auto">
             <button class="close-modal absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
             <h2 class="text-xl font-bold text-[#002d74] text-center mb-5 border-b pb-3">تأكيد إرسال الطلب</h2>
             
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">الاسم الكامل</label>
-                    <input type="text" id="customer-name" placeholder="أدخل اسمك" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] font-bold">
+                    <input type="text" id="customer-name" placeholder="أدخل اسمك" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] font-bold bg-gray-50">
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">تحديد الموقع</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">تحديد الموقع (إلزامي لتأكيد العنوان)</label>
                     <button id="get-location-btn" onclick="window.requestLocation()" class="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-[#00839b] text-[#00839b] rounded-xl font-bold hover:bg-[#f0f9fa] transition-colors">
-                        <i data-lucide="crosshair" class="w-5 h-5"></i> <span id="get-location-text">تحديد الموقع (إلزامي)</span>
+                        <i data-lucide="crosshair" class="w-5 h-5"></i> <span id="get-location-text">تحديد موقعك الحالي (GPS)</span>
                     </button>
                 </div>
 
-                <!-- تفاصيل العنوان المخفية تظهر بعد التحديد -->
+                <!-- تفاصيل العنوان تظهر بعد التحديد -->
                 <div id="address-details-sec" class="hidden">
-                    <label class="block text-sm font-bold text-gray-700 mb-1">العنوان بالتفصيل (إلزامي)</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">العنوان بالتفصيل (أرقام فقط)</label>
                     <div class="grid grid-cols-3 gap-2">
-                        <input type="text" id="bldg-no" placeholder="العمارة *" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
-                        <input type="text" id="floor-no" placeholder="الطابق *" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
-                        <input type="text" id="apt-no" placeholder="الشقة *" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold block mb-1 text-center">رقم العمارة</label>
+                            <input type="number" id="bldg-no" placeholder="عمارة" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold block mb-1 text-center">رقم الطابق</label>
+                            <input type="number" id="floor-no" placeholder="طابق" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold block mb-1 text-center">رقم الشقة</label>
+                            <input type="number" id="apt-no" placeholder="شقة" class="w-full p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center text-sm font-bold bg-gray-50">
+                        </div>
                     </div>
                 </div>
 
@@ -405,26 +425,11 @@
         </div>
     </div>
 
-    <!-- Success Modal -->
-    <div id="success-modal" class="modal fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-xs overflow-hidden shadow-2xl relative p-8 text-center">
-            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
-                <i data-lucide="check" class="w-12 h-12 text-green-500"></i>
-            </div>
-            <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">تم الإرسال بنجاح!</h2>
-            <p class="text-gray-500 text-sm mb-8 font-medium">لقد تم استلام طلبك وهو الآن قيد المراجعة. يمكنك متابعة حالته من قسم (طلباتي).</p>
-            <button onclick="window.toggleModal('success', false)" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-lg hover:bg-[#005f73] transition-colors text-lg">
-                حسناً
-            </button>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, runTransaction, updateDoc, serverTimestamp, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Configuration
         const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'farah-snacks-v3';
         const FIREBASE_CONFIG = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
             apiKey: "AIzaSyCHJ4leiSUZAnzA6NQE-DkJDv_Z34VQXLU",
@@ -446,8 +451,8 @@
         const TELEGRAM_CHAT_ID = '7065245608'; 
 
         const sendTelegramNotification = async (title) => {
-            if(TELEGRAM_CHAT_ID === '7065245608') return;
-            const text = `🔔 <b>${title}</b>\n\nالرابط:\nhttps://admin.farah-snacks.store/`;
+            if(TELEGRAM_CHAT_ID === 'ضع_رقمك_هنا') return;
+            const text = `🔔 <b>${title}</b>\n\nالرابط:\nhttps://1.farah-snacks.store/`;
             const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
             try {
                 await fetch(url, {
@@ -457,68 +462,54 @@
                 });
             } catch(e) { console.error("Telegram error", e); }
         };
-        // ==================================
 
-        const CATEGORIES = ['الكل', 'المطاعم', 'شيبس', 'شوكولاتة', 'قهوة', 'بسكويت', 'علكة'];
-        
         // Initial Hardcoded Lists
         const RESTAURANTS = [
             { name: 'مطعم سلمة', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg', desc: 'شاورما ووجبات سريعة', bg: 'bg-white' },
-            { name: 'الحموي', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/logo-12-1.png', desc: 'قهوة تركية ومشروبات', bg: 'bg-black' },
-            { name: 'انكل اوساكا', image: 'https://uncleosaka.com/wp-content/uploads/2022/10/UncleOsaka.webp', desc: 'قهوة ومشروبات مميزة', bg: 'bg-white' },
             { name: 'سناكات', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Gemini_Generated_Image_5h65xw5h65xw5h65.png', desc: 'شيبس، شوكولاتة، بسكويت', bg: 'bg-white' }
         ];
         
         const PRODUCTS = [
-            { id: '21', name: 'شاورما عادي', price: 2.00, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'مع بطاطا ومخلل' },
-            { id: '22', name: 'شاورما سوبر', price: 2.60, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'حجم سوبر' },
-            { id: '23', name: 'ساندويشة شاورما صغير', price: 0.60, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/xxxxxxxxxx80-1024x1024.jpg' },
-            { id: '31', name: 'سندويشة بطاطا', price: 0, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images__20_-removebg-preview.png', ingredients: 'بخبز شراك' },
-            { id: 'potato_small', name: 'سندويشة بطاطا صغيرة', price: 0.40, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images__20_-removebg-preview.png' },
-            { id: 'potato_large', name: 'سندويشة بطاطا كبيرة', price: 0.80, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images__20_-removebg-preview.png' },
-            { id: 'zinger', name: 'سندويشة شاورما', price: 1.50, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png', ingredients: 'اختر بين سندويشة أو وجبة' },
-            { id: 'zinger_sand', name: 'سندويشة زنجر', price: 1.50, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png' },
-            { id: 'zinger_meal', name: 'وجبة زنجر', price: 2.50, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png' },
-            { id: 'shawarma_italy', name: 'وجبة شاورما ايطالي', price: 3.75, category: 'المطاعم', restaurant: 'مطعم سلمة', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B4%D8%A7%D9%88%D8%B1%D9%85%D8%A7-%D8%A7%D9%8A%D8%B7%D8%A7%D9%84%D9%8A-copy-removebg-preview.png', ingredients: 'تقدم مع بطاطا و مخلل و مايونيز' },
-            { id: '24', name: 'كاسة قهوة', price: 0.50, category: 'المطاعم', restaurant: 'الحموي', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/cafe.jpeg', ingredients: 'قهوه تركية أصيلة.' },
-            { id: '25', name: 'Ice tea peach', price: 1.00, category: 'المطاعم', restaurant: 'الحموي', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/pngtree-iced-tea-in-plastic-cup-with-ice-cubes-png-image_15236193-removebg-preview.png' },
-            { id: '26', name: 'قهوة لاتيه', price: 2.00, category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromAll: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/HOT-COFFEE.png' },
-            { id: '27', name: 'مشروبات اللاتيه', price: 2.00, category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromAll: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg' },
-            { id: 'osaka_1', name: 'Spanish latte', price: 2.00, category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg' },
-            { id: 'osaka_2', name: 'Caramel Latte', price: 2.50, category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg' },
-            { id: 'osaka_3', name: 'Vanilla Latte', price: 2.50, category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg' },
-            { id: 'osaka_4', name: 'hazelnut latte', price: 2.50, category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg' },
-            { id: 'osaka_5', name: 'Pistachio Latte', price: 2.95, category: 'المطاعم', restaurant: 'انكل اوساكا', hideFromMenu: true, image: 'https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg' },
+            { id: '21', name: 'شاورما عادي', price: 2.00, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'مع بطاطا ومخلل' },
+            { id: '22', name: 'شاورما سوبر', price: 2.60, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'حجم سوبر' },
+            { id: '23', name: 'ساندويشة شاورما صغير', price: 0.60, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/xxxxxxxxxx80-1024x1024.jpg' },
+            { id: '31', name: 'سندويشة بطاطا', price: 0, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images__20_-removebg-preview.png', ingredients: 'بخبز شراك' },
+            { id: 'zinger', name: 'سندويشة شاورما', price: 1.50, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png', ingredients: 'اختر بين سندويشة أو وجبة' },
+            { id: 'shawarma_italy', name: 'وجبة شاورما ايطالي', price: 3.75, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B4%D8%A7%D9%88%D8%B1%D9%85%D8%A7-%D8%A7%D9%8A%D8%B7%D8%A7%D9%84%D9%8A-copy-removebg-preview.png', ingredients: 'تقدم مع بطاطا و مخلل و مايونيز' },
             
-            // سناكات
-            { id: '30', name: 'شوكلاته فيوري', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Xrv1gtMvDtRtqoQfh00kvW4blvOZvPPZeOpnPb3G-removebg-preview.png' },
-            { id: '28', name: 'شنينه', price: 0.50, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
-            { id: 'shanina_1', name: 'شنينه 0.50', price: 0.50, category: 'المطاعم', restaurant: 'سناكات', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
-            { id: 'shanina_2', name: 'شنينه 0.75', price: 0.75, category: 'المطاعم', restaurant: 'سناكات', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
-            { id: 'shanina_3', name: 'شنينه 1.00', price: 1.00, category: 'المطاعم', restaurant: 'سناكات', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
-            { id: 'shanina_4', name: 'شنينه 1.25', price: 1.25, category: 'المطاعم', restaurant: 'سناكات', hideFromMenu: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
-            { id: '29', name: 'بريك تايم الدائرية', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/download-removebg-preview.png' },
-            { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png' }, 
-            { id: '19', name: 'بسكوت ستارز', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png' },
-            { id: '18', name: 'بسكوت مانيكس', price: 0.05, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png' },
-            { id: '17', name: 'قهوة العميد 2/1', price: 0.25, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png' },
-            { id: '16', name: 'شوكلاتة بريك تايم', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__17_-removebg-preview.png' },
-            { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445tdx6b2/IMG_6071-IDX-removebg-preview.png' },
-            
-            // تحديث صور الشيبس ومنتجات جديدة
-            { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/IMG-7394_370x370-removebg-preview.png' },
-            { id: '12', name: 'شيبس روكي', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png' },
-            { id: '9', name: 'شيبس سناك ميكس', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/sd465465f4654dfs654-removebg-preview.png' },
-            { id: '11', name: 'شيبس كانتينا', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/JOR-6251040001050_800x.webp' },
-            { id: '13', name: 'شيبس بینج رينج', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png' },
-            { id: '8', name: 'شيبس تريتوس', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/images__16_-removebg-preview.png' },
-            { id: '10', name: 'شيبس شبابيك', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/blackfridayoffers-2023-10-10T174155.525_800x-removebg-preview.png' },  
-            { id: '14', name: 'شيبس ريلاكس', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/445t3c2fr/images__15_-removebg-preview.png' },
-            { id: '32', name: 'كيكة باندا', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/dDO9Oaz1v5uKg37U5G6O6ZfoizHABoS9OMoGJhnc-removebg-preview.png' },
-            { id: '33', name: 'ميني بوند كيك', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/mini-pound-cake-776x743-removebg-preview.png' },
-            { id: '34', name: 'ماتريكس كولا', price: 0.25, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/mfRuL349OzXVbDtDBh9xkcQYGeKuidxXO2ETxAXm-removebg-preview.png' },
-            { id: '35', name: 'شيبس بوشار', price: 0.10, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/IMG-7377_800x-removebg-preview.png' },
-            { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, category: 'المطاعم', restaurant: 'سناكات', hideFromAll: true, image: 'https://uploads.onecompiler.io/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' }
+            // سناكات - شوكولاتة
+            { id: '30', name: 'شوكلاته فيوري', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Xrv1gtMvDtRtqoQfh00kvW4blvOZvPPZeOpnPb3G-removebg-preview.png' },
+            { id: '29', name: 'بريك تايم الدائرية', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/download-removebg-preview.png' },
+            { id: '19', name: 'بسكوت ستارز', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png' },
+            { id: '18', name: 'بسكوت مانيكس', price: 0.05, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__18_-removebg-preview.png' },
+            { id: '16', name: 'شوكلاتة بريك تايم', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/images__17_-removebg-preview.png' },
+            { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png' },
+            { id: '32', name: 'كيكة باندا', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/dDO9Oaz1v5uKg37U5G6O6ZfoizHABoS9OMoGJhnc-removebg-preview.png' },
+            { id: '33', name: 'ميني بوند كيك', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mini-pound-cake-776x743-removebg-preview.png' },
+
+            // سناكات - شيبس
+            { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/IMG-7394_370x370-removebg-preview.png' },
+            { id: '12', name: 'شيبس روكي', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, outOfStock: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png' }, // مثال لنفذ المنتج
+            { id: '9', name: 'شيبس سناك ميكس', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png' },
+            { id: '11', name: 'شيبس كانتينا', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/JOR-6251040001050_800x.webp' },
+            { id: '13', name: 'شيبس بینج رينج', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png' },
+            { id: '8', name: 'شيبس تريتوس', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__16_-removebg-preview.png' },
+            { id: '10', name: 'شيبس شبابيك', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/blackfridayoffers-2023-10-10T174155.525_800x-removebg-preview.png' },  
+            { id: '14', name: 'شيبس ريلاكس', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png' },
+            { id: '35', name: 'شيبس بوشار', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/IMG-7377_800x-removebg-preview.png' },
+            { id: '37', name: 'شيبس بيتزا', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/64cb5965b860eb3a86cd83b7-removebg-preview.png' },
+
+            // سناكات - مواد تموينية ومشروبات
+            { id: '34', name: 'ماتريكس كولا', price: 0.25, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mfRuL349OzXVbDtDBh9xkcQYGeKuidxXO2ETxAXm-removebg-preview.png' },
+            { id: '28', name: 'شنينه', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
+            { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
+            { id: '38', name: 'علبة لبن', price: 1.00, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D9%84%D8%A8%D9%86-removebg-preview.png' },
+            { id: '39', name: 'كرتونة البيض', price: 3.15, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
+            { id: '40', name: 'بيض بالحبة', price: 0.15, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
+
+            // سناكات - قهوة وعلكة
+            { id: '17', name: 'قهوة العميد 2/1', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png' },
+            { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, restaurant: 'سناكات', subCategory: 'علكة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png' }
         ];
 
         const COUPONS = { 'راشد50': { type: 'fixed', val: 0.50 } }; 
@@ -564,7 +555,7 @@
             onSnapshot(doc(appState.db, PATH_PROFILES, appState.user.uid), (snap) => {
                 if(snap.exists() && snap.data().phone && snap.data().name) {
                     appState.profile = snap.data();
-                    if(!appState.profile.points) appState.profile.points = 0; // default points
+                    if(!appState.profile.points) appState.profile.points = 0;
                     updateAuthUI();
                     
                     if (appState.profile.debt && appState.profile.debt > 0 && !appState.debtAlertShown) {
@@ -603,7 +594,11 @@
                 window.renderMyOrders();
                 window.renderActiveOrderBanner();
 
-                // Check for unrated completed orders
+                // تحديث واجهة نقاط الولاء بناءً على الطلبات المكتملة
+                if(document.getElementById('loyalty-modal').classList.contains('active')) {
+                    window.openLoyalty(); 
+                }
+
                 const orderToRate = appState.myOrders.find(o => o.status === 'تم توصيل الطلب بنجاح' && !o.rated);
                 if(orderToRate && !document.getElementById('rating-modal').classList.contains('active')) {
                     window.openRatingModal(orderToRate);
@@ -752,7 +747,14 @@
 
         // Loyalty Points Logic
         window.openLoyalty = () => {
+            const completedOrders = appState.myOrders.filter(o => o.status === 'تم توصيل الطلب بنجاح').length;
+            const progress = completedOrders % 4;
+            const progressPercent = (progress / 4) * 100;
+
             document.getElementById('loyalty-current-points').textContent = appState.profile?.points || 0;
+            document.getElementById('loyalty-progress-text').textContent = `${progress} / 4`;
+            document.getElementById('loyalty-progress-bar').style.width = `${progressPercent}%`;
+            
             document.getElementById('convert-points-btn').disabled = (appState.profile?.points || 0) < 10;
             toggleModal('auth', false);
             toggleModal('loyalty', true);
@@ -920,12 +922,24 @@
 
         const renderCategories = () => {
             const c = document.getElementById('categories-container'); if(!c) return;
-            const cats = CATEGORIES;
+            const cw = document.getElementById('category-wrapper'); if(!cw) return;
+            
+            if (!appState.currentRestaurant) {
+                cw.classList.add('hidden');
+                return;
+            }
+            
+            cw.classList.remove('hidden');
+            let cats = ['الكل'];
+            if (appState.currentRestaurant === 'سناكات') {
+                cats = ['الكل', 'شيبس', 'شوكلاته', 'قهوه', 'علكة', 'مواد تموينية'];
+            }
+            
             c.innerHTML = cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('');
         };
 
-        window.setCategory = (c) => { appState.category = c; appState.currentRestaurant = null; renderApp(); };
-        window.openRestaurant = (n) => { appState.currentRestaurant = n; renderProducts(); };
+        window.setCategory = (c) => { appState.category = c; renderApp(); };
+        window.openRestaurant = (n) => { appState.currentRestaurant = n; appState.category = 'الكل'; renderProducts(); renderCategories(); };
         window.updateCustomOrder = (v) => { appState.customOrder = v; updateCartUI(); };
         window.confirmCustomOrder = () => { appState.customOrder = document.getElementById('custom-order-input').value; updateCartUI(); showToast("تم تأكيد الإضافة للسلة!", "success"); };
 
@@ -941,22 +955,27 @@
 
             if (appState.currentRestaurant) {
                 const r = appState.restaurants.find(x => x.name === appState.currentRestaurant);
-                backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2><p class="text-xs text-gray-500">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.setCategory('${appState.category}')"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
+                backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2><p class="text-xs text-gray-500">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.setCategory('الكل'); window.openRestaurant(null)"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
             }
 
-            if (!appState.currentRestaurant && !appState.search && (appState.category === 'الكل' || appState.category === 'المطاعم')) {
+            if (!appState.currentRestaurant && !appState.search) {
                 contentHtml += visibleRest.map(r => `<div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 flex flex-col items-center justify-center hover:shadow-lg cursor-pointer transition-shadow" onclick="window.openRestaurant('${r.name}')"><div class="h-24 w-24 mb-3 rounded-full border-4 border-gray-50 shadow-inner flex items-center justify-center overflow-hidden ${r.bg}"><img src="${r.image}" class="max-h-full max-w-full object-contain ${r.bg==='bg-black'?'p-2':''}"></div><h3 class="font-bold text-[#002d74] text-lg">${r.name}</h3><p class="text-xs text-gray-400 mt-1">${r.desc || ''}</p></div>`).join('');
-                if (appState.category === 'المطاعم') { document.getElementById('products-grid').innerHTML = contentHtml; if(window.lucide) lucide.createIcons(); return; }
+                document.getElementById('products-grid').innerHTML = contentHtml; 
+                document.getElementById('empty-state').classList.add('hidden');
+                if(window.lucide) lucide.createIcons(); 
+                return;
             }
 
             let filtered = appState.products.filter(p => {
                 if (p.hideFromMenu) return false;
                 const m = p.name.includes(appState.search);
-                if (appState.currentRestaurant) return p.restaurant === appState.currentRestaurant && m;
-                if (appState.search) return (appState.category === 'الكل' || p.category === appState.category) && m;
-                if (appState.category === 'الكل') return !p.hideFromAll;
-                if (appState.category === 'المطاعم') return false;
-                return p.category === appState.category && !p.hideFromAll;
+                if (appState.currentRestaurant) {
+                    if (p.restaurant !== appState.currentRestaurant) return false;
+                    if (appState.category !== 'الكل' && p.subCategory !== appState.category) return false;
+                    return m;
+                }
+                if (appState.search) return m;
+                return false;
             });
 
             document.getElementById('empty-state').classList.toggle('hidden', filtered.length > 0 || contentHtml || backHtml);
@@ -967,8 +986,12 @@
                     Object.keys(appState.cart).forEach(k => { if(k.startsWith(p.id)) qty += appState.cart[k].quantity; });
                 } else qty = appState.cart[p.id]?.quantity || 0;
 
+                const isOutOfStock = p.outOfStock === true;
                 let action = '';
-                if (['24','27','28','31','zinger'].includes(p.id)) {
+                
+                if (isOutOfStock) {
+                     action = `<button disabled class="bg-gray-200 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 cursor-not-allowed" onclick="event.stopPropagation();"><i data-lucide="x" class="w-5 h-5"></i></button>`;
+                } else if (['24','27','28','31','zinger'].includes(p.id)) {
                     action = `<button class="bg-[#002d74] w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md hover:scale-105 transition-transform" onclick="event.stopPropagation(); window.addItem('${p.id}')"><i data-lucide="plus" class="w-5 h-5"></i></button>`;
                 } else {
                     if (qty > 0) {
@@ -982,7 +1005,17 @@
                     }
                 }
 
-                return `<div class="bg-white rounded-3xl p-3 shadow-sm hover:shadow-md border border-transparent hover:border-[#00839b]/20 cursor-pointer flex flex-col" onclick="window.openDetails('${p.id}')"><img src="${p.image}" class="h-28 object-contain mb-3 drop-shadow-sm"><h3 class="font-bold text-gray-800 text-sm mb-1 truncate">${p.name}</h3><div class="mt-auto flex justify-between items-center w-full pt-2"><span class="font-black text-[#00839b] text-sm">${p.price>0?p.price.toFixed(2)+' د.أ':'خيارات'}</span><div>${action}</div></div></div>`;
+                const priceDisplay = isOutOfStock ? `<span class="text-red-500 font-bold text-xs bg-red-50 px-2 py-1 rounded">نفذ المنتج</span>` : `<span class="font-black text-[#00839b] text-sm">${p.price>0?p.price.toFixed(2)+' د.أ':'خيارات'}</span>`;
+                const imgStyle = isOutOfStock ? `opacity-50 grayscale` : ``;
+
+                return `<div class="bg-white rounded-3xl p-3 shadow-sm hover:shadow-md border border-transparent hover:border-[#00839b]/20 cursor-pointer flex flex-col relative" onclick="if(!${isOutOfStock}) window.openDetails('${p.id}')">
+                    <img src="${p.image}" class="h-28 object-contain mb-3 drop-shadow-sm ${imgStyle}">
+                    <h3 class="font-bold text-gray-800 text-sm mb-1 truncate ${isOutOfStock ? 'text-gray-400' : ''}">${p.name}</h3>
+                    <div class="mt-auto flex justify-between items-center w-full pt-2">
+                        ${priceDisplay}
+                        <div>${action}</div>
+                    </div>
+                </div>`;
             }).join('');
 
             document.getElementById('products-grid').innerHTML = backHtml + contentHtml + customOrderHtml;
@@ -1084,7 +1117,7 @@
             const btn = document.getElementById('get-location-btn');
             if(btn) btn.className = "w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-[#00839b] text-[#00839b] rounded-xl font-bold hover:bg-[#f0f9fa] transition-colors";
             const txt = document.getElementById('get-location-text');
-            if(txt) txt.textContent = "تحديد الموقع (إلزامي)";
+            if(txt) txt.textContent = "تحديد الموقع الحالي (إلزامي)";
             document.getElementById('address-details-sec').classList.add('hidden');
             window.updateCheckoutTotal();
             toggleModal('checkout', true);
@@ -1121,18 +1154,12 @@
             t.textContent = "جاري التحديد..."; btn.disabled = true; btn.classList.add('opacity-50');
             navigator.geolocation.getCurrentPosition(p => {
                 appState.exactLocationLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                t.textContent = "تم تحديد الموقع ✓"; btn.className = "w-full py-3 bg-green-100 text-green-700 border border-green-300 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm";
+                t.textContent = "تم تحديد الموقع بنجاح ✓"; btn.className = "w-full py-3 bg-green-100 text-green-700 border border-green-300 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm";
                 btn.disabled = false; btn.classList.remove('opacity-50');
                 document.getElementById('address-details-sec').classList.remove('hidden');
             }, e => {
-                appState.locationFailCount++;
-                if(appState.locationFailCount >= 2) { 
-                    appState.exactLocationBypassed = true; 
-                    t.textContent = "تم التخطي (يرجى كتابة العنوان أدناه)"; 
-                    document.getElementById('address-details-sec').classList.remove('hidden');
-                } else {
-                    t.textContent = "حاول مرة أخرى (يجب تشغيل GPS)";
-                }
+                showToast("حدث خطأ في تحديد الموقع. يرجى تفعيل الـ GPS في هاتفك والمحاولة مجدداً.", "error");
+                t.textContent = "حاول مرة أخرى (تأكد من تفعيل GPS)";
                 btn.disabled = false; btn.classList.remove('opacity-50');
             }, { enableHighAccuracy: true, timeout: 10000 });
         };
@@ -1140,13 +1167,13 @@
         window.submitOrder = async () => {
             const name = document.getElementById('customer-name').value.trim();
             if(name.length < 3) return showToast("أدخل اسم صحيح", "error");
-            if(!appState.exactLocationLink && !appState.exactLocationBypassed) return showToast("حدد الموقع أولاً", "error");
+            if(!appState.exactLocationLink) return showToast("الرجاء الضغط على (تحديد الموقع الحالي) أولاً", "error");
             
             const bldg = document.getElementById('bldg-no').value.trim();
             const floor = document.getElementById('floor-no').value.trim();
             const apt = document.getElementById('apt-no').value.trim();
             
-            if(!bldg || !floor || !apt) return showToast("الرجاء إدخال تفاصيل العنوان (عمارة، طابق، شقة)", "error");
+            if(!bldg || !floor || !apt) return showToast("الرجاء إدخال أرقام العمارة، الطابق، والشقة لتأكيد الطلب", "error");
             const fullAddress = `عمارة: ${bldg}، طابق: ${floor}، شقة: ${apt}`;
 
             const pay = document.querySelector('input[name="payment_method"]:checked').value;
@@ -1192,7 +1219,7 @@
                     Object.keys(appState.cart).forEach(k => t.delete(doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k)));
                 });
                 
-                // TELEGRAM NOTIFICATION
+                // TELEGRAM NOTIFICATION (Domain Agnostic link)
                 sendTelegramNotification('طلب جديد من فرح سناكس!');
 
                 appState.customOrder = ''; renderProducts(); toggleModal('checkout', false);
@@ -1207,7 +1234,6 @@
             
             o.items.forEach(i => {
                 const k = i.option ? `${i.product.id}_${i.option}` : i.product.id;
-                // Accumulate if already in cart
                 appState.cart[k] = { product: i.product, quantity: (appState.cart[k]?.quantity||0) + i.quantity, option: i.option };
             });
             
@@ -1258,7 +1284,7 @@
         window.openDetails = (id) => {
             if(['24','27','28','31','zinger'].includes(id)) { window.addItem(id); return; }
             const p = appState.products.find(x => x.id === id); if(!p) return;
-            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p.image}" class="h-48 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-2">${p.name}</h2><p class="font-black text-[#00839b] text-xl mb-4">${p.price.toFixed(2)} د.أ</p><p class="text-sm text-gray-500 mb-6 leading-relaxed">${p.ingredients||''}</p><button onclick="window.addItem('${id}');window.toggleModal('product',false)" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-lg flex justify-center items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> إضافة للسلة</button></div>`;
+            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p.image}" class="h-48 mx-auto mb-4 object-contain ${p.outOfStock ? 'opacity-50 grayscale' : ''}"><h2 class="text-2xl font-bold text-[#002d74] mb-2">${p.name}</h2><p class="font-black text-[#00839b] text-xl mb-4">${p.price.toFixed(2)} د.أ</p><p class="text-sm text-gray-500 mb-6 leading-relaxed">${p.ingredients||''}</p><button onclick="window.addItem('${id}');window.toggleModal('product',false)" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-lg flex justify-center items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> إضافة للسلة</button></div>`;
             toggleModal('product', true);
             if(window.lucide) lucide.createIcons();
         };
