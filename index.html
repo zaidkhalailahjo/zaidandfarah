@@ -69,21 +69,22 @@
                 <i data-lucide="search" class="absolute right-4 top-3 text-gray-400 w-5 h-5"></i>
             </div>
 
-            <div class="flex items-center gap-2 md:gap-3">
-                <button id="auth-btn" onclick="window.toggleModal('auth', true)" class="bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full text-xs md:text-sm font-bold items-center gap-1 transition-colors border border-white/20 flex">
-                    <i data-lucide="user" class="w-4 h-4"></i>
-                    <span id="auth-btn-text">دخول</span>
-                </button>
-                
-                <button id="orders-btn" onclick="window.toggleModal('orders', true)" class="hidden bg-[#00839b] hover:bg-[#005f73] px-3 py-2 rounded-full text-xs md:text-sm font-bold items-center gap-1 transition-colors shadow-md flex">
-                    <i data-lucide="clock" class="w-4 h-4"></i>
-                    <span class="hidden md:inline">طلباتي</span>
-                </button>
-
-                <div class="relative cursor-pointer hover:scale-105 transition-transform bg-white/10 p-2 rounded-full" id="cart-btn" onclick="window.toggleModal('cart', true)">
-                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+            <!-- أزرار التحكم مرتبة عمودياً في الجوال وأفقياً في سطح المكتب -->
+            <div class="flex flex-col md:flex-row items-end md:items-center gap-2 md:gap-3">
+                <div class="relative cursor-pointer hover:scale-105 transition-transform bg-white/10 p-2 rounded-full order-1 md:order-3" id="cart-btn" onclick="window.toggleModal('cart', true)">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 md:w-6 md:h-6"></i>
                     <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#002d74] hidden">0</span>
                 </div>
+
+                <button id="orders-btn" onclick="window.toggleModal('orders', true)" class="hidden bg-[#00839b] hover:bg-[#005f73] px-3 py-1.5 md:py-2 rounded-full text-[10px] md:text-sm font-bold items-center gap-1 transition-colors shadow-md order-2 flex">
+                    <i data-lucide="clock" class="w-3 h-3 md:w-4 md:h-4"></i>
+                    <span class="inline">طلباتي</span>
+                </button>
+
+                <button id="auth-btn" onclick="window.toggleModal('auth', true)" class="bg-white/10 hover:bg-white/20 px-3 py-1.5 md:py-2 rounded-full text-[10px] md:text-sm font-bold items-center gap-1 transition-colors border border-white/20 flex order-3 md:order-1">
+                    <i data-lucide="user" class="w-3 h-3 md:w-4 md:h-4"></i>
+                    <span id="auth-btn-text">دخول</span>
+                </button>
             </div>
         </div>
         <div class="md:hidden px-4 pb-3 flex gap-2">
@@ -1010,7 +1011,7 @@
             let baseDelivery = 0;
             let service = 0;
 
-            // تحديد الأسعار بناءً على المطعم
+            // تحديد الأسعار بناءً على المطعم الافتراضية
             if (currentRest === 'مطعم سلمة' || currentRest === 'الحموي' || currentRest === 'انكل اوساكا') {
                 baseDelivery = 0.25;
                 service = 0.15;
@@ -1020,9 +1021,12 @@
                 service = 0.00;
             }
             
-            // تخصيص التوصيل من صفحة الأدمن (يحل محل السعر الافتراضي إن وجد)
+            // تطبيق السعر المخصص إن وجد بناءً على الهدف المحدد (الكل، سناكات، مطعم سلمة)
             if (appState.profile?.customDelivery !== undefined && appState.profile.customDelivery !== '') {
-                baseDelivery = parseFloat(appState.profile.customDelivery);
+                const target = appState.profile.customDeliveryTarget || 'all';
+                if (target === 'all' || target === currentRest) {
+                    baseDelivery = parseFloat(appState.profile.customDelivery);
+                }
             }
             
             const delivery = (hasItems && !isFreeDelivery) ? baseDelivery : 0;
