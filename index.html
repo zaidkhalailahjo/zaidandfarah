@@ -559,7 +559,7 @@
             { id: '28', name: 'شنينه', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
             { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/catalog_yogert_Baladna+Yogurt+With+Cream+200gm-removebg-preview.png' },
             { id: '38', name: 'علبة لبن', price: 1.00, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D9%84%D8%A8%D9%86-removebg-preview.png' },
-            { id: '39', name: 'بيض', price: 0.15, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
+            { id: '39', name: 'بيض', price: 0, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
 
             // سناكات - مشروبات غازية
             { id: '34', name: 'ماتريكس', price: 0, restaurant: 'سناكات', subCategory: 'مشروبات غازية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
@@ -573,7 +573,7 @@
             { id: 'boza_iceberg', name: 'بوظة ايس بيرج', price: 0.35, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/ds5a4564sda564sda_800x-removebg-preview.png' },
             { id: 'boza_spiral', name: 'بوظة سبيرال', price: 0.15, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.51.53AM-removebg-preview.png' },
             { id: 'boza_wave', name: 'بوظة ويف', price: 0.10, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.53.39AM-removebg-preview.png' },
-            { id: 'boza_sandwich', name: 'بوظة ساندويش', price: 0.15, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/04-26-2025_0652am335b39568640d7622323.png' },
+            { id: 'boza_sandwich', name: 'بوظة ساندويش', price: 0.10, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/04-26-2025_0652am335b39568640d7622323.png' },
             { id: 'boza_mini', name: 'بوظة ميني', price: 0.35, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/101211-removebg-preview.png' },
 
             // سناكات - اندومي
@@ -999,7 +999,7 @@
             
             const isFreeDelivery = appState.profile?.freeDelivery || false;
             
-            let baseDelivery = items.some(i => i.product.restaurant === 'سناكات') ? 0.20 : 0.10;
+            let baseDelivery = 0.25; // التعديل الأول: رسوم التوصيل أصبحت 0.25
             if (appState.profile?.customDelivery !== undefined && appState.profile.customDelivery !== '') {
                 baseDelivery = parseFloat(appState.profile.customDelivery);
             }
