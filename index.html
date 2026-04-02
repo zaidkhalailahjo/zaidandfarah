@@ -99,6 +99,11 @@
         <p class="text-gray-500 text-sm md:text-base">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
     </div>
 
+    <!-- Category container (now hidden by default on home screen, shown when inside a restaurant) -->
+    <div class="container mx-auto px-4 py-4 hidden" id="category-wrapper">
+        <div id="categories-container" class="flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth"></div>
+    </div>
+
     <main class="container mx-auto px-4 pb-32 flex-grow pt-4">
         <!-- Active Order Banner -->
         <div id="active-order-banner" class="hidden mb-6"></div>
@@ -107,9 +112,7 @@
             <div class="loader mb-4"></div>
             <p class="text-[#00839b] font-bold">جاري تحميل المنتجات...</p>
         </div>
-        
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"></div>
-        
         <div id="empty-state" class="text-center py-20 hidden">
             <i data-lucide="search-x" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
             <p class="text-gray-500 font-bold">عذراً، لا توجد منتجات مطابقة لبحثك.</p>
@@ -1075,7 +1078,7 @@
                 const priceDisplay = isOutOfStock ? `<span class="text-red-500 font-bold text-xs bg-red-50 px-2 py-1 rounded">نفذ المنتج</span>` : `<span class="font-black text-[#00839b] text-sm">${p.price>0?p.price.toFixed(2)+' د.أ':'خيارات'}</span>`;
                 const imgStyle = isOutOfStock ? `opacity-50 grayscale` : ``;
 
-                return `<div class="bg-white rounded-3xl p-3 shadow-sm hover:shadow-md border border-transparent hover:border-[#00839b]/20 cursor-pointer flex flex-col relative" onclick="window.openDetails('${p.id}')">
+                return `<div class="bg-white rounded-3xl p-3 shadow-sm hover:shadow-md border border-transparent hover:border-[#00839b]/20 cursor-pointer flex flex-col relative" onclick="if(!${isOutOfStock}) window.openDetails('${p.id}')">
                     <img src="${p.image}" class="h-28 object-contain mb-3 drop-shadow-sm ${imgStyle}">
                     <h3 class="font-bold text-gray-800 text-sm mb-1 truncate ${isOutOfStock ? 'text-gray-400' : ''}">${p.name}</h3>
                     <div class="mt-auto flex justify-between items-center w-full pt-2">
@@ -1349,12 +1352,12 @@
             const grid = document.getElementById('payment-options-grid');
             
             if(bal <= 0) {
-                walletLabel.classList.add('hidden');
+                walletLabel.style.display = 'none';
                 cashLabel.querySelector('input').checked = true;
                 cashLabel.classList.remove('col-span-1');
                 cashLabel.classList.add('col-span-2');
             } else {
-                walletLabel.classList.remove('hidden');
+                walletLabel.style.display = 'flex';
                 cashLabel.classList.remove('col-span-2');
                 cashLabel.classList.add('col-span-1');
                 walletLabel.querySelector('input').checked = true;
@@ -1370,9 +1373,6 @@
             const totals = calculateTotals();
             const walletBal = appState.profile?.balance || 0;
             
-            document.getElementById('lbl-wallet').className = payMethod === 'wallet' ? "relative flex flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 rounded-xl cursor-pointer transition-colors col-span-1" : "relative flex flex-col items-center justify-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-blue-50 transition-colors col-span-1";
-            document.getElementById('lbl-cash').className = payMethod === 'cash' ? `relative flex flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 rounded-xl cursor-pointer transition-colors ${walletBal <= 0 ? 'col-span-2' : 'col-span-1'}` : "relative flex flex-col items-center justify-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors col-span-1";
-
             let displayTotal = totals.total;
             let msg = "المطلوب دفعه كاش";
 
@@ -1673,10 +1673,12 @@
                 deliveryRowHtml = `<div class="flex justify-between text-gray-600"><span>سعر التوصيل:</span><span><span class="line-through text-red-400 mr-1 text-xs font-normal">0.10</span> <span class="text-green-600 font-bold">+ 0.00 د.أ</span></span></div>`;
             }
 
+            const reorderBtn = o.status === 'تم توصيل الطلب بنجاح' ? `<button onclick="window.reorder('${o.id}')" class="absolute top-3 right-3 text-sm bg-blue-50 text-[#002d74] px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 hover:bg-blue-100 transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i> إعادة الطلب</button>` : '';
+
             const content = `
                 <div class="space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm text-center relative">
-                        <button onclick="window.reorder('${o.id}')" class="absolute top-3 right-3 text-sm bg-blue-50 text-[#002d74] px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 hover:bg-blue-100 transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i> إعادة الطلب</button>
+                        ${reorderBtn}
                         <div class="inline-block ${s.bg} p-3 rounded-full mb-2 mt-8 text-3xl ${s.anim}">${s.icon}</div>
                         <h3 class="font-bold text-lg ${s.color} mb-1">${s.text}</h3>
                         <p class="text-xs text-gray-400">طلب #${o.id.substring(0,8)} • ${dateStr}</p>
