@@ -99,11 +99,6 @@
         <p class="text-gray-500 text-sm md:text-base">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
     </div>
 
-    <!-- Category container -->
-    <div class="container mx-auto px-4 py-4 hidden" id="category-wrapper">
-        <div id="categories-container" class="flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth"></div>
-    </div>
-
     <main class="container mx-auto px-4 pb-32 flex-grow pt-4">
         <!-- Active Order Banner -->
         <div id="active-order-banner" class="hidden mb-6"></div>
@@ -112,7 +107,9 @@
             <div class="loader mb-4"></div>
             <p class="text-[#00839b] font-bold">جاري تحميل المنتجات...</p>
         </div>
+        
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"></div>
+        
         <div id="empty-state" class="text-center py-20 hidden">
             <i data-lucide="search-x" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
             <p class="text-gray-500 font-bold">عذراً، لا توجد منتجات مطابقة لبحثك.</p>
@@ -468,15 +465,13 @@
             const text = `🔔 <b>${title}</b>\n\nالرابط:\nhttps://admin.farah-snacks.store/`;
             const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
             
-            for (const chatId of TELEGRAM_CHAT_IDS) {
-                try {
-                    await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
-                    });
-                } catch(e) { console.error("Telegram error for chat " + chatId, e); }
-            }
+            await Promise.all(TELEGRAM_CHAT_IDS.map(chatId => 
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
+                }).catch(e => console.error("Telegram error for chat " + chatId, e))
+            ));
         };
 
         // Initial Hardcoded Lists
@@ -486,11 +481,12 @@
         ];
         
         const PRODUCTS = [
+            // مطعم سلمة
             { id: '21', name: 'شاورما عادي', price: 2.00, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'مع بطاطا ومخلل' },
             { id: '22', name: 'شاورما سوبر', price: 2.60, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'حجم سوبر' },
             { id: '23', name: 'ساندويشة شاورما صغير', price: 0.60, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/xxxxxxxxxx80-1024x1024.jpg' },
             { id: '31', name: 'سندويشة بطاطا', price: 0, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images__20_-removebg-preview.png', ingredients: 'بخبز شراك' },
-            { id: 'zinger', name: 'سندويشة شاورما', price: 1.50, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png', ingredients: 'اختر بين سندويشة أو وجبة' },
+            { id: 'zinger', name: 'ساندويشة زنجر', price: 1.50, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png', ingredients: 'اختر بين سندويشة أو وجبة' },
             { id: 'shawarma_italy', name: 'وجبة شاورما ايطالي', price: 3.75, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B4%D8%A7%D9%88%D8%B1%D9%85%D8%A7-%D8%A7%D9%8A%D8%B7%D8%A7%D9%84%D9%8A-copy-removebg-preview.png', ingredients: 'تقدم مع بطاطا و مخلل و مايونيز' },
             
             // سناكات - شوكولاتة
@@ -505,7 +501,7 @@
 
             // سناكات - شيبس
             { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/IMG-7394_370x370-removebg-preview.png' },
-            { id: '12', name: 'شيبس روكي', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, outOfStock: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png' }, // مثال لنفذ المنتج
+            { id: '12', name: 'شيبس روكي', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, outOfStock: true, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png' },
             { id: '9', name: 'شيبس سناك ميكس', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png' },
             { id: '11', name: 'شيبس كانتينا', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/JOR-6251040001050_800x.webp' },
             { id: '13', name: 'شيبس بینج رينج', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/tBVYLZQLm7O4ul18hNZQw0M7OuQpYRmUTTSo1Ut1-removebg-preview.png' },
@@ -515,16 +511,33 @@
             { id: '35', name: 'شيبس بوشار', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/IMG-7377_800x-removebg-preview.png' },
             { id: '37', name: 'شيبس بيتزا', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/64cb5965b860eb3a86cd83b7-removebg-preview.png' },
 
-            // سناكات - مواد تموينية ومشروبات
-            { id: '34', name: 'ماتريكس كولا', price: 0.25, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mfRuL349OzXVbDtDBh9xkcQYGeKuidxXO2ETxAXm-removebg-preview.png' },
+            // سناكات - مواد تموينية 
             { id: '28', name: 'شنينه', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
             { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/catalog_yogert_Baladna+Yogurt+With+Cream+200gm-removebg-preview.png' },
             { id: '38', name: 'علبة لبن', price: 1.00, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D9%84%D8%A8%D9%86-removebg-preview.png' },
             { id: '39', name: 'بيض', price: 0.15, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
 
+            // سناكات - مشروبات غازية
+            { id: '34', name: 'ماتريكس كولا', price: 0.25, restaurant: 'سناكات', subCategory: 'مشروبات غازية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mfRuL349OzXVbDtDBh9xkcQYGeKuidxXO2ETxAXm-removebg-preview.png' },
+            
             // سناكات - قهوة وعلكة
             { id: '17', name: 'قهوة العميد 2/1', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png' },
-            { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, restaurant: 'سناكات', subCategory: 'علكة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png' }
+            { id: 'good_day', name: 'كابتشينو Good day', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/IMG-3584_800x-removebg-preview.png' },
+            { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, restaurant: 'سناكات', subCategory: 'علكة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png' },
+
+            // سناكات - بوظة
+            { id: 'boza_iceberg', name: 'بوظة ايس بيرج', price: 0.35, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/ds5a4564sda564sda_800x-removebg-preview.png' },
+            { id: 'boza_spiral', name: 'بوظة سبيرال', price: 0.15, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.51.53AM-removebg-preview.png' },
+            { id: 'boza_wave', name: 'بوظة ويف', price: 0.10, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.53.39AM-removebg-preview.png' },
+            { id: 'boza_sandwich', name: 'بوظة ساندويش', price: 0.15, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/04-26-2025_0652am335b39568640d7622323.png' },
+            { id: 'boza_mini', name: 'بوظة ميني', price: 0.35, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/101211-removebg-preview.png' },
+
+            // سناكات - اندومي
+            { id: 'indomie_curry', name: 'اندومي بنكهة الكاري', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/NDVdVrd9IkDQzcBQIp2HfltGgEkaZSlJsEKE9dVX-removebg-preview.png' },
+            { id: 'indomie_chicken', name: 'اندومي نكهة الدجاج', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/SPECIALCHICKEN-removebg-preview.png' },
+            { id: 'indomie_veg', name: 'اندومي بنكهة الخضار', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/0809f08c-aacf-4882-9674-155b5cb5e790-removebg-preview.png' },
+            { id: 'indomie_box_veg', name: 'علبة اندومي بنكهة الخضار', price: 0.35, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/a26e5cce-61fb-45ac-8aca-02e8a8e6c4fd-removebg-preview.png' },
+            { id: 'indomie_box_chicken', name: 'علبة اندومي بنكة الدجاج', price: 0.35, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/im-60-_1_370x370-removebg-preview.png' }
         ];
 
         const COUPONS = { 'راشد50': { type: 'fixed', val: 0.50 } }; 
@@ -540,7 +553,8 @@
             category: 'الكل', currentRestaurant: null, search: '',
             appliedCoupon: null, appliedCouponCode: '',
             exactLocationLink: null, locationFailCount: 0, exactLocationBypassed: false,
-            myOrders: [], feedback: [], currentFeedbackType: 'suggestion'
+            myOrders: [], feedback: [], currentFeedbackType: 'suggestion',
+            potatoNoKetchup: false, potatoNoMayo: false // لحفظ خيارات البطاطا
         };
 
         const showToast = (msg, type) => {
@@ -946,28 +960,23 @@
             return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
-        const renderCategories = () => {
-            const c = document.getElementById('categories-container'); if(!c) return;
-            const cw = document.getElementById('category-wrapper'); if(!cw) return;
-            
-            if (!appState.currentRestaurant) {
-                cw.classList.add('hidden');
-                return;
-            }
-            
-            cw.classList.remove('hidden');
+        const getCategoriesHtml = () => {
+            if (!appState.currentRestaurant) return '';
             let cats = ['الكل'];
             if (appState.currentRestaurant === 'سناكات') {
-                cats = ['الكل', 'شيبس', 'شوكلاته', 'قهوه', 'علكة', 'مواد تموينية'];
+                cats = ['الكل', 'شيبس', 'شوكلاته', 'اندومي', 'قهوه', 'مشروبات غازية', 'بوظة', 'علكة', 'مواد تموينية'];
             }
-            
-            c.innerHTML = cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('');
+            return `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth mb-4">` + 
+                   cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('') +
+                   `</div>`;
         };
 
         window.setCategory = (c) => { appState.category = c; renderApp(); };
-        window.openRestaurant = (n) => { appState.currentRestaurant = n; appState.category = 'الكل'; renderProducts(); renderCategories(); };
+        window.openRestaurant = (n) => { appState.currentRestaurant = n; appState.category = 'الكل'; renderProducts(); };
         window.updateCustomOrder = (v) => { appState.customOrder = v; updateCartUI(); };
         window.confirmCustomOrder = () => { appState.customOrder = document.getElementById('custom-order-input').value; updateCartUI(); showToast("تم تأكيد الإضافة للسلة!", "success"); };
+
+        const hasDynamicOptions = (id) => ['24','27','28','31','zinger', '39', 'indomie_curry', 'indomie_chicken', 'indomie_veg'].includes(id);
 
         const renderProducts = () => {
             document.getElementById('loading-indicator').classList.add('hidden');
@@ -1008,7 +1017,7 @@
             
             contentHtml += filtered.map(p => {
                 let qty = 0;
-                if (['24','27','28','31','zinger', '39'].includes(p.id)) {
+                if (hasDynamicOptions(p.id)) {
                     Object.keys(appState.cart).forEach(k => { if(k.startsWith(p.id)) qty += appState.cart[k].quantity; });
                 } else qty = appState.cart[p.id]?.quantity || 0;
 
@@ -1017,7 +1026,7 @@
                 
                 if (isOutOfStock) {
                      action = `<button disabled class="bg-gray-200 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 cursor-not-allowed" onclick="event.stopPropagation();"><i data-lucide="x" class="w-5 h-5"></i></button>`;
-                } else if (['24','27','28','31','zinger', '39'].includes(p.id)) {
+                } else if (hasDynamicOptions(p.id)) {
                     action = `<button class="bg-[#002d74] w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md hover:scale-105 transition-transform" onclick="event.stopPropagation(); window.addItem('${p.id}')"><i data-lucide="plus" class="w-5 h-5"></i></button>`;
                 } else {
                     if (qty > 0) {
@@ -1044,7 +1053,7 @@
                 </div>`;
             }).join('');
 
-            document.getElementById('products-grid').innerHTML = backHtml + contentHtml + customOrderHtml;
+            document.getElementById('products-grid').innerHTML = backHtml + getCategoriesHtml() + contentHtml + customOrderHtml;
             if(window.lucide) lucide.createIcons();
         };
 
@@ -1057,6 +1066,7 @@
             if(id==='31') return window.openPotatoOptions();
             if(id==='zinger') return window.openZingerOptions();
             if(id==='39') return window.openEggsOptions();
+            if(id.startsWith('indomie')) return window.openIndomieOptions(id);
             window.addToCartWithOption(id, null);
         };
 
@@ -1077,19 +1087,58 @@
             toggleModal('product', false); showToast(`تم الإضافة للسلة`, 'success');
         };
 
-        window.updateQtyAndRefreshModal = async (k, d) => {
-            let pId = '39';
-            let opt = k.includes('كرتونة') ? 'كرتونة بيض' : 'بيضة واحدة';
-            
-            if(!appState.cart[k] && d > 0) {
-                const p = appState.products.find(x => x.id === pId);
-                let price = opt === 'كرتونة بيض' ? 3.15 : 0.15;
-                const tempProduct = {...p, price: price}; 
-                await window.addToCartWithOptionDirect(tempProduct, opt, k);
-            } else {
-                await window.updateQty(k, d);
+        window.updateDynamicQty = async (pId, optName, price, delta, isPotato = false) => {
+            let finalOpt = optName;
+            if(isPotato) {
+                let mods = [];
+                if(appState.potatoNoKetchup) mods.push('بدون كتشب');
+                if(appState.potatoNoMayo) mods.push('بدون ميونيز');
+                if(mods.length) finalOpt += ' (' + mods.join(' و ') + ')';
             }
-            window.openEggsOptions();
+            
+            const k = `${pId}_${finalOpt}`;
+            if(!appState.cart[k] && delta > 0) {
+                const p = appState.products.find(x => x.id === pId);
+                const tempProduct = {...p, price: price}; 
+                await window.addToCartWithOptionDirect(tempProduct, finalOpt, k);
+            } else {
+                await window.updateQty(k, delta);
+            }
+            
+            if(pId === '39') window.openEggsOptions();
+            else if(pId === 'zinger') window.openZingerOptions();
+            else if(pId === '28') window.openShaninaOptions();
+            else if(pId === '31') window.openPotatoOptions();
+            else if(pId.startsWith('indomie')) window.openIndomieOptions(pId);
+        };
+
+        const buildOptionRow = (pId, optName, price, isPotato = false) => {
+            let finalOpt = optName;
+            let mods = [];
+            if(isPotato) {
+               if(appState.potatoNoKetchup) mods.push('بدون كتشب');
+               if(appState.potatoNoMayo) mods.push('بدون ميونيز');
+            }
+            if(mods.length) finalOpt += ' (' + mods.join(' و ') + ')';
+            
+            const k = `${pId}_${finalOpt}`;
+            const qty = appState.cart[k]?.quantity || 0;
+            
+            return `
+            <div class="flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl shadow-sm mb-3">
+                <div class="text-right">
+                    <span class="font-bold text-[#002d74] block text-sm">${optName}</span>
+                    <span class="text-gray-500 font-bold text-xs mt-1 block">${price.toFixed(2)} د.أ</span>
+                </div>
+                ${qty > 0 ? 
+                    `<div class="flex items-center justify-between bg-[#f3f4f6] rounded-full w-[90px] h-[36px] p-1 border border-gray-200 shadow-inner">
+                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, -1, ${isPotato})" class="text-red-500 font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">-</button>
+                        <span class="font-extrabold text-[#002d74] text-base">${qty}</span>
+                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, 1, ${isPotato})" class="text-[#00839b] font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">+</button>
+                    </div>`
+                    : `<button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, 1, ${isPotato})" class="bg-[#00839b] text-white px-5 py-2 rounded-xl font-bold text-sm shadow-md hover:bg-[#005f73] transition-colors">إضافة</button>`
+                }
+            </div>`;
         };
 
         window.updateQty = async (k, d) => {
@@ -1285,6 +1334,7 @@
             if(!o) return;
             
             o.items.forEach(i => {
+                if(i.isAvailable === false) return; // لا نرجع المنتجات المحذوفة
                 const k = i.option ? `${i.product.id}_${i.option}` : i.product.id;
                 appState.cart[k] = { product: i.product, quantity: (appState.cart[k]?.quantity||0) + i.quantity, option: i.option };
             });
@@ -1302,7 +1352,16 @@
         };
 
         window.openZingerOptions = () => {
-            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png" class="h-40 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-6">سندويشة شاورما</h2><div class="space-y-3" dir="rtl"><button onclick="window.addItem('zinger_sand');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>سندويشة زنجر</span><span class="text-gray-500">1.50 د.أ</span></button><button onclick="window.addItem('zinger_meal');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>وجبة زنجر</span><span class="text-gray-500">2.50 د.أ</span></button></div></div>`;
+            const p = appState.products.find(x => x.id === 'zinger');
+            document.getElementById('product-modal-body').innerHTML = `
+                <div class="p-6 text-center">
+                    <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
+                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">ساندويشة زنجر</h2>
+                    <div class="space-y-3" dir="rtl">
+                        ${buildOptionRow('zinger', 'ساندويشة زنجر', 1.50)}
+                        ${buildOptionRow('zinger', 'وجبة زنجر', 2.50)}
+                    </div>
+                </div>`;
             toggleModal('product', true);
         };
 
@@ -1319,90 +1378,84 @@
 
         window.openShaninaOptions = () => {
             const p = appState.products.find(x => x.id === '28');
-            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-2">شنينه</h2><p class="text-sm font-bold text-gray-500 mb-6">الرجاء اختيار الحجم/السعر:</p><div class="space-y-3" dir="rtl"><button onclick="window.addItem('shanina_1');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>شنينه 0.50</span><span class="text-gray-500">0.50 د.أ</span></button><button onclick="window.addItem('shanina_2');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>شنينه 0.75</span><span class="text-gray-500">0.75 د.أ</span></button><button onclick="window.addItem('shanina_3');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>شنينه 1.00</span><span class="text-gray-500">1.00 د.أ</span></button><button onclick="window.addItem('shanina_4');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>شنينه 1.25</span><span class="text-gray-500">1.25 د.أ</span></button></div></div>`;
-            toggleModal('product', true);
-        };
-
-        window.openPotatoOptions = () => {
-            const p = appState.products.find(x => x.id === '31');
-            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-6">سندويشة بطاطا</h2><div class="space-y-3" dir="rtl"><button onclick="window.openPotatoCustomizations('potato_small')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>سندويشة صغيرة</span><span class="text-gray-500">0.40 د.أ</span></button><button onclick="window.openPotatoCustomizations('potato_large')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>سندويشة كبيرة</span><span class="text-gray-500">0.80 د.أ</span></button></div></div>`;
-            toggleModal('product', true);
-        };
-        
-        window.openPotatoCustomizations = (id) => {
-            document.getElementById('product-modal-body').innerHTML = `<div class="p-6"><h2 class="text-xl font-bold mb-4 text-[#002d74]">إضافات (اختياري)</h2><label class="flex items-center gap-3 mb-3 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm cursor-pointer hover:bg-gray-50"><input type="checkbox" id="no-ketchup" class="w-5 h-5 text-[#00839b] rounded focus:ring-[#00839b]"> <span class="font-bold text-gray-700">بدون كتشب</span></label><label class="flex items-center gap-3 mb-6 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm cursor-pointer hover:bg-gray-50"><input type="checkbox" id="no-mayo" class="w-5 h-5 text-[#00839b] rounded focus:ring-[#00839b]"> <span class="font-bold text-gray-700">بدون ميونيز</span></label><button onclick="window.confirmPotatoCart('${id}')" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-lg">إضافة للسلة</button></div>`;
-        };
-
-        window.confirmPotatoCart = (id) => {
-            let o = []; if(document.getElementById('no-ketchup').checked) o.push('بدون كتشب'); if(document.getElementById('no-mayo').checked) o.push('بدون ميونيز');
-            window.addToCartWithOption(id, o.length?o.join(' و '):null);
-        };
-
-        window.openEggsOptions = () => {
-            const p = appState.products.find(x => x.id === '39');
-            const k1 = '39_كرتونة بيض';
-            const k2 = '39_بيضة واحدة';
-            const qty1 = appState.cart[k1]?.quantity || 0;
-            const qty2 = appState.cart[k2]?.quantity || 0;
-
             document.getElementById('product-modal-body').innerHTML = `
                 <div class="p-6 text-center">
                     <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
-                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">بيض</h2>
+                    <h2 class="text-2xl font-bold text-[#002d74] mb-2">شنينه</h2>
+                    <p class="text-sm font-bold text-gray-500 mb-6">الرجاء اختيار الحجم/السعر:</p>
                     <div class="space-y-3" dir="rtl">
-                        
-                        <div class="flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl shadow-sm">
-                            <div class="text-right">
-                                <span class="font-bold text-[#002d74] block text-sm">كرتونة بيض</span>
-                                <span class="text-gray-500 font-bold text-xs mt-1 block">3.15 د.أ</span>
-                            </div>
-                            ${qty1 > 0 ? 
-                                `<div class="flex items-center justify-between bg-[#f3f4f6] rounded-full w-[90px] h-[36px] p-1 border border-gray-200 shadow-inner">
-                                    <button onclick="window.updateQtyAndRefreshModal('${k1}', -1)" class="text-red-500 font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">-</button>
-                                    <span class="font-extrabold text-[#002d74] text-base">${qty1}</span>
-                                    <button onclick="window.updateQtyAndRefreshModal('${k1}', 1)" class="text-[#00839b] font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">+</button>
-                                </div>`
-                                : `<button onclick="window.updateQtyAndRefreshModal('${k1}', 1)" class="bg-[#00839b] text-white px-5 py-2 rounded-xl font-bold text-sm shadow-md hover:bg-[#005f73] transition-colors">إضافة</button>`
-                            }
-                        </div>
-
-                        <div class="flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl shadow-sm">
-                            <div class="text-right">
-                                <span class="font-bold text-[#002d74] block text-sm">بيضة واحدة</span>
-                                <span class="text-gray-500 font-bold text-xs mt-1 block">0.15 د.أ</span>
-                            </div>
-                            ${qty2 > 0 ? 
-                                `<div class="flex items-center justify-between bg-[#f3f4f6] rounded-full w-[90px] h-[36px] p-1 border border-gray-200 shadow-inner">
-                                    <button onclick="window.updateQtyAndRefreshModal('${k2}', -1)" class="text-red-500 font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">-</button>
-                                    <span class="font-extrabold text-[#002d74] text-base">${qty2}</span>
-                                    <button onclick="window.updateQtyAndRefreshModal('${k2}', 1)" class="text-[#00839b] font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">+</button>
-                                </div>`
-                                : `<button onclick="window.updateQtyAndRefreshModal('${k2}', 1)" class="bg-[#00839b] text-white px-5 py-2 rounded-xl font-bold text-sm shadow-md hover:bg-[#005f73] transition-colors">إضافة</button>`
-                            }
-                        </div>
-
+                        ${buildOptionRow('28', 'شنينه 0.50', 0.50)}
+                        ${buildOptionRow('28', 'شنينه 0.75', 0.75)}
+                        ${buildOptionRow('28', 'شنينه 1.00', 1.00)}
+                        ${buildOptionRow('28', 'شنينه 1.25', 1.25)}
                     </div>
                 </div>`;
             toggleModal('product', true);
         };
 
-        window.updateQtyAndRefreshModal = async (k, d) => {
-            let pId = '39';
-            let opt = k.includes('كرتونة') ? 'كرتونة بيض' : 'بيضة واحدة';
-            
-            if(!appState.cart[k] && d > 0) {
-                const p = appState.products.find(x => x.id === pId);
-                let price = opt === 'كرتونة بيض' ? 3.15 : 0.15;
-                const tempProduct = {...p, price: price}; 
-                await window.addToCartWithOptionDirect(tempProduct, opt, k);
-            } else {
-                await window.updateQty(k, d);
-            }
-            window.openEggsOptions();
+        window.openPotatoOptions = () => {
+            const p = appState.products.find(x => x.id === '31');
+            document.getElementById('product-modal-body').innerHTML = `
+                <div class="p-6 text-center">
+                    <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
+                    <h2 class="text-2xl font-bold text-[#002d74] mb-4">سندويشة بطاطا</h2>
+                    
+                    <div class="text-right mb-5 border-b pb-4">
+                        <h2 class="text-sm font-bold mb-3 text-[#002d74]">إضافات (اختياري)</h2>
+                        <label class="flex items-center gap-3 mb-2 p-3 bg-white border border-gray-200 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" id="no-ketchup" class="w-5 h-5 text-[#00839b] rounded" onchange="window.togglePotatoMod('ketchup')" ${appState.potatoNoKetchup?'checked':''}> 
+                            <span class="font-bold text-gray-700 text-sm">بدون كتشب</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50">
+                            <input type="checkbox" id="no-mayo" class="w-5 h-5 text-[#00839b] rounded" onchange="window.togglePotatoMod('mayo')" ${appState.potatoNoMayo?'checked':''}> 
+                            <span class="font-bold text-gray-700 text-sm">بدون ميونيز</span>
+                        </label>
+                    </div>
+
+                    <div class="space-y-3" dir="rtl">
+                        ${buildOptionRow('31', 'سندويشة صغيرة', 0.40, true)}
+                        ${buildOptionRow('31', 'سندويشة كبيرة', 0.80, true)}
+                    </div>
+                </div>`;
+            toggleModal('product', true);
+        };
+
+        window.togglePotatoMod = (type) => {
+            if(type === 'ketchup') appState.potatoNoKetchup = !appState.potatoNoKetchup;
+            if(type === 'mayo') appState.potatoNoMayo = !appState.potatoNoMayo;
+            window.openPotatoOptions();
+        };
+
+        window.openIndomieOptions = (id) => {
+            const p = appState.products.find(x => x.id === id);
+            document.getElementById('product-modal-body').innerHTML = `
+                <div class="p-6 text-center">
+                    <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
+                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">${p?.name}</h2>
+                    <div class="space-y-3" dir="rtl">
+                        ${buildOptionRow(id, 'بكيت واحد', 0.25)}
+                        ${buildOptionRow(id, '5 بكيتات', 1.00)}
+                    </div>
+                </div>`;
+            toggleModal('product', true);
+        };
+
+        window.openEggsOptions = () => {
+            const p = appState.products.find(x => x.id === '39');
+            document.getElementById('product-modal-body').innerHTML = `
+                <div class="p-6 text-center">
+                    <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
+                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">بيض</h2>
+                    <div class="space-y-3" dir="rtl">
+                        ${buildOptionRow('39', 'كرتونة بيض', 3.15)}
+                        ${buildOptionRow('39', 'بيضة واحدة', 0.15)}
+                    </div>
+                </div>`;
+            toggleModal('product', true);
         };
 
         window.openDetails = (id) => {
-            if(['24','27','28','31','zinger', '39'].includes(id)) { window.addItem(id); return; }
+            if(hasDynamicOptions(id)) { window.addItem(id); return; }
             const p = appState.products.find(x => x.id === id); if(!p) return;
             document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p.image}" class="h-48 mx-auto mb-4 object-contain ${p.outOfStock ? 'opacity-50 grayscale' : ''}"><h2 class="text-2xl font-bold text-[#002d74] mb-2">${p.name}</h2><p class="font-black text-[#00839b] text-xl mb-4">${p.price.toFixed(2)} د.أ</p><p class="text-sm text-gray-500 mb-6 leading-relaxed">${p.ingredients||''}</p><button onclick="window.addItem('${id}');window.toggleModal('product',false)" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-lg flex justify-center items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> إضافة للسلة</button></div>`;
             toggleModal('product', true);
