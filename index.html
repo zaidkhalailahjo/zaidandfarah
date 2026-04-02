@@ -999,7 +999,28 @@
             
             const isFreeDelivery = appState.profile?.freeDelivery || false;
             
-            let baseDelivery = 0.25; // التعديل الأول: رسوم التوصيل أصبحت 0.25
+            // تحديد المطعم الحالي لمعرفة رسوم التوصيل والخدمة
+            let currentRest = null;
+            if (items.length > 0) {
+                currentRest = items[0].product.restaurant;
+            } else if (appState.currentRestaurant) {
+                currentRest = appState.currentRestaurant;
+            }
+
+            let baseDelivery = 0;
+            let service = 0;
+
+            // تحديد الأسعار بناءً على المطعم
+            if (currentRest === 'مطعم سلمة' || currentRest === 'الحموي' || currentRest === 'انكل اوساكا') {
+                baseDelivery = 0.25;
+                service = 0.15;
+            } else {
+                // سناكات (الافتراضي)
+                baseDelivery = 0.20;
+                service = 0.00;
+            }
+            
+            // تخصيص التوصيل من صفحة الأدمن (يحل محل السعر الافتراضي إن وجد)
             if (appState.profile?.customDelivery !== undefined && appState.profile.customDelivery !== '') {
                 baseDelivery = parseFloat(appState.profile.customDelivery);
             }
@@ -1007,7 +1028,6 @@
             const delivery = (hasItems && !isFreeDelivery) ? baseDelivery : 0;
             const originalDelivery = hasItems ? baseDelivery : 0;
 
-            const service = items.some(i => ['مطعم سلمة', 'الحموي', 'انكل اوساكا'].includes(i.product.restaurant)) ? 0.15 : 0;
             let discount = appState.appliedCoupon?.val || 0;
             if(discount > (sub + delivery + service)) discount = sub + delivery + service;
             return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
