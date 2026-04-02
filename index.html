@@ -122,6 +122,11 @@
         <p class="text-gray-500 text-sm md:text-base">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
     </div>
 
+    <!-- Category container (now hidden by default on home screen, shown when inside a restaurant) -->
+    <div class="container mx-auto px-4 py-4 hidden" id="category-wrapper">
+        <div id="categories-container" class="flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth"></div>
+    </div>
+
     <main class="container mx-auto px-4 pb-32 flex-grow pt-4">
         <!-- Active Order Banner -->
         <div id="active-order-banner" class="hidden mb-6"></div>
@@ -1032,7 +1037,7 @@
             return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
-        const getCategoriesHtml = () => {
+        window.renderCategoriesHtml = () => {
             if (!appState.currentRestaurant) return '';
             let cats = ['الكل'];
             if (appState.currentRestaurant === 'سناكات') {
@@ -1157,11 +1162,11 @@
                 </div>`;
             }).join('');
 
-            document.getElementById('products-grid').innerHTML = backHtml + getCategoriesHtml() + contentHtml + customOrderHtml;
+            document.getElementById('products-grid').innerHTML = backHtml + window.renderCategoriesHtml() + contentHtml + customOrderHtml;
             if(window.lucide) lucide.createIcons();
         };
 
-        window.renderApp = () => { renderProducts(); }; // Fixed to make buttons click smoothly
+        window.renderApp = () => { window.renderProducts(); }; // Fixed to make buttons click smoothly
         
         window.addItem = (id) => {
             const loggedIn = appState.user && !appState.user.isAnonymous;
@@ -1838,7 +1843,7 @@
         document.getElementById('desktop-search')?.addEventListener('input', handleSearch);
         document.getElementById('mobile-search')?.addEventListener('input', handleSearch);
 
-        window.renderApp = () => { window.renderCategories(); renderProducts(); if(window.lucide) lucide.createIcons(); };
+        window.renderApp = () => { window.renderCategories(); window.renderProducts(); if(window.lucide) lucide.createIcons(); };
         
         // Start
         initFirebase();
