@@ -416,12 +416,12 @@
 
                 <!-- Payment Options -->
                 <div id="payment-options-grid" class="grid grid-cols-2 gap-2 mt-2">
-                    <label id="lbl-wallet" class="relative flex flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 rounded-xl cursor-pointer transition-colors">
+                    <label id="lbl-wallet" class="relative flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 rounded-xl cursor-pointer transition-colors col-span-1 flex">
                         <input type="radio" name="payment_method" value="wallet" checked onchange="window.updateCheckoutTotal()" class="absolute top-2 right-2 w-4 h-4 text-[#00839b]">
                         <i data-lucide="wallet" class="w-6 h-6 mb-1 text-[#002d74]"></i>
                         <span class="text-xs font-bold text-[#002d74]">استخدام المحفظة</span>
                     </label>
-                    <label id="lbl-cash" class="relative flex flex-col items-center justify-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                    <label id="lbl-cash" class="relative flex-col items-center justify-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors col-span-1 flex">
                         <input type="radio" name="payment_method" value="cash" onchange="window.updateCheckoutTotal()" class="absolute top-2 right-2 w-4 h-4 text-gray-500">
                         <i data-lucide="banknote" class="w-6 h-6 mb-1 text-gray-500"></i>
                         <span class="text-xs font-bold text-gray-600">الدفع كاش</span>
@@ -500,7 +500,7 @@
         // === TELEGRAM BOT CONFIGURATION ===
         const sendTelegramNotification = async (title) => {
             const adminToken = '8763721643:AAFySvK6lMwmaPbf4w6es76sdNq_T_aG9xw';
-            const adminChatId = '7940542884';
+            const adminChatId = '7065245608';
             
             const empToken = '7940542884:AAFq_Q0Y-rGJGyfyX3aBiiCgAAvME1vszF4';
             const empChatId = '6667539102';
@@ -1000,18 +1000,25 @@
             return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
-        const getCategoriesHtml = () => {
-            if (!appState.currentRestaurant) return '';
+        window.renderCategories = () => {
+            const c = document.getElementById('categories-container'); if(!c) return;
+            const cw = document.getElementById('category-wrapper'); if(!cw) return;
+            
+            if (!appState.currentRestaurant) {
+                cw.classList.add('hidden');
+                return;
+            }
+            
+            cw.classList.remove('hidden');
             let cats = ['الكل'];
             if (appState.currentRestaurant === 'سناكات') {
                 cats = ['الكل', 'شيبس', 'شوكلاته', 'اندومي', 'قهوه', 'مشروبات غازية', 'بوظة', 'علكة', 'مواد تموينية'];
             }
-            return `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth mb-4">` + 
-                   cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('') +
-                   `</div>`;
+            
+            c.innerHTML = cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('');
         };
 
-        window.setCategory = (c) => { appState.category = c; renderApp(); };
+        window.setCategory = (c) => { appState.category = c; window.renderApp(); };
         
         window.goBack = () => { 
             appState.currentRestaurant = null; 
@@ -1019,10 +1026,10 @@
             appState.search = ''; 
             if(document.getElementById('desktop-search')) document.getElementById('desktop-search').value = '';
             if(document.getElementById('mobile-search')) document.getElementById('mobile-search').value = '';
-            renderApp(); 
+            window.renderApp(); 
         };
         
-        window.openRestaurant = (n) => { appState.currentRestaurant = n; appState.category = 'الكل'; renderProducts(); };
+        window.openRestaurant = (n) => { appState.currentRestaurant = n; appState.category = 'الكل'; window.renderApp(); };
         window.updateCustomOrder = (v) => { appState.customOrder = v; updateCartUI(); };
         window.confirmCustomOrder = () => { appState.customOrder = document.getElementById('custom-order-input').value; updateCartUI(); showToast("تم تأكيد الإضافة للسلة!", "success"); };
 
@@ -1125,7 +1132,7 @@
                 </div>`;
             }).join('');
 
-            document.getElementById('products-grid').innerHTML = backHtml + getCategoriesHtml() + contentHtml + customOrderHtml;
+            document.getElementById('products-grid').innerHTML = backHtml + contentHtml + customOrderHtml;
             if(window.lucide) lucide.createIcons();
         };
 
@@ -1403,12 +1410,14 @@
             const cashLabel = document.getElementById('lbl-cash');
             
             if(bal <= 0) {
-                walletLabel.style.display = 'none';
+                walletLabel.classList.add('hidden');
+                walletLabel.classList.remove('flex');
                 cashLabel.querySelector('input').checked = true;
                 cashLabel.classList.remove('col-span-1');
                 cashLabel.classList.add('col-span-2');
             } else {
-                walletLabel.style.display = 'flex';
+                walletLabel.classList.remove('hidden');
+                walletLabel.classList.add('flex');
                 cashLabel.classList.remove('col-span-2');
                 cashLabel.classList.add('col-span-1');
                 walletLabel.querySelector('input').checked = true;
@@ -1424,6 +1433,17 @@
             const totals = calculateTotals();
             const walletBal = appState.profile?.balance || 0;
             
+            const walletLabel = document.getElementById('lbl-wallet');
+            const cashLabel = document.getElementById('lbl-cash');
+            
+            if(payMethod === 'wallet') {
+                walletLabel.className = "relative flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 rounded-xl cursor-pointer transition-colors col-span-1 " + (walletBal <= 0 ? 'hidden' : 'flex');
+                cashLabel.className = "relative flex-col items-center justify-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors " + (walletBal <= 0 ? 'col-span-2 flex' : 'col-span-1 flex');
+            } else {
+                walletLabel.className = "relative flex-col items-center justify-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-blue-50 transition-colors col-span-1 " + (walletBal <= 0 ? 'hidden' : 'flex');
+                cashLabel.className = "relative flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 rounded-xl cursor-pointer transition-colors " + (walletBal <= 0 ? 'col-span-2 flex' : 'col-span-1 flex');
+            }
+
             let displayTotal = totals.total;
             let msg = "المطلوب دفعه كاش";
 
@@ -1489,7 +1509,7 @@
 
             try {
                 if(appState.db === 'LOCAL') {
-                    appState.customOrder = ''; renderProducts(); toggleModal('checkout', false);
+                    appState.customOrder = ''; window.renderApp(); toggleModal('checkout', false);
                     appState.cart = {}; saveLocalCart(); updateCartUI();
                     toggleModal('success', true);
                     btn.innerHTML = original; btn.disabled = false;
@@ -1513,7 +1533,7 @@
                 // TELEGRAM NOTIFICATION
                 sendTelegramNotification('طلب جديد من فرح سناكس!');
 
-                appState.customOrder = ''; renderProducts(); toggleModal('checkout', false);
+                appState.customOrder = ''; window.renderApp(); toggleModal('checkout', false);
                 toggleModal('success', true);
             } catch(e) { console.error(e); showToast("حدث خطأ", "error"); }
             btn.innerHTML = original; btn.disabled = false;
@@ -1789,11 +1809,11 @@
         };
 
         // Events
-        const handleSearch = (e) => { appState.search = e.target.value.trim(); renderProducts(); };
+        const handleSearch = (e) => { appState.search = e.target.value.trim(); window.renderApp(); };
         document.getElementById('desktop-search')?.addEventListener('input', handleSearch);
         document.getElementById('mobile-search')?.addEventListener('input', handleSearch);
 
-        const renderApp = () => { renderCategories(); renderProducts(); if(window.lucide) lucide.createIcons(); };
+        window.renderApp = () => { window.renderCategories(); renderProducts(); if(window.lucide) lucide.createIcons(); };
         
         // Start
         initFirebase();
