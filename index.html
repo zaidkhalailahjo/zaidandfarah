@@ -10,8 +10,8 @@
     <meta name="keywords" content="سناكات, فرح سناكس, شيبس, شوكولاتة, مطعم سلمة, شاورما, توصيل طلبات, بوظة, قهوة">
     
     <!-- الشعار الذي يظهر في بحث جوجل وعلامات تبويب المتصفح (Favicon) -->
-    <link rel="icon" href="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" type="image/png">
-    <link rel="apple-touch-icon" href="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png">
+    <link rel="icon" href="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" sizes="512x512" type="image/png">
+    <link rel="apple-touch-icon" href="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" sizes="512x512">
     
     <!-- تخصيص طريقة ظهور الرابط عند مشاركته في واتساب وفيسبوك -->
     <meta property="og:title" content="فرح سناكس - أطلب الآن">
@@ -85,9 +85,10 @@
             </div>
 
             <div class="flex items-center gap-2 md:gap-3">
-                <button id="auth-btn" onclick="window.toggleModal('auth', true)" class="bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full text-xs md:text-sm font-bold items-center gap-1 transition-colors border border-white/20 flex">
+                <!-- Desktop Auth Button -->
+                <button id="auth-btn-desktop" onclick="window.toggleModal('auth', true)" class="hidden md:flex bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full text-xs md:text-sm font-bold items-center gap-1 transition-colors border border-white/20">
                     <i data-lucide="user" class="w-4 h-4"></i>
-                    <span id="auth-btn-text">دخول</span>
+                    <span class="auth-btn-text-class">دخول</span>
                 </button>
                 
                 <button id="orders-btn" onclick="window.toggleModal('orders', true)" class="hidden bg-[#00839b] hover:bg-[#005f73] px-3 py-2 rounded-full text-xs md:text-sm font-bold items-center gap-1 transition-colors shadow-md flex">
@@ -101,7 +102,14 @@
                 </div>
             </div>
         </div>
-        <div class="md:hidden px-4 pb-3 flex gap-2">
+        <div class="md:hidden px-4 pb-3 flex flex-col gap-2">
+           <div class="flex justify-end">
+               <!-- Mobile Auth Button -->
+               <button id="auth-btn-mobile" onclick="window.toggleModal('auth', true)" class="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full text-xs font-bold items-center gap-1 transition-colors border border-white/20 flex w-fit">
+                   <i data-lucide="user" class="w-3 h-3"></i>
+                   <span class="auth-btn-text-class">دخول</span>
+               </button>
+           </div>
            <div class="relative flex-grow">
                <input type="text" id="mobile-search" placeholder="ابحث عن منتج..." class="w-full py-2.5 px-4 pr-10 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00839b] text-sm shadow-inner">
                <i data-lucide="search" class="absolute right-3 top-2.5 text-gray-400 w-5 h-5"></i>
@@ -112,11 +120,6 @@
     <div class="bg-gradient-to-b from-[#f0f9fa] to-white py-6 px-4 text-center border-b border-[#00839b]/20">
         <h2 class="text-2xl md:text-4xl font-extrabold text-[#002d74] mb-2">ألذ وأشهر أصناف السناكات!</h2>
         <p class="text-gray-500 text-sm md:text-base">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
-    </div>
-
-    <!-- Category container (now hidden by default on home screen, shown when inside a restaurant) -->
-    <div class="container mx-auto px-4 py-4 hidden" id="category-wrapper">
-        <div id="categories-container" class="flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth"></div>
     </div>
 
     <main class="container mx-auto px-4 pb-32 flex-grow pt-4">
@@ -724,7 +727,7 @@
                 dbRests.forEach(dbR => {
                     if (!appState.restaurants.find(r => r.name === dbR.name)) appState.restaurants.push(dbR);
                 });
-                renderApp();
+                window.renderApp();
             }, (error) => console.log("Rest listen err"));
 
             onSnapshot(collection(appState.db, PATH_PRODUCTS), (snap) => {
@@ -736,7 +739,7 @@
                         appState.products.push(dbP);
                     }
                 });
-                renderApp();
+                window.renderApp();
             }, (error) => console.log("Prod listen err"));
         };
 
@@ -757,7 +760,7 @@
                             appState.listenersInitialized = true;
                         }
                         listenToProfile(); listenToOrders(); listenToCart(); listenToFeedback();
-                        appState.isAuthReady = true; renderProducts(); 
+                        appState.isAuthReady = true; window.renderApp(); 
                     } else {
                         appState.profile = null; appState.cart = {}; updateAuthUI(); updateCartUI();
                         
@@ -767,14 +770,14 @@
                         document.getElementById('auth-close-btn').classList.add('hidden'); 
                         toggleModal('auth', true);
 
-                        appState.isAuthReady = true; renderProducts(); 
+                        appState.isAuthReady = true; window.renderApp(); 
                     }
                 });
             } catch (e) {
                 console.error("Firebase init err:", e);
                 appState.db = 'LOCAL'; appState.isAuthReady = true;
                 appState.cart = loadLocalCart();
-                updateCartUI(); renderProducts();
+                updateCartUI(); window.renderApp();
             }
         };
 
@@ -817,7 +820,8 @@
 
         const updateAuthUI = () => {
             const loggedIn = appState.user && !appState.user.isAnonymous;
-            document.getElementById('auth-btn-text').textContent = loggedIn && appState.profile?.name ? appState.profile.name.split(' ')[0] : (loggedIn ? 'حسابي' : 'دخول');
+            const authText = loggedIn && appState.profile?.name ? appState.profile.name.split(' ')[0] : (loggedIn ? 'حسابي' : 'دخول');
+            document.querySelectorAll('.auth-btn-text-class').forEach(el => el.textContent = authText);
             document.getElementById('orders-btn').classList.toggle('hidden', !loggedIn);
             
             const walletDisp = document.getElementById('wallet-display');
@@ -1028,7 +1032,7 @@
             return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
-        window.renderCategoriesHtml = () => {
+        const getCategoriesHtml = () => {
             if (!appState.currentRestaurant) return '';
             let cats = ['الكل'];
             if (appState.currentRestaurant === 'سناكات') {
@@ -1090,11 +1094,11 @@
 
             if (appState.currentRestaurant) {
                 const r = appState.restaurants.find(x => x.name === appState.currentRestaurant);
-                backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2><p class="text-xs text-gray-500">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.goBack()"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
+                backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img loading="lazy" src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2><p class="text-xs text-gray-500">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.goBack()"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
             }
 
             if (!appState.currentRestaurant && !appState.search) {
-                contentHtml += visibleRest.map(r => `<div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 flex flex-col items-center justify-center hover:shadow-lg cursor-pointer transition-shadow" onclick="window.openRestaurant('${r.name}')"><div class="h-24 w-24 mb-3 rounded-full border-4 border-gray-50 shadow-inner flex items-center justify-center overflow-hidden ${r.bg}"><img src="${r.image}" class="max-h-full max-w-full object-contain ${r.bg==='bg-black'?'p-2':''}"></div><h3 class="font-bold text-[#002d74] text-lg">${r.name}</h3><p class="text-xs text-gray-400 mt-1">${r.desc || ''}</p></div>`).join('');
+                contentHtml += visibleRest.map(r => `<div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 flex flex-col items-center justify-center hover:shadow-lg cursor-pointer transition-shadow" onclick="window.openRestaurant('${r.name}')"><div class="h-24 w-24 mb-3 rounded-full border-4 border-gray-50 shadow-inner flex items-center justify-center overflow-hidden ${r.bg}"><img loading="lazy" src="${r.image}" class="max-h-full max-w-full object-contain ${r.bg==='bg-black'?'p-2':''}"></div><h3 class="font-bold text-[#002d74] text-lg">${r.name}</h3><p class="text-xs text-gray-400 mt-1">${r.desc || ''}</p></div>`).join('');
                 document.getElementById('products-grid').innerHTML = contentHtml; 
                 document.getElementById('empty-state').classList.add('hidden');
                 if(window.lucide) lucide.createIcons(); 
@@ -1144,7 +1148,7 @@
                 const imgStyle = isOutOfStock ? `opacity-50 grayscale` : ``;
 
                 return `<div class="bg-white rounded-3xl p-3 shadow-sm hover:shadow-md border border-transparent hover:border-[#00839b]/20 cursor-pointer flex flex-col relative" onclick="if(!${isOutOfStock}) window.openDetails('${p.id}')">
-                    <img src="${p.image}" class="h-28 object-contain mb-3 drop-shadow-sm ${imgStyle}">
+                    <img loading="lazy" src="${p.image}" class="h-28 object-contain mb-3 drop-shadow-sm ${imgStyle}">
                     <h3 class="font-bold text-gray-800 text-sm mb-1 truncate ${isOutOfStock ? 'text-gray-400' : ''}">${p.name}</h3>
                     <div class="mt-auto flex justify-between items-center w-full pt-2">
                         ${priceDisplay}
@@ -1153,10 +1157,12 @@
                 </div>`;
             }).join('');
 
-            document.getElementById('products-grid').innerHTML = backHtml + window.renderCategoriesHtml() + contentHtml + customOrderHtml;
+            document.getElementById('products-grid').innerHTML = backHtml + getCategoriesHtml() + contentHtml + customOrderHtml;
             if(window.lucide) lucide.createIcons();
         };
 
+        window.renderApp = () => { renderProducts(); }; // Fixed to make buttons click smoothly
+        
         window.addItem = (id) => {
             const loggedIn = appState.user && !appState.user.isAnonymous;
             if(!loggedIn) return showToast("قم بتسجيل الدخول أولاً", "error");
