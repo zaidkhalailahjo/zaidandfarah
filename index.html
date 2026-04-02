@@ -182,9 +182,6 @@
                 <button onclick="window.openFeedback()" class="w-full bg-blue-50 text-[#002d74] py-3 rounded-xl font-bold hover:bg-blue-100 transition-colors mt-4 flex items-center justify-center gap-2">
                     <i data-lucide="message-square" class="w-5 h-5"></i> الاقتراحات والشكاوي
                 </button>
-                <button id="install-app-btn-profile" class="w-full bg-[#00839b]/10 text-[#00839b] py-3 rounded-xl font-bold hover:bg-[#00839b]/20 transition-colors mt-2 flex items-center justify-center gap-2 hidden">
-                    <i data-lucide="download" class="w-5 h-5"></i> تنزيل الموقع على الشاشة الرئيسة
-                </button>
                 <button onclick="window.confirmLogout()" class="w-full bg-red-50 text-red-600 py-3 rounded-xl font-bold hover:bg-red-100 transition-colors mt-2">تسجيل الخروج</button>
             </div>
         </div>
@@ -482,17 +479,6 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            const installBtn = document.getElementById('install-app-btn-profile');
-            if (installBtn) {
-                installBtn.classList.remove('hidden');
-                installBtn.onclick = () => {
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then((choiceResult) => {
-                        deferredPrompt = null;
-                        installBtn.classList.add('hidden');
-                    });
-                };
-            }
         });
 
         // === TELEGRAM BOT CONFIGURATION ===
@@ -559,7 +545,7 @@
             { id: '28', name: 'شنينه', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
             { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/catalog_yogert_Baladna+Yogurt+With+Cream+200gm-removebg-preview.png' },
             { id: '38', name: 'علبة لبن', price: 1.00, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D9%84%D8%A8%D9%86-removebg-preview.png' },
-            { id: '39', name: 'بيض', price: 0.15, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
+            { id: '39', name: 'بيض', price: 0, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
 
             // سناكات - مشروبات غازية
             { id: '34', name: 'ماتريكس', price: 0, restaurant: 'سناكات', subCategory: 'مشروبات غازية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
@@ -573,7 +559,7 @@
             { id: 'boza_iceberg', name: 'بوظة ايس بيرج', price: 0.35, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/ds5a4564sda564sda_800x-removebg-preview.png' },
             { id: 'boza_spiral', name: 'بوظة سبيرال', price: 0.15, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.51.53AM-removebg-preview.png' },
             { id: 'boza_wave', name: 'بوظة ويف', price: 0.10, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.53.39AM-removebg-preview.png' },
-            { id: 'boza_sandwich', name: 'بوظة ساندويش', price: 0.15, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/04-26-2025_0652am335b39568640d7622323.png' },
+            { id: 'boza_sandwich', name: 'بوظة ساندويش', price: 0.10, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/04-26-2025_0652am335b39568640d7622323.png' },
             { id: 'boza_mini', name: 'بوظة ميني', price: 0.35, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/101211-removebg-preview.png' },
 
             // سناكات - اندومي
@@ -709,7 +695,7 @@
                 dbRests.forEach(dbR => {
                     if (!appState.restaurants.find(r => r.name === dbR.name)) appState.restaurants.push(dbR);
                 });
-                renderApp();
+                window.renderApp();
             }, (error) => console.log("Rest listen err"));
 
             onSnapshot(collection(appState.db, PATH_PRODUCTS), (snap) => {
@@ -721,7 +707,7 @@
                         appState.products.push(dbP);
                     }
                 });
-                renderApp();
+                window.renderApp();
             }, (error) => console.log("Prod listen err"));
         };
 
@@ -742,7 +728,7 @@
                             appState.listenersInitialized = true;
                         }
                         listenToProfile(); listenToOrders(); listenToCart(); listenToFeedback();
-                        appState.isAuthReady = true; renderProducts(); 
+                        appState.isAuthReady = true; window.renderApp(); 
                     } else {
                         appState.profile = null; appState.cart = {}; updateAuthUI(); updateCartUI();
                         
@@ -752,14 +738,14 @@
                         document.getElementById('auth-close-btn').classList.add('hidden'); 
                         toggleModal('auth', true);
 
-                        appState.isAuthReady = true; renderProducts(); 
+                        appState.isAuthReady = true; window.renderApp(); 
                     }
                 });
             } catch (e) {
                 console.error("Firebase init err:", e);
                 appState.db = 'LOCAL'; appState.isAuthReady = true;
                 appState.cart = loadLocalCart();
-                updateCartUI(); renderProducts();
+                updateCartUI(); window.renderApp();
             }
         };
 
@@ -802,7 +788,9 @@
 
         const updateAuthUI = () => {
             const loggedIn = appState.user && !appState.user.isAnonymous;
-            document.getElementById('auth-btn-text').textContent = loggedIn && appState.profile?.name ? appState.profile.name.split(' ')[0] : (loggedIn ? 'حسابي' : 'دخول');
+            document.querySelectorAll('.auth-btn-text-class').forEach(el => {
+                el.textContent = loggedIn && appState.profile?.name ? appState.profile.name.split(' ')[0] : (loggedIn ? 'حسابي' : 'دخول');
+            });
             document.getElementById('orders-btn').classList.toggle('hidden', !loggedIn);
             
             const walletDisp = document.getElementById('wallet-display');
@@ -999,7 +987,7 @@
             
             const isFreeDelivery = appState.profile?.freeDelivery || false;
             
-            let baseDelivery = items.some(i => i.product.restaurant === 'سناكات') ? 0.20 : 0.10;
+            let baseDelivery = items.some(i => i.product.restaurant === 'سناكات') ? 0.25 : 0.25;
             if (appState.profile?.customDelivery !== undefined && appState.profile.customDelivery !== '') {
                 baseDelivery = parseFloat(appState.profile.customDelivery);
             }
@@ -1013,22 +1001,15 @@
             return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
-        window.renderCategories = () => {
-            const c = document.getElementById('categories-container'); if(!c) return;
-            const cw = document.getElementById('category-wrapper'); if(!cw) return;
-            
-            if (!appState.currentRestaurant) {
-                cw.classList.add('hidden');
-                return;
-            }
-            
-            cw.classList.remove('hidden');
+        window.renderCategoriesHtml = () => {
+            if (!appState.currentRestaurant) return '';
             let cats = ['الكل'];
             if (appState.currentRestaurant === 'سناكات') {
                 cats = ['الكل', 'شيبس', 'شوكلاته', 'اندومي', 'قهوه', 'مشروبات غازية', 'بوظة', 'علكة', 'مواد تموينية'];
             }
-            
-            c.innerHTML = cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('');
+            return `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth mb-4">` + 
+                   cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('') +
+                   `</div>`;
         };
 
         window.setCategory = (c) => { appState.category = c; window.renderApp(); };
@@ -1082,11 +1063,11 @@
 
             if (appState.currentRestaurant) {
                 const r = appState.restaurants.find(x => x.name === appState.currentRestaurant);
-                backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2><p class="text-xs text-gray-500">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.goBack()"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
+                backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img loading="lazy" src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2><p class="text-xs text-gray-500">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.goBack()"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
             }
 
             if (!appState.currentRestaurant && !appState.search) {
-                contentHtml += visibleRest.map(r => `<div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 flex flex-col items-center justify-center hover:shadow-lg cursor-pointer transition-shadow" onclick="window.openRestaurant('${r.name}')"><div class="h-24 w-24 mb-3 rounded-full border-4 border-gray-50 shadow-inner flex items-center justify-center overflow-hidden ${r.bg}"><img src="${r.image}" class="max-h-full max-w-full object-contain ${r.bg==='bg-black'?'p-2':''}"></div><h3 class="font-bold text-[#002d74] text-lg">${r.name}</h3><p class="text-xs text-gray-400 mt-1">${r.desc || ''}</p></div>`).join('');
+                contentHtml += visibleRest.map(r => `<div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 flex flex-col items-center justify-center hover:shadow-lg cursor-pointer transition-shadow" onclick="window.openRestaurant('${r.name}')"><div class="h-24 w-24 mb-3 rounded-full border-4 border-gray-50 shadow-inner flex items-center justify-center overflow-hidden ${r.bg}"><img loading="lazy" src="${r.image}" class="max-h-full max-w-full object-contain ${r.bg==='bg-black'?'p-2':''}"></div><h3 class="font-bold text-[#002d74] text-lg">${r.name}</h3><p class="text-xs text-gray-400 mt-1">${r.desc || ''}</p></div>`).join('');
                 document.getElementById('products-grid').innerHTML = contentHtml; 
                 document.getElementById('empty-state').classList.add('hidden');
                 if(window.lucide) lucide.createIcons(); 
@@ -1136,7 +1117,7 @@
                 const imgStyle = isOutOfStock ? `opacity-50 grayscale` : ``;
 
                 return `<div class="bg-white rounded-3xl p-3 shadow-sm hover:shadow-md border border-transparent hover:border-[#00839b]/20 cursor-pointer flex flex-col relative" onclick="if(!${isOutOfStock}) window.openDetails('${p.id}')">
-                    <img src="${p.image}" class="h-28 object-contain mb-3 drop-shadow-sm ${imgStyle}">
+                    <img loading="lazy" src="${p.image}" class="h-28 object-contain mb-3 drop-shadow-sm ${imgStyle}">
                     <h3 class="font-bold text-gray-800 text-sm mb-1 truncate ${isOutOfStock ? 'text-gray-400' : ''}">${p.name}</h3>
                     <div class="mt-auto flex justify-between items-center w-full pt-2">
                         ${priceDisplay}
@@ -1149,17 +1130,8 @@
             if(window.lucide) lucide.createIcons();
         };
 
-        window.renderCategoriesHtml = () => {
-            if (!appState.currentRestaurant) return '';
-            let cats = ['الكل'];
-            if (appState.currentRestaurant === 'سناكات') {
-                cats = ['الكل', 'شيبس', 'شوكلاته', 'اندومي', 'قهوه', 'مشروبات غازية', 'بوظة', 'علكة', 'مواد تموينية'];
-            }
-            return `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth mb-4">` + 
-                   cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('') +
-                   `</div>`;
-        };
-
+        window.renderApp = () => { window.renderProducts(); }; 
+        
         window.addItem = (id) => {
             const loggedIn = appState.user && !appState.user.isAnonymous;
             if(!loggedIn) return showToast("قم بتسجيل الدخول أولاً", "error");
@@ -1786,7 +1758,7 @@
 
             let deliveryRowHtml = `<div class="flex justify-between text-gray-600"><span>سعر التوصيل:</span><span>+ ${(o.fees?.delivery||0).toFixed(2)} د.أ</span></div>`;
             if(o.fees?.isFreeDelivery) {
-                deliveryRowHtml = `<div class="flex justify-between text-gray-600"><span>سعر التوصيل:</span><span><span class="line-through text-red-400 mr-1 text-xs font-normal">${(o.fees?.originalDelivery||0.10).toFixed(2)}</span> <span class="text-green-600 font-bold">+ 0.00 د.أ</span></span></div>`;
+                deliveryRowHtml = `<div class="flex justify-between text-gray-600"><span>سعر التوصيل:</span><span><span class="line-through text-red-400 mr-1 text-xs font-normal">${(o.fees?.originalDelivery||0.25).toFixed(2)}</span> <span class="text-green-600 font-bold">+ 0.00 د.أ</span></span></div>`;
             }
 
             const reorderBtn = o.status === 'تم توصيل الطلب بنجاح' ? `<button onclick="window.reorder('${o.id}')" class="absolute top-3 right-3 text-sm bg-blue-50 text-[#002d74] px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 hover:bg-blue-100 transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i> إعادة الطلب</button>` : '';
@@ -1835,7 +1807,7 @@
         document.getElementById('desktop-search')?.addEventListener('input', handleSearch);
         document.getElementById('mobile-search')?.addEventListener('input', handleSearch);
 
-        window.renderApp = () => { window.renderCategories(); renderProducts(); if(window.lucide) lucide.createIcons(); };
+        window.renderApp = () => { window.renderCategories(); window.renderProducts(); if(window.lucide) lucide.createIcons(); };
         
         // Start
         initFirebase();
