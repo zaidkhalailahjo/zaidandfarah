@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فرح سناكس</title>
+    
+    <!-- تحسينات محركات البحث (SEO) والوصف الذي يظهر في جوجل -->
+    <meta name="description" content="فرح سناكس - وجهتك الأولى لطلب ألذ السناكات، الشوكولاتة، الشيبس، المشروبات، والوجبات السريعة أونلاين. خدمة توصيل سريعة ومميزة تلبي كافة احتياجاتك.">
+    <meta name="keywords" content="سناكات, فرح سناكس, شيبس, شوكولاتة, مطعم سلمة, شاورما, توصيل طلبات, بوظة, قهوة">
+    
+    <!-- الشعار الذي يظهر في بحث جوجل وعلامات تبويب المتصفح (Favicon) -->
+    <link rel="icon" href="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png">
+    
+    <!-- تخصيص طريقة ظهور الرابط عند مشاركته في واتساب وفيسبوك -->
+    <meta property="og:title" content="فرح سناكس - أطلب الآن">
+    <meta property="og:description" content="وجهتك الأولى لطلب ألذ السناكات والوجبات السريعة أونلاين.">
+    <meta property="og:image" content="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png">
+    <meta property="og:type" content="website">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Kufi+Arabic:wght@400;700&display=swap" rel="stylesheet">
@@ -510,7 +525,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
-                }).catch(e => console.error(e));
+                }).catch(e => console.error("Telegram error for chat " + chatId, e));
             };
 
             send(adminToken, adminChatId);
@@ -1013,22 +1028,15 @@
             return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
-        window.renderCategories = () => {
-            const c = document.getElementById('categories-container'); if(!c) return;
-            const cw = document.getElementById('category-wrapper'); if(!cw) return;
-            
-            if (!appState.currentRestaurant) {
-                cw.classList.add('hidden');
-                return;
-            }
-            
-            cw.classList.remove('hidden');
+        window.renderCategoriesHtml = () => {
+            if (!appState.currentRestaurant) return '';
             let cats = ['الكل'];
             if (appState.currentRestaurant === 'سناكات') {
                 cats = ['الكل', 'شيبس', 'شوكلاته', 'اندومي', 'قهوه', 'مشروبات غازية', 'بوظة', 'علكة', 'مواد تموينية'];
             }
-            
-            c.innerHTML = cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('');
+            return `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth mb-4">` + 
+                   cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('') +
+                   `</div>`;
         };
 
         window.setCategory = (c) => { appState.category = c; window.renderApp(); };
@@ -1147,17 +1155,6 @@
 
             document.getElementById('products-grid').innerHTML = backHtml + window.renderCategoriesHtml() + contentHtml + customOrderHtml;
             if(window.lucide) lucide.createIcons();
-        };
-
-        window.renderCategoriesHtml = () => {
-            if (!appState.currentRestaurant) return '';
-            let cats = ['الكل'];
-            if (appState.currentRestaurant === 'سناكات') {
-                cats = ['الكل', 'شيبس', 'شوكلاته', 'اندومي', 'قهوه', 'مشروبات غازية', 'بوظة', 'علكة', 'مواد تموينية'];
-            }
-            return `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth mb-4">` + 
-                   cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('') +
-                   `</div>`;
         };
 
         window.addItem = (id) => {
