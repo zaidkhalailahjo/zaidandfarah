@@ -475,6 +475,28 @@
         const PATH_PRODUCTS = `artifacts/${APP_ID}/public/data/menu_products`;
         const PATH_FEEDBACK = `artifacts/${APP_ID}/public/data/feedback`;
 
+        window.checkRestaurantConflict = (newProductId, proceedCallback) => {
+            const p = appState.products.find(x => x.id === newProductId);
+            if (!p) return;
+            const cartItems = Object.values(appState.cart);
+            if (cartItems.length > 0) {
+                const currentRest = cartItems[0].product.restaurant;
+                if (currentRest !== p.restaurant) {
+                    if (confirm('سلتك تحتوي على منتجات من مكان آخر. هل تريد بدء سلة جديدة وحذف المنتجات الحالية؟')) {
+                        if (appState.db !== 'LOCAL' && appState.user) {
+                            Object.keys(appState.cart).forEach(k => deleteDoc(doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k)).catch(e=>console.log(e)));
+                        }
+                        appState.cart = {};
+                        saveLocalCart();
+                        updateCartUI();
+                        proceedCallback();
+                    }
+                    return;
+                }
+            }
+            proceedCallback();
+        };
+
         // === TELEGRAM BOT CONFIGURATION ===
         const sendTelegramNotification = async (title) => {
             const adminToken = '8763721643:AAFySvK6lMwmaPbf4w6es76sdNq_T_aG9xw';
@@ -511,7 +533,8 @@
             { id: '31', name: 'سندويشة بطاطا', price: 0, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images__20_-removebg-preview.png', ingredients: 'بخبز شراك' },
             { id: 'zinger', name: 'ساندويشة زنجر', price: 1.50, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png', ingredients: 'اختر بين سندويشة أو وجبة' },
             { id: 'shawarma_italy', name: 'وجبة شاورما ايطالي', price: 3.75, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B4%D8%A7%D9%88%D8%B1%D9%85%D8%A7-%D8%A7%D9%8A%D8%B7%D8%A7%D9%84%D9%8A-copy-removebg-preview.png', ingredients: 'تقدم مع بطاطا و مخلل و مايونيز' },
-            
+            { id: '34_salma', name: 'ماتريكس', price: 0, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
+
             // سناكات - شوكولاتة
             { id: '30', name: 'شوكلاته فيوري', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Xrv1gtMvDtRtqoQfh00kvW4blvOZvPPZeOpnPb3G-removebg-preview.png' },
             { id: '29', name: 'بريك تايم الدائرية', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/download-removebg-preview.png' },
@@ -541,7 +564,7 @@
             { id: '39', name: 'بيض', price: 0.15, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
 
             // سناكات - مشروبات غازية
-            { id: '34', name: 'ماتريكس كولا', price: 0.25, restaurant: 'سناكات', subCategory: 'مشروبات غازية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mfRuL349OzXVbDtDBh9xkcQYGeKuidxXO2ETxAXm-removebg-preview.png' },
+            { id: '34', name: 'ماتريكس', price: 0, restaurant: 'سناكات', subCategory: 'مشروبات غازية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
             
             // سناكات - قهوة وعلكة
             { id: '17', name: 'قهوة العميد 2/1', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png' },
@@ -603,14 +626,6 @@
 
         const loadLocalCart = () => { try { return JSON.parse(localStorage.getItem(LS_CART_KEY)) || {}; } catch (e) { return {}; } };
         const saveLocalCart = () => localStorage.setItem(LS_CART_KEY, JSON.stringify(appState.cart));
-
-        const checkLocation = () => {
-            if (!appState.location) {
-                window.setLocation('ضاحية الاستقلال');
-            } else {
-                document.getElementById('current-location-display').textContent = appState.location;
-            }
-        };
 
         const listenToProfile = () => {
             onSnapshot(doc(appState.db, PATH_PROFILES, appState.user.uid), (snap) => {
@@ -1011,7 +1026,29 @@
         window.updateCustomOrder = (v) => { appState.customOrder = v; updateCartUI(); };
         window.confirmCustomOrder = () => { appState.customOrder = document.getElementById('custom-order-input').value; updateCartUI(); showToast("تم تأكيد الإضافة للسلة!", "success"); };
 
-        const hasDynamicOptions = (id) => ['24','27','28','31','zinger', '39', 'indomie_curry', 'indomie_chicken', 'indomie_veg'].includes(id);
+        const hasDynamicOptions = (id) => ['24','27','28','31','zinger', '39', 'indomie_curry', 'indomie_chicken', 'indomie_veg', '34', '34_salma'].includes(id);
+
+        window.checkRestaurantConflict = (newProductId, proceedCallback) => {
+            const p = appState.products.find(x => x.id === newProductId);
+            if (!p) return;
+            const cartItems = Object.values(appState.cart);
+            if (cartItems.length > 0) {
+                const currentRest = cartItems[0].product.restaurant;
+                if (currentRest !== p.restaurant) {
+                    if (confirm('سلتك الحالية تحتوي على منتجات من مكان آخر. هل تريد بدء سلة جديدة وحذف المنتجات الحالية؟')) {
+                        if (appState.db !== 'LOCAL' && appState.user) {
+                            Object.keys(appState.cart).forEach(k => deleteDoc(doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k)).catch(e=>console.log(e)));
+                        }
+                        appState.cart = {};
+                        saveLocalCart();
+                        updateCartUI();
+                        proceedCallback();
+                    }
+                    return;
+                }
+            }
+            proceedCallback();
+        };
 
         const renderProducts = () => {
             document.getElementById('loading-indicator').classList.add('hidden');
@@ -1095,14 +1132,18 @@
         window.addItem = (id) => {
             const loggedIn = appState.user && !appState.user.isAnonymous;
             if(!loggedIn) return showToast("قم بتسجيل الدخول أولاً", "error");
-            if(id==='24') return window.openCoffeeOptions();
-            if(id==='27') return window.openOsakaOptions();
-            if(id==='28') return window.openShaninaOptions();
-            if(id==='31') return window.openPotatoOptions();
-            if(id==='zinger') return window.openZingerOptions();
-            if(id==='39') return window.openEggsOptions();
-            if(id.startsWith('indomie')) return window.openIndomieOptions(id);
-            window.addToCartWithOption(id, null);
+            
+            window.checkRestaurantConflict(id, () => {
+                if(id==='24') return window.openCoffeeOptions();
+                if(id==='27') return window.openOsakaOptions();
+                if(id==='28') return window.openShaninaOptions();
+                if(id==='31') return window.openPotatoOptions();
+                if(id==='zinger') return window.openZingerOptions();
+                if(id==='39') return window.openEggsOptions();
+                if(id==='34' || id==='34_salma') return window.openMatrixOptions(id);
+                if(['indomie_curry', 'indomie_chicken', 'indomie_veg'].includes(id)) return window.openIndomieOptions(id);
+                window.addToCartWithOption(id, null);
+            });
         };
 
         window.addToCartWithOptionDirect = async (p, opt, k) => {
@@ -1132,19 +1173,23 @@
             }
             
             const k = `${pId}_${finalOpt}`;
-            if(!appState.cart[k] && delta > 0) {
-                const p = appState.products.find(x => x.id === pId);
-                const tempProduct = {...p, price: price}; 
-                await window.addToCartWithOptionDirect(tempProduct, finalOpt, k);
-            } else {
-                await window.updateQty(k, delta);
-            }
             
-            if(pId === '39') window.openEggsOptions();
-            else if(pId === 'zinger') window.openZingerOptions();
-            else if(pId === '28') window.openShaninaOptions();
-            else if(pId === '31') window.openPotatoOptions();
-            else if(pId.startsWith('indomie')) window.openIndomieOptions(pId);
+            window.checkRestaurantConflict(pId, async () => {
+                if(!appState.cart[k] && delta > 0) {
+                    const p = appState.products.find(x => x.id === pId);
+                    const tempProduct = {...p, price: price}; 
+                    await window.addToCartWithOptionDirect(tempProduct, finalOpt, k);
+                } else {
+                    await window.updateQty(k, delta);
+                }
+                
+                if(pId === '39') window.openEggsOptions();
+                else if(pId === 'zinger') window.openZingerOptions();
+                else if(pId === '28') window.openShaninaOptions();
+                else if(pId === '31') window.openPotatoOptions();
+                else if(pId === '34' || pId === '34_salma') window.openMatrixOptions(pId);
+                else if(['indomie_curry', 'indomie_chicken', 'indomie_veg'].includes(pId)) window.openIndomieOptions(pId);
+            });
         };
 
         const buildOptionRow = (pId, optName, price, isPotato = false) => {
@@ -1177,7 +1222,14 @@
         };
 
         window.updateQty = async (k, d) => {
-            const item = appState.cart[k]; if(!item) return; const q = item.quantity + d;
+            const item = appState.cart[k]; 
+            if(!item && d > 0) {
+                 const pId = k.split('_')[0];
+                 window.checkRestaurantConflict(pId, async () => {});
+                 return;
+            }
+            if(!item) return;
+            const q = item.quantity + d;
             if (appState.db === 'LOCAL') { if(q <= 0) delete appState.cart[k]; else appState.cart[k].quantity = q; saveLocalCart(); updateCartUI(); }
             else { const ref = doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k); if(q <= 0) await deleteDoc(ref); else await updateDoc(ref, {quantity: q}); }
         };
@@ -1349,7 +1401,6 @@
             const bal = appState.profile?.balance || 0;
             const walletLabel = document.getElementById('lbl-wallet');
             const cashLabel = document.getElementById('lbl-cash');
-            const grid = document.getElementById('payment-options-grid');
             
             if(bal <= 0) {
                 walletLabel.style.display = 'none';
@@ -1471,6 +1522,14 @@
         window.reorder = async (orderId) => {
             const o = appState.myOrders.find(x => x.id === orderId);
             if(!o) return;
+
+            if (Object.keys(appState.cart).length > 0) {
+                if (!confirm("سلتك تحتوي على منتجات حالياً. هل تريد استبدالها لإعادة هذا الطلب؟")) return;
+                if (appState.db !== 'LOCAL') {
+                    Object.keys(appState.cart).forEach(k => deleteDoc(doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k)).catch(e=>console.log(e)));
+                }
+                appState.cart = {};
+            }
             
             o.items.forEach(i => {
                 if(i.isAvailable === false) return; // لا نرجع المنتجات المحذوفة
@@ -1512,6 +1571,21 @@
 
         window.openOsakaOptions = () => {
             document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg" class="h-40 mx-auto mb-4 rounded-xl object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-6">انكل اوساكا</h2><div class="space-y-3" dir="ltr"><button onclick="window.addItem('osaka_1');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Spanish latte</span><span class="text-gray-500">2.00 د.أ</span></button><button onclick="window.addItem('osaka_2');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Caramel Latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_3');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Vanilla Latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_4');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Hazelnut latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_5');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Pistachio Latte</span><span class="text-gray-500">2.95 د.أ</span></button></div></div>`;
+            toggleModal('product', true);
+        };
+
+        window.openMatrixOptions = (id) => {
+            const p = appState.products.find(x => x.id === id);
+            document.getElementById('product-modal-body').innerHTML = `
+                <div class="p-6 text-center">
+                    <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
+                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">مشروبات ماتريكس</h2>
+                    <div class="space-y-3" dir="rtl">
+                        ${buildOptionRow(id, 'ماتريكس كولا', 0.25)}
+                        ${buildOptionRow(id, 'ماتريكس اب', 0.25)}
+                        ${buildOptionRow(id, 'ماتركس اورنج', 0.25)}
+                    </div>
+                </div>`;
             toggleModal('product', true);
         };
 
