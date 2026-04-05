@@ -1186,7 +1186,7 @@
                 </div>`;
             }).join('');
 
-            document.getElementById('products-grid').innerHTML = backHtml + contentHtml + customOrderHtml;
+            document.getElementById('products-grid').innerHTML = backHtml + window.renderCategoriesHtml() + contentHtml + customOrderHtml;
             if(window.lucide) lucide.createIcons();
         };
 
@@ -1229,7 +1229,7 @@
             if(isPotato) {
                 let mods = [];
                 if(appState.potatoNoKetchup) mods.push('بدون كتشب');
-                if(appState.potatoNoMayo) push('بدون ميونيز');
+                if(appState.potatoNoMayo) mods.push('بدون ميونيز');
                 if(mods.length) finalOpt += ' (' + mods.join(' و ') + ')';
             }
             
