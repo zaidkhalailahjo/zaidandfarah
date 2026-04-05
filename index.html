@@ -100,11 +100,6 @@
         <p class="text-gray-500 text-sm md:text-base">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
     </div>
 
-    <!-- Category container (now hidden by default on home screen, shown when inside a restaurant) -->
-    <div class="container mx-auto px-4 py-4 hidden" id="category-wrapper">
-        <div id="categories-container" class="flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth"></div>
-    </div>
-
     <main class="container mx-auto px-4 pb-32 flex-grow pt-4">
         <!-- Active Order Banner -->
         <div id="active-order-banner" class="hidden mb-6"></div>
@@ -113,7 +108,9 @@
             <div class="loader mb-4"></div>
             <p class="text-[#00839b] font-bold">جاري تحميل المنتجات...</p>
         </div>
+        
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"></div>
+        
         <div id="empty-state" class="text-center py-20 hidden">
             <i data-lucide="search-x" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
             <p class="text-gray-500 font-bold">عذراً، لا توجد منتجات مطابقة لبحثك.</p>
@@ -570,12 +567,12 @@
             { id: 'good_day', name: 'كابتشينو Good day', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/IMG-3584_800x-removebg-preview.png' },
             { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, restaurant: 'سناكات', subCategory: 'علكة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png' },
 
-            // سناكات - بوظة
-            { id: 'boza_iceberg', name: 'بوظة ايس بيرج', price: 0.35, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/ds5a4564sda564sda_800x-removebg-preview.png' },
-            { id: 'boza_spiral', name: 'بوظة سبيرال', price: 0.15, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.51.53AM-removebg-preview.png' },
-            { id: 'boza_wave', name: 'بوظة ويف', price: 0.10, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.53.39AM-removebg-preview.png' },
-            { id: 'boza_sandwich', name: 'بوظة ساندويش', price: 0.10, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/04-26-2025_0652am335b39568640d7622323.png' },
-            { id: 'boza_mini', name: 'بوظة ميني', price: 0.35, restaurant: 'سناكات', subCategory: 'بوظة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/101211-removebg-preview.png' },
+            // سناكات - آيس كريم
+            { id: 'boza_iceberg', name: 'بوظة ايس بيرج', price: 0.35, restaurant: 'سناكات', subCategory: 'آيس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/ds5a4564sda564sda_800x-removebg-preview.png' },
+            { id: 'boza_spiral', name: 'بوظة سبيرال', price: 0.15, restaurant: 'سناكات', subCategory: 'آيس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.51.53AM-removebg-preview.png' },
+            { id: 'boza_wave', name: 'بوظة ويف', price: 0.10, restaurant: 'سناكات', subCategory: 'آيس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.53.39AM-removebg-preview.png' },
+            { id: 'boza_sandwich', name: 'بوظة ساندويش', price: 0.10, restaurant: 'سناكات', subCategory: 'آيس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/04-26-2025_0652am335b39568640d7622323.png' },
+            { id: 'boza_mini', name: 'بوظة ميني', price: 0.35, restaurant: 'سناكات', subCategory: 'آيس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/101211-removebg-preview.png' },
 
             // سناكات - اندومي
             { id: 'indomie_curry', name: 'اندومي بنكهة الكاري', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/NDVdVrd9IkDQzcBQIp2HfltGgEkaZSlJsEKE9dVX-removebg-preview.png' },
@@ -585,7 +582,19 @@
             { id: 'indomie_box_chicken', name: 'علبة اندومي بنكة الدجاج', price: 0.35, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/im-60-_1_370x370-removebg-preview.png' }
         ];
 
-        const COUPONS = { 'راشد50': { type: 'fixed', val: 0.50 } }; 
+        // المجلدات (أقسام سناكات) مع الصور
+        const SNACKS_CATEGORIES = [
+            { name: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85%20%D8%A8%D8%AF%D9%88%D9%86%20%D8%B9%D9%86%D9%88%D8%A7%D9%86%20(12).png' },
+            { name: 'شوكلاته', image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png' },
+            { name: 'مشروبات غازية', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
+            { name: 'قهوه', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png' },
+            { name: 'اندومي', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/SPECIALCHICKEN-removebg-preview.png' },
+            { name: 'آيس كريم', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/ds5a4564sda564sda_800x-removebg-preview.png' },
+            { name: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png' },
+            { name: 'مواد تموينية', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' }
+        ];
+
+        const COUPONS = {}; 
 
         const LS_CART_KEY = 'snack_market_cart';
 
@@ -625,14 +634,6 @@
 
         const loadLocalCart = () => { try { return JSON.parse(localStorage.getItem(LS_CART_KEY)) || {}; } catch (e) { return {}; } };
         const saveLocalCart = () => localStorage.setItem(LS_CART_KEY, JSON.stringify(appState.cart));
-
-        const checkLocation = () => {
-            if (!appState.location) {
-                window.setLocation('ضاحية الاستقلال');
-            } else {
-                document.getElementById('current-location-display').textContent = appState.location;
-            }
-        };
 
         const listenToProfile = () => {
             onSnapshot(doc(appState.db, PATH_PROFILES, appState.user.uid), (snap) => {
@@ -1037,24 +1038,6 @@
             return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
-        window.renderCategories = () => {
-            const c = document.getElementById('categories-container'); if(!c) return;
-            const cw = document.getElementById('category-wrapper'); if(!cw) return;
-            
-            if (!appState.currentRestaurant) {
-                cw.classList.add('hidden');
-                return;
-            }
-            
-            cw.classList.remove('hidden');
-            let cats = ['الكل'];
-            if (appState.currentRestaurant === 'سناكات') {
-                cats = ['الكل', 'شيبس', 'شوكلاته', 'اندومي', 'قهوه', 'مشروبات غازية', 'بوظة', 'علكة', 'مواد تموينية'];
-            }
-            
-            c.innerHTML = cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('');
-        };
-
         window.setCategory = (c) => { appState.category = c; window.renderApp(); };
         
         window.goBack = () => { 
@@ -1106,7 +1089,23 @@
 
             if (appState.currentRestaurant) {
                 const r = appState.restaurants.find(x => x.name === appState.currentRestaurant);
-                backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2><p class="text-xs text-gray-500">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.goBack()"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
+                
+                // Custom back logic for nested categories
+                if(appState.currentRestaurant === 'سناكات' && appState.category !== 'الكل') {
+                     backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4">
+                        <div class="h-12 w-12 rounded-full border border-gray-100 shadow-sm flex justify-center items-center bg-[#f0f9fa]">
+                            <i data-lucide="folder-open" class="w-6 h-6 text-[#00839b]"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-[#002d74]">${appState.category}</h2>
+                        </div>
+                        <button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.setCategory('الكل')">
+                            <span class="font-bold text-xs hidden md:block">رجوع للأقسام</span><i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>`;
+                } else {
+                     backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74]">${appState.currentRestaurant}</h2><p class="text-xs text-gray-500">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.goBack()"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
+                }
             }
 
             if (!appState.currentRestaurant && !appState.search) {
@@ -1117,12 +1116,30 @@
                 return;
             }
 
+            // --- NEW LOGIC FOR FOLDERS ---
+            if (appState.currentRestaurant === 'سناكات' && appState.category === 'الكل' && !appState.search) {
+                 contentHtml += SNACKS_CATEGORIES.map(cat => `
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 flex flex-col items-center justify-center hover:shadow-md hover:border-[#00839b]/30 cursor-pointer transition-all" onclick="window.setCategory('${cat.name}')">
+                        <div class="h-20 w-20 mb-3 bg-[#f0f9fa] rounded-2xl flex items-center justify-center p-2">
+                            <img src="${cat.image}" class="max-h-full max-w-full object-contain drop-shadow-sm">
+                        </div>
+                        <h3 class="font-bold text-[#002d74] text-sm text-center leading-tight">${cat.name}</h3>
+                    </div>
+                `).join('');
+                
+                document.getElementById('empty-state').classList.add('hidden');
+                document.getElementById('products-grid').innerHTML = backHtml + contentHtml + customOrderHtml;
+                if(window.lucide) lucide.createIcons();
+                return;
+            }
+            // -----------------------------
+
             let filtered = appState.products.filter(p => {
                 if (p.hideFromMenu) return false;
                 const m = p.name.includes(appState.search);
                 if (appState.currentRestaurant) {
                     if (p.restaurant !== appState.currentRestaurant) return false;
-                    if (appState.category !== 'الكل' && p.subCategory !== appState.category) return false;
+                    if (appState.currentRestaurant === 'سناكات' && appState.category !== 'الكل' && p.subCategory !== appState.category) return false;
                     return m;
                 }
                 if (appState.search) return m;
@@ -1169,19 +1186,8 @@
                 </div>`;
             }).join('');
 
-            document.getElementById('products-grid').innerHTML = backHtml + window.renderCategoriesHtml() + contentHtml + customOrderHtml;
+            document.getElementById('products-grid').innerHTML = backHtml + contentHtml + customOrderHtml;
             if(window.lucide) lucide.createIcons();
-        };
-
-        window.renderCategoriesHtml = () => {
-            if (!appState.currentRestaurant) return '';
-            let cats = ['الكل'];
-            if (appState.currentRestaurant === 'سناكات') {
-                cats = ['الكل', 'شيبس', 'شوكلاته', 'اندومي', 'قهوه', 'مشروبات غازية', 'بوظة', 'علكة', 'مواد تموينية'];
-            }
-            return `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex overflow-x-auto pb-2 gap-2 no-scrollbar scroll-smooth mb-4">` + 
-                   cats.map(cat => `<button class="px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors shadow-sm border ${appState.category === cat ? 'bg-[#00839b] text-white border-[#00839b]' : 'bg-white text-gray-500 hover:bg-gray-50'}" onclick="window.setCategory('${cat}')">${cat}</button>`).join('') +
-                   `</div>`;
         };
 
         window.addItem = (id) => {
@@ -1223,7 +1229,7 @@
             if(isPotato) {
                 let mods = [];
                 if(appState.potatoNoKetchup) mods.push('بدون كتشب');
-                if(appState.potatoNoMayo) mods.push('بدون ميونيز');
+                if(appState.potatoNoMayo) push('بدون ميونيز');
                 if(mods.length) finalOpt += ' (' + mods.join(' و ') + ')';
             }
             
@@ -1507,15 +1513,53 @@
             document.getElementById('checkout-payment-msg').textContent = msg;
         };
 
+        // إحداثيات المتجر (عمان كمثال - يرجى تغييرها لإحداثيات متجرك)
+        const STORE_LAT = 31.9539;
+        const STORE_LON = 35.9106;
+        const MAX_DISTANCE_KM = 5; // أقصى مسافة مسموحة للتوصيل بالكيلومتر
+
+        // دالة حساب المسافة (Haversine Formula)
+        const calculateDistance = (lat1, lon1, lat2, lon2) => {
+            const R = 6371; // نصف قطر الأرض بالكيلومتر
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // المسافة بالكيلومتر
+        };
+
         window.requestLocation = () => {
             const t = document.getElementById('get-location-text'), btn = document.getElementById('get-location-btn');
             if(!navigator.geolocation) return showToast("جهازك لا يدعم تحديد الموقع", "error");
+            
             t.textContent = "جاري التحديد..."; btn.disabled = true; btn.classList.add('opacity-50');
+            
             navigator.geolocation.getCurrentPosition(p => {
-                appState.exactLocationLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                t.textContent = "تم تحديد الموقع بنجاح ✓"; btn.className = "w-full py-3 bg-green-100 text-green-700 border border-green-300 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm mb-3";
-                btn.disabled = false; btn.classList.remove('opacity-50');
-                document.getElementById('address-details-sec').classList.remove('hidden');
+                const userLat = p.coords.latitude;
+                const userLon = p.coords.longitude;
+
+                // حساب المسافة بين المتجر والعميل
+                const distance = calculateDistance(STORE_LAT, STORE_LON, userLat, userLon);
+
+                if (distance > MAX_DISTANCE_KM) {
+                    // العميل خارج النطاق المسموح
+                    showToast(`عذراً، موقعك يبعد ${distance.toFixed(1)} كم. نحن نوصل فقط ضمن نطاق ${MAX_DISTANCE_KM} كم.`, "error");
+                    t.textContent = "الموقع خارج نطاق التوصيل";
+                    btn.className = "w-full flex items-center justify-center gap-2 py-3 border-2 border-red-500 bg-red-50 text-red-600 rounded-xl font-bold mb-3";
+                    btn.disabled = false; btn.classList.remove('opacity-50');
+                    document.getElementById('address-details-sec').classList.add('hidden');
+                } else {
+                    // العميل داخل النطاق
+                    appState.exactLocationLink = `https://www.google.com/maps?q=${userLat},${userLon}`;
+                    t.textContent = "تم تحديد الموقع بنجاح ✓"; 
+                    btn.className = "w-full py-3 bg-green-100 text-green-700 border border-green-300 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm mb-3";
+                    btn.disabled = false; btn.classList.remove('opacity-50');
+                    document.getElementById('address-details-sec').classList.remove('hidden');
+                }
+
             }, e => {
                 showToast("حدث خطأ في تحديد الموقع. يرجى تفعيل الـ GPS في هاتفك والمحاولة مجدداً.", "error");
                 t.textContent = "حاول مرة أخرى (تأكد من تفعيل GPS)";
