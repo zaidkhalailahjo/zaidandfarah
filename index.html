@@ -903,8 +903,8 @@
             }, (error) => console.log("Feedback listen err"));
         };
 
-        const initDataListeners = () => {
-            if (!appState.db || appState.db === 'LOCAL' || !appState.user) return;
+        const initPublicDataListeners = () => {
+            if (!appState.db || appState.db === 'LOCAL') return;
             
             onSnapshot(doc(appState.db, PATH_SETTINGS, 'appSettings'), (snap) => {
                 if (snap.exists()) {
@@ -945,6 +945,9 @@
                 appState.db = getFirestore(app);
                 appState.auth = getAuth(app);
                 
+                // استدعاء البيانات العامة (الشروط، المنتجات، المطاعم) للجميع حتى قبل تسجيل الدخول
+                initPublicDataListeners();
+
                 onAuthStateChanged(appState.auth, async (user) => {
                     appState.user = user;
                     if (user && !user.isAnonymous) {
@@ -957,10 +960,12 @@
                         }
 
                         if (!appState.listenersInitialized) {
-                            initDataListeners();
+                            listenToProfile(); 
+                            listenToOrders(); 
+                            listenToCart(); 
+                            listenToFeedback();
                             appState.listenersInitialized = true;
                         }
-                        listenToProfile(); listenToOrders(); listenToCart(); listenToFeedback();
                         appState.isAuthReady = true; renderProducts(); 
                     } else {
                         appState.profile = null; appState.cart = {}; updateAuthUI(); updateCartUI();
