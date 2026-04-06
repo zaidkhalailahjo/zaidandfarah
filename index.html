@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فرح سناكس</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0f172a',
+                        darkcard: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Kufi+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -21,6 +34,7 @@
             height: 24px;
             animation: spin 1s linear infinite;
         }
+        .dark .loader { border: 4px solid #334155; border-top: 4px solid #38bdf8; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         /* Animations for Order Status */
@@ -45,12 +59,12 @@
         .anim-done { animation: pop 0.5s ease-out forwards; display: inline-block; color: #10b981; }
     </style>
 </head>
-<body class="bg-gray-50 flex flex-col min-h-screen text-gray-800">
+<body class="bg-gray-50 dark:bg-darkbg text-gray-800 dark:text-gray-100 flex flex-col min-h-screen transition-colors duration-300">
 
     <div id="toast-container" class="fixed top-5 right-5 z-[99999] flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Header -->
-    <header class="bg-[#002d74] text-white shadow-lg sticky top-0 z-40">
+    <header class="bg-[#002d74] text-white shadow-lg sticky top-0 z-40 transition-colors duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <!-- Logo Area -->
             <div class="flex items-center gap-3">
@@ -65,15 +79,21 @@
             </div>
             
             <div class="relative hidden md:block w-1/3">
-                <input type="text" id="desktop-search" placeholder="ابحث عن منتج..." class="w-full py-2.5 px-4 pr-11 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00839b] shadow-inner">
+                <input type="text" id="desktop-search" placeholder="ابحث عن منتج..." class="w-full py-2.5 px-4 pr-11 rounded-full text-gray-800 dark:text-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00839b] shadow-inner transition-colors">
                 <i data-lucide="search" class="absolute right-4 top-3 text-gray-400 w-5 h-5"></i>
             </div>
 
-            <!-- أزرار التحكم مرتبة عمودياً في الجوال وأفقياً في سطح المكتب -->
+            <!-- التحكم بالهيدر -->
             <div class="flex flex-col md:flex-row items-end md:items-center gap-2 md:gap-3">
-                <div class="relative cursor-pointer hover:scale-105 transition-transform bg-white/10 p-2 rounded-full order-1 md:order-3" id="cart-btn" onclick="window.toggleModal('cart', true)">
-                    <i data-lucide="shopping-cart" class="w-5 h-5 md:w-6 md:h-6"></i>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#002d74] hidden">0</span>
+                
+                <div class="flex items-center gap-2 order-1 md:order-4">
+                    <button onclick="window.toggleDarkMode()" class="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors">
+                        <i id="theme-icon" data-lucide="moon" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <div class="relative cursor-pointer hover:scale-105 transition-transform bg-white/10 p-2 rounded-full" id="cart-btn" onclick="window.toggleModal('cart', true)">
+                        <i data-lucide="shopping-cart" class="w-4 h-4 md:w-5 md:h-5"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 md:w-5 md:h-5 flex items-center justify-center rounded-full border-2 border-[#002d74] hidden">0</span>
+                    </div>
                 </div>
 
                 <button id="orders-btn" onclick="window.toggleModal('orders', true)" class="hidden bg-[#00839b] hover:bg-[#005f73] px-3 py-1.5 md:py-2 rounded-full text-[10px] md:text-sm font-bold items-center gap-1 transition-colors shadow-md order-2 flex">
@@ -89,38 +109,46 @@
         </div>
         <div class="md:hidden px-4 pb-3 flex gap-2">
            <div class="relative flex-grow">
-               <input type="text" id="mobile-search" placeholder="ابحث عن منتج..." class="w-full py-2.5 px-4 pr-10 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00839b] text-sm shadow-inner">
+               <input type="text" id="mobile-search" placeholder="ابحث عن منتج..." class="w-full py-2.5 px-4 pr-10 rounded-full text-gray-800 dark:text-gray-100 dark:bg-gray-800 dark:border-gray-700 border focus:outline-none focus:ring-2 focus:ring-[#00839b] text-sm shadow-inner transition-colors">
                <i data-lucide="search" class="absolute right-3 top-2.5 text-gray-400 w-5 h-5"></i>
            </div>
         </div>
     </header>
 
-    <div class="bg-gradient-to-b from-[#f0f9fa] to-white py-6 px-4 text-center border-b border-[#00839b]/20">
-        <h2 class="text-2xl md:text-4xl font-extrabold text-[#002d74] mb-2">ألذ وأشهر أصناف السناكات!</h2>
-        <p class="text-gray-500 text-sm md:text-base">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
+    <div class="bg-gradient-to-b from-[#f0f9fa] dark:from-darkbg dark:to-darkbg to-white py-6 px-4 text-center border-b border-[#00839b]/20 dark:border-gray-800">
+        <h2 class="text-2xl md:text-4xl font-extrabold text-[#002d74] dark:text-blue-400 mb-2">ألذ وأشهر أصناف السناكات!</h2>
+        <p class="text-gray-500 dark:text-gray-400 text-sm md:text-base">كل ما تشتهيه من أصناف الشيبس والشوكولاتة والقهوة تجده هنا.</p>
     </div>
 
     <main class="container mx-auto px-4 pb-32 flex-grow pt-4">
         <!-- Active Order Banner -->
         <div id="active-order-banner" class="hidden mb-6"></div>
 
+        <div id="sort-container" class="hidden mb-4 flex justify-end">
+            <select id="sort-select" onchange="window.setSortOrder(this.value)" class="bg-white dark:bg-darkcard text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none text-[#002d74] dark:text-gray-200 font-bold shadow-sm focus:ring-2 focus:ring-[#00839b]">
+                <option value="default">الترتيب: الافتراضي</option>
+                <option value="price_asc">السعر: من الأرخص للأغلى</option>
+                <option value="price_desc">السعر: من الأغلى للأرخص</option>
+            </select>
+        </div>
+
         <div id="loading-indicator" class="flex flex-col items-center justify-center py-20 hidden">
             <div class="loader mb-4"></div>
-            <p class="text-[#00839b] font-bold">جاري تحميل المنتجات...</p>
+            <p class="text-[#00839b] dark:text-blue-400 font-bold">جاري تحميل المنتجات...</p>
         </div>
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"></div>
         <div id="empty-state" class="text-center py-20 hidden">
-            <i data-lucide="search-x" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
-            <p class="text-gray-500 font-bold">عذراً، لا توجد منتجات مطابقة لبحثك.</p>
+            <i data-lucide="search-x" class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4"></i>
+            <p class="text-gray-500 dark:text-gray-400 font-bold">عذراً، لا توجد منتجات مطابقة لبحثك.</p>
         </div>
     </main>
 
     <!-- Sticky Bottom Cart -->
-    <div id="sticky-cart" class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)] rounded-t-3xl z-30 transition-transform duration-300 transform translate-y-full p-4 border-t border-gray-100 hidden">
+    <div id="sticky-cart" class="fixed bottom-0 left-0 w-full bg-white dark:bg-darkcard shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.3)] rounded-t-3xl z-30 transition-transform duration-300 transform translate-y-full p-4 border-t border-gray-100 dark:border-gray-800 hidden">
         <div class="container mx-auto flex justify-between items-center gap-4">
             <div>
-                <p class="text-xs font-bold text-gray-500 mb-0.5">إجمالي السلة</p>
-                <p class="text-xl font-black text-[#002d74]" id="sticky-cart-total">0.00 د.أ</p>
+                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-0.5">إجمالي السلة</p>
+                <p class="text-xl font-black text-[#002d74] dark:text-blue-300" id="sticky-cart-total">0.00 د.أ</p>
             </div>
             <button onclick="window.toggleModal('cart', true)" class="bg-[#00839b] hover:bg-[#005f73] text-white px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-colors">
                 متابعة الطلب <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -130,15 +158,15 @@
 
     <!-- Modals -->
 
-    <!-- Auth Modal (Google Login) -->
+    <!-- Auth Modal -->
     <div id="auth-modal" class="modal fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 text-center">
-            <button id="auth-close-btn" class="close-modal hidden absolute top-4 left-4 bg-gray-100 p-2 rounded-full hover:bg-gray-200 z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">مرحباً بك!</h2>
-            <p class="text-gray-500 text-sm mb-6" id="auth-subtitle">يجب تسجيل الدخول لتتمكن من تصفح المنتجات والطلب.</p>
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 text-center transition-colors">
+            <button id="auth-close-btn" class="close-modal hidden absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="x" class="w-5 h-5 text-gray-800 dark:text-gray-200"></i></button>
+            <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-2">مرحباً بك!</h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mb-6" id="auth-subtitle">يجب تسجيل الدخول لتتمكن من تصفح المنتجات والطلب.</p>
             
             <div id="auth-step-1" class="space-y-4">
-                <button onclick="window.googleLogin()" class="w-full bg-white border border-gray-300 text-gray-700 py-3.5 rounded-xl font-bold text-lg shadow-sm hover:bg-gray-50 transition-all flex justify-center items-center gap-3">
+                <button onclick="window.googleLogin()" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-3.5 rounded-xl font-bold text-lg shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex justify-center items-center gap-3">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" class="w-6 h-6">
                     دخول باستخدام جوجل
                 </button>
@@ -146,10 +174,10 @@
 
             <!-- Profile Name Step -->
             <div id="auth-step-3" class="space-y-4 hidden">
-                <h3 class="text-xl font-bold text-[#002d74]">خطوة أخيرة!</h3>
-                <p class="text-sm text-gray-500">لتوصيل طلباتك، نحتاج لمعرفة اسمك ورقم هاتفك.</p>
-                <input type="text" id="new-user-name" placeholder="الاسم الكامل" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold text-lg">
-                <input type="tel" id="new-user-phone" placeholder="رقم الهاتف (مثال: 0791234567)" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold text-lg mt-2" dir="ltr">
+                <h3 class="text-xl font-bold text-[#002d74] dark:text-blue-300">خطوة أخيرة!</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">لتوصيل طلباتك، نحتاج لمعرفة اسمك ورقم هاتفك.</p>
+                <input type="text" id="new-user-name" placeholder="الاسم الكامل" class="w-full p-3 border dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold text-lg">
+                <input type="tel" id="new-user-phone" placeholder="رقم الهاتف (مثال: 0791234567)" class="w-full p-3 border dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold text-lg mt-2" dir="ltr">
                 <button onclick="window.saveUserProfile()" class="w-full bg-[#00839b] text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:bg-[#005f73] transition-all mt-4">
                     حفظ ومتابعة
                 </button>
@@ -157,60 +185,96 @@
 
             <!-- Profile Info (If logged in) -->
             <div id="auth-profile" class="space-y-4 hidden">
-                <div class="w-20 h-20 bg-[#002d74] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto shadow-inner border-4 border-white">👤</div>
-                <h3 class="text-xl font-bold text-gray-800" id="profile-phone"></h3>
-                <div class="bg-green-50 border border-green-200 rounded-xl p-4 mt-4 mb-2 relative overflow-hidden">
-                    <div class="absolute -right-4 -top-4 opacity-10"><i data-lucide="wallet" class="w-20 h-20 text-green-800"></i></div>
-                    <p class="text-sm text-green-800 font-bold mb-1 relative z-10">الرصيد المتاح في المحفظة</p>
-                    <p class="text-3xl font-black text-green-600 relative z-10"><span id="profile-wallet">0.00</span> <span class="text-lg">د.أ</span></p>
+                <div class="w-20 h-20 bg-[#002d74] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto shadow-inner border-4 border-white dark:border-gray-700">👤</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100" id="profile-phone"></h3>
+                <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded-xl p-4 mt-4 mb-2 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 opacity-10"><i data-lucide="wallet" class="w-20 h-20 text-green-800 dark:text-green-500"></i></div>
+                    <p class="text-sm text-green-800 dark:text-green-400 font-bold mb-1 relative z-10">الرصيد المتاح في المحفظة</p>
+                    <p class="text-3xl font-black text-green-600 dark:text-green-400 relative z-10"><span id="profile-wallet">0.00</span> <span class="text-lg">د.أ</span></p>
                 </div>
                 
-                <button onclick="window.openLoyalty()" class="w-full bg-yellow-50 text-yellow-700 py-3 rounded-xl font-bold hover:bg-yellow-100 transition-colors border border-yellow-200 flex items-center justify-between px-4">
+                <button onclick="window.openLoyalty()" class="w-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 py-3 rounded-xl font-bold hover:bg-yellow-100 dark:hover:bg-yellow-900/40 transition-colors border border-yellow-200 dark:border-yellow-800/50 flex items-center justify-between px-4">
                     <span class="flex items-center gap-2"><i data-lucide="gift" class="w-5 h-5"></i> نقاط الولاء</span>
-                    <span class="font-black bg-yellow-200 px-3 py-1 rounded-lg text-yellow-800"><span id="profile-points-display">0</span> نقطة</span>
+                    <span class="font-black bg-yellow-200 dark:bg-yellow-700/50 px-3 py-1 rounded-lg text-yellow-800 dark:text-yellow-200"><span id="profile-points-display">0</span> نقطة</span>
                 </button>
 
-                <div id="profile-debt-container" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 mt-4">
-                    <p class="text-xs text-red-800 font-bold mb-1">المستحقات غير المدفوعة</p>
-                    <p class="text-lg font-black text-red-600"><span id="profile-debt">0.00</span> د.أ</p>
+                <div id="profile-debt-container" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl p-3 mt-4">
+                    <p class="text-xs text-red-800 dark:text-red-400 font-bold mb-1">المستحقات غير المدفوعة</p>
+                    <p class="text-lg font-black text-red-600 dark:text-red-400"><span id="profile-debt">0.00</span> د.أ</p>
                 </div>
                 
-                <button onclick="window.openFeedback()" class="w-full bg-blue-50 text-[#002d74] py-3 rounded-xl font-bold hover:bg-blue-100 transition-colors mt-4 flex items-center justify-center gap-2">
-                    <i data-lucide="message-square" class="w-5 h-5"></i> الاقتراحات والشكاوي
+                <button onclick="window.openFavoritesView()" class="w-full bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-400 py-3 rounded-xl font-bold hover:bg-pink-100 dark:hover:bg-pink-900/40 transition-colors mt-4 flex items-center justify-center gap-2 border border-pink-200 dark:border-pink-800/50">
+                    <i data-lucide="heart" class="w-5 h-5"></i> مفضلاتي
                 </button>
-                <button id="install-app-btn-profile" class="w-full bg-[#00839b]/10 text-[#00839b] py-3 rounded-xl font-bold hover:bg-[#00839b]/20 transition-colors mt-2 flex items-center justify-center gap-2 hidden">
-                    <i data-lucide="download" class="w-5 h-5"></i> تنزيل الموقع على الشاشة الرئيسة
+
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <button onclick="window.openFeedback()" class="bg-blue-50 dark:bg-blue-900/20 text-[#002d74] dark:text-blue-300 py-3 rounded-xl font-bold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors flex flex-col items-center justify-center gap-1 border border-blue-200 dark:border-blue-800/50 text-xs">
+                        <i data-lucide="message-square" class="w-5 h-5"></i> الشكاوي
+                    </button>
+                    <button onclick="window.openFAQ()" class="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-3 rounded-xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex flex-col items-center justify-center gap-1 border border-gray-200 dark:border-gray-700 text-xs">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i> الأسئلة الشائعة
+                    </button>
+                </div>
+
+                <button id="install-app-btn-profile" class="w-full bg-[#00839b]/10 dark:bg-[#00839b]/20 text-[#00839b] dark:text-cyan-400 py-3 rounded-xl font-bold hover:bg-[#00839b]/20 dark:hover:bg-[#00839b]/30 transition-colors mt-2 flex items-center justify-center gap-2 hidden">
+                    <i data-lucide="download" class="w-5 h-5"></i> تنزيل الموقع
                 </button>
-                <button onclick="window.confirmLogout()" class="w-full bg-red-50 text-red-600 py-3 rounded-xl font-bold hover:bg-red-100 transition-colors mt-2">تسجيل الخروج</button>
+                <button onclick="window.confirmLogout()" class="w-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 py-3 rounded-xl font-bold hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors mt-2">تسجيل الخروج</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div id="faq-modal" class="modal fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 text-right max-h-[85vh] overflow-y-auto">
+            <button class="close-modal absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
+            <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-6 text-center border-b dark:border-gray-700 pb-3">الأسئلة الشائعة</h2>
+            
+            <div class="space-y-4">
+                <div class="border-b dark:border-gray-700 pb-3">
+                    <h3 class="font-bold text-[#00839b] dark:text-cyan-400 text-sm mb-1">كم يستغرق التوصيل؟</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">يعتمد وقت التوصيل على ضغط الطلبات والمسافة، ولكن في العادة يستغرق من 15 إلى 30 دقيقة كحد أقصى.</p>
+                </div>
+                <div class="border-b dark:border-gray-700 pb-3">
+                    <h3 class="font-bold text-[#00839b] dark:text-cyan-400 text-sm mb-1">كيف أستفيد من نقاط الولاء؟</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">كل 4 طلبات مكتملة تمنحك 10 نقاط. يمكنك تحويل كل 10 نقاط إلى 0.25 د.أ رصيد في محفظتك لاستخدامه في الشراء.</p>
+                </div>
+                <div class="border-b dark:border-gray-700 pb-3">
+                    <h3 class="font-bold text-[#00839b] dark:text-cyan-400 text-sm mb-1">ماذا أفعل إذا طلبت منتجاً ولم أجده في القائمة؟</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">يمكنك كتابة اسم المنتج والسعر التقريبي في صندوق "طلب خاص" المتاح في كل قسم، وسنقوم بإحضاره لك!</p>
+                </div>
+                <div class="border-b dark:border-gray-700 pb-3">
+                    <h3 class="font-bold text-[#00839b] dark:text-cyan-400 text-sm mb-1">هل يمكنني جدولة طلب لوقت لاحق؟</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">نعم! في صفحة الدفع يمكنك اختيار "تحديد موعد" واختيار الوقت والتاريخ المناسبين لك لتسليم الطلب.</p>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Loyalty Points Modal -->
     <div id="loyalty-modal" class="modal fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 text-center">
-            <button class="close-modal absolute top-4 left-4 bg-gray-100 p-2 rounded-full hover:bg-gray-200 z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <div class="w-20 h-20 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-yellow-50">
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 text-center">
+            <button class="close-modal absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
+            <div class="w-20 h-20 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-yellow-50 dark:border-yellow-800/50">
                 <i data-lucide="gift" class="w-10 h-10"></i>
             </div>
-            <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">نقاط الولاء</h2>
-            <p class="text-gray-500 text-sm mb-4 font-medium">لكل <span class="font-bold text-[#002d74]">4 طلبات</span> مكتملة تمنحك <span class="font-bold text-yellow-600">10 نقاط</span> تلقائياً في رصيدك!</p>
+            <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-2">نقاط الولاء</h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 font-medium">لكل <span class="font-bold text-[#002d74] dark:text-blue-300">4 طلبات</span> مكتملة تمنحك <span class="font-bold text-yellow-600 dark:text-yellow-400">10 نقاط</span> تلقائياً في رصيدك!</p>
             
-            <!-- Progress Bar -->
             <div class="mb-5 text-right px-2">
                 <div class="flex justify-between items-center mb-1">
-                    <span class="text-xs font-bold text-gray-500">الطلبات المنجزة</span>
-                    <span class="text-xs font-bold text-[#00839b]" id="loyalty-progress-text">0 / 4</span>
+                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400">الطلبات المنجزة</span>
+                    <span class="text-xs font-bold text-[#00839b] dark:text-cyan-400" id="loyalty-progress-text">0 / 4</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-3">
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                     <div id="loyalty-progress-bar" class="bg-green-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
             </div>
 
-            <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6">
-                <p class="text-sm font-bold text-gray-600 mb-1">رصيد نقاطك الحالي</p>
-                <p class="text-4xl font-black text-yellow-600 mb-2" id="loyalty-current-points">0</p>
-                <p class="text-xs text-gray-500 font-bold">يمكنك تحويل كل 10 نقاط إلى 0.25 د.أ رصيد إضافي في محفظتك لاستخدامه في الطلبات القادمة.</p>
+            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 mb-6">
+                <p class="text-sm font-bold text-gray-600 dark:text-gray-300 mb-1">رصيد نقاطك الحالي</p>
+                <p class="text-4xl font-black text-yellow-600 dark:text-yellow-400 mb-2" id="loyalty-current-points">0</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">يمكنك تحويل كل 10 نقاط إلى 0.25 د.أ رصيد إضافي في محفظتك لاستخدامه في الطلبات القادمة.</p>
             </div>
 
             <button id="convert-points-btn" onclick="window.convertPoints()" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:bg-[#005f73] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
@@ -221,13 +285,13 @@
 
     <!-- Rating Modal -->
     <div id="rating-modal" class="modal fixed inset-0 z-[160] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-8 text-center">
-            <button onclick="window.skipRating()" class="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <div class="w-20 h-20 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-yellow-100">
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-8 text-center">
+            <button onclick="window.skipRating()" class="absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
+            <div class="w-20 h-20 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-500 dark:text-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-yellow-100 dark:border-yellow-800/50">
                 <i data-lucide="star" class="w-10 h-10 fill-current"></i>
             </div>
-            <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">كيف كانت تجربتك؟</h2>
-            <p class="text-gray-500 text-sm mb-6 font-medium">لقد تم توصيل طلبك الأخير، يسعدنا تقييمك لخدمتنا!</p>
+            <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-2">كيف كانت تجربتك؟</h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 font-medium">لقد تم توصيل طلبك الأخير، يسعدنا تقييمك لخدمتنا!</p>
             
             <div class="flex justify-center gap-2 mb-6" dir="ltr">
                 <button onclick="window.setRating(1)" class="focus:outline-none"><i id="star-1" data-lucide="star" class="w-8 h-8 text-yellow-400 fill-yellow-400 transition-colors"></i></button>
@@ -237,7 +301,7 @@
                 <button onclick="window.setRating(5)" class="focus:outline-none"><i id="star-5" data-lucide="star" class="w-8 h-8 text-yellow-400 fill-yellow-400 transition-colors"></i></button>
             </div>
 
-            <textarea id="rating-comment" placeholder="شاركنا رأيك أو ملاحظاتك (اختياري)" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-sm mb-4 bg-gray-50 font-medium" rows="3"></textarea>
+            <textarea id="rating-comment" placeholder="شاركنا رأيك أو ملاحظاتك (اختياري)" class="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-sm mb-4 bg-gray-50 dark:bg-gray-800 dark:text-white font-medium" rows="3"></textarea>
 
             <button id="submit-rating-btn" onclick="window.submitRating()" class="w-full bg-[#002d74] text-white py-3.5 rounded-xl font-bold shadow-lg hover:bg-blue-900 transition-colors text-lg">
                 إرسال التقييم
@@ -245,14 +309,13 @@
         </div>
     </div>
 
-    <!-- Feedback (Suggestions & Complaints) Modal -->
+    <!-- Feedback Modal -->
     <div id="feedback-modal" class="modal fixed inset-0 z-[125] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-         <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6">
-            <button class="close-modal absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
+         <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6">
+            <button class="close-modal absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
             
-            <!-- Main Feedback List -->
             <div id="feedback-list-sec">
-                <h2 class="text-xl font-bold text-[#002d74] text-center mb-5 border-b pb-3">الاقتراحات والشكاوي</h2>
+                <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 text-center mb-5 border-b dark:border-gray-700 pb-3">الاقتراحات والشكاوي</h2>
                 <div class="flex gap-3 mb-6">
                     <button onclick="window.showFeedbackForm('suggestion')" class="flex-1 bg-[#00839b] text-white py-3 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors flex flex-col items-center gap-1">
                         <i data-lucide="lightbulb" class="w-5 h-5"></i> تقديم اقتراح
@@ -261,19 +324,16 @@
                         <i data-lucide="alert-triangle" class="w-5 h-5"></i> تقديم شكوى
                     </button>
                 </div>
-                <h3 class="font-bold text-gray-700 text-sm mb-3"><i data-lucide="history" class="w-4 h-4 inline"></i> سجل الطلبات السابقة</h3>
-                <div id="feedback-items" class="max-h-[30vh] overflow-y-auto space-y-2 pr-1">
-                    <!-- Items injected here -->
-                </div>
+                <h3 class="font-bold text-gray-700 dark:text-gray-300 text-sm mb-3"><i data-lucide="history" class="w-4 h-4 inline"></i> سجل الطلبات السابقة</h3>
+                <div id="feedback-items" class="max-h-[30vh] overflow-y-auto space-y-2 pr-1 no-scrollbar"></div>
             </div>
 
-            <!-- Feedback Form -->
             <div id="feedback-form-sec" class="hidden">
-                <div class="flex items-center mb-5 border-b pb-3">
-                    <button onclick="window.openFeedback()" class="p-1 hover:bg-gray-100 rounded-full mr-2"><i data-lucide="arrow-right" class="w-5 h-5 text-gray-600"></i></button>
-                    <h2 class="text-xl font-bold text-[#002d74] mx-auto pr-6" id="feedback-form-title">تقديم</h2>
+                <div class="flex items-center mb-5 border-b dark:border-gray-700 pb-3">
+                    <button onclick="window.openFeedback()" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full mr-2"><i data-lucide="arrow-right" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i></button>
+                    <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 mx-auto pr-6" id="feedback-form-title">تقديم</h2>
                 </div>
-                <textarea id="feedback-text" class="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#00839b] bg-gray-50 text-sm mb-4 font-medium" rows="5" placeholder="اكتب ما تود إرساله للإدارة هنا..."></textarea>
+                <textarea id="feedback-text" class="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-2 focus:ring-[#00839b] bg-gray-50 dark:bg-gray-800 dark:text-white text-sm mb-4 font-medium" rows="5" placeholder="اكتب ما تود إرساله للإدارة هنا..."></textarea>
                 <button id="submit-feedback-btn" onclick="window.submitFeedback()" class="w-full bg-[#002d74] text-white py-3.5 rounded-xl font-bold text-lg shadow-md hover:bg-blue-900 transition-colors flex items-center justify-center gap-2">
                     <i data-lucide="send" class="w-5 h-5"></i> إرسال للإدارة
                 </button>
@@ -281,76 +341,77 @@
          </div>
     </div>
 
-    <!-- Logout Confirmation Modal -->
+    <!-- Logout Modal -->
     <div id="logout-confirm-modal" class="modal fixed inset-0 z-[160] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-xs overflow-hidden shadow-2xl relative p-6 text-center">
-            <h2 class="text-xl font-bold text-[#002d74] mb-4">تسجيل الخروج</h2>
-            <p class="text-gray-600 mb-6 font-medium">هل أنت متأكد من تسجيل الخروج؟</p>
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-xs overflow-hidden shadow-2xl relative p-6 text-center">
+            <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 mb-4">تسجيل الخروج</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6 font-medium">هل أنت متأكد من تسجيل الخروج؟</p>
             <div class="flex gap-3">
                 <button onclick="window.executeLogout()" class="flex-1 bg-red-500 text-white py-3 rounded-xl font-bold shadow-md hover:bg-red-600 transition-colors">نعم</button>
-                <button onclick="window.toggleModal('logout-confirm', false)" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors border border-gray-200">لا</button>
+                <button onclick="window.toggleModal('logout-confirm', false)" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-3 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600">لا</button>
             </div>
         </div>
     </div>
 
     <!-- My Orders Modal -->
     <div id="orders-modal" class="modal fixed inset-0 z-[115] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative max-h-[85vh] flex flex-col">
-            <div class="p-5 border-b flex justify-between items-center bg-gray-50">
-                <h2 class="text-xl font-bold text-[#002d74] flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5"></i> طلباتي</h2>
-                <button class="close-modal p-2 rounded-full hover:bg-gray-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative max-h-[85vh] flex flex-col">
+            <div class="p-5 border-b dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800">
+                <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5"></i> طلباتي</h2>
+                <button class="close-modal p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
             </div>
-            <div id="orders-list-container" class="p-4 space-y-4 overflow-y-auto flex-grow bg-gray-100">
-                <!-- Orders injected here -->
-            </div>
+            <div id="orders-list-container" class="p-4 space-y-4 overflow-y-auto flex-grow bg-gray-100 dark:bg-gray-900"></div>
         </div>
     </div>
 
-    <!-- Order Full Details Modal (Read Only) -->
+    <!-- Order Details Modal -->
     <div id="my-order-details-modal" class="modal fixed inset-0 z-[125] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-         <div class="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col">
+         <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col">
             <div class="p-4 bg-[#002d74] text-white flex justify-between items-center z-10 shadow-md">
                 <h2 class="text-lg font-bold flex items-center gap-2"><i data-lucide="receipt" class="w-5 h-5"></i> تفاصيل الفاتورة</h2>
                 <button class="close-modal p-1.5 rounded-full hover:bg-white/20 bg-white/10"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="flex-grow overflow-y-auto p-4 bg-gray-50" id="my-order-details-content">
-                <!-- Details injected here -->
-            </div>
+            <div class="flex-grow overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900" id="my-order-details-content"></div>
          </div>
     </div>
 
     <!-- Product Details Modal -->
     <div id="product-modal" class="modal fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-gray-50 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto" id="product-modal-content">
-            <button class="close-modal absolute top-4 left-4 bg-white shadow-sm p-2 rounded-full hover:bg-gray-200 z-10 border border-gray-100"><i data-lucide="x" class="w-5 h-5 text-gray-800"></i></button>
+        <div class="bg-gray-50 dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto" id="product-modal-content">
+            <button class="close-modal absolute top-4 left-4 bg-white dark:bg-gray-800 shadow-sm p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 z-10 border border-gray-100 dark:border-gray-700"><i data-lucide="x" class="w-5 h-5 text-gray-800 dark:text-gray-200"></i></button>
             <div id="product-modal-body"></div>
         </div>
     </div>
 
     <!-- Cart Modal -->
     <div id="cart-modal" class="modal fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col">
-            <div class="p-5 border-b flex justify-between items-center bg-gray-50">
-                <h2 class="text-xl font-bold text-[#002d74] flex items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> سلة التسوق</h2>
-                <button class="close-modal p-2 rounded-full hover:bg-gray-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800">
+                <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 flex items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> سلة التسوق</h2>
+                <button class="close-modal p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
             </div>
-            <div id="cart-items-container" class="p-4 space-y-3 overflow-y-auto flex-grow bg-white pb-20"></div>
-            <div class="p-5 bg-gray-50 border-t space-y-4">
-                
-                <!-- Coupon - Mobile Friendly Layout -->
-                <div class="flex items-center bg-white border border-gray-300 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#00839b] shadow-sm">
-                    <input type="text" id="coupon-input" placeholder="أدخل كود الخصم (إن وجد)" class="flex-grow p-3 outline-none text-sm bg-transparent w-full font-bold">
+            
+            <div class="p-3 bg-[#f0f9fa] dark:bg-blue-900/20 border-b border-[#00839b]/20 dark:border-blue-800/50 flex justify-center">
+                <button onclick="window.shareCart()" class="text-[#00839b] dark:text-cyan-400 font-bold text-sm flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <i data-lucide="share-2" class="w-4 h-4"></i> إرسال طلبي لصديق عبر واتساب
+                </button>
+            </div>
+
+            <div id="cart-items-container" class="p-4 space-y-3 overflow-y-auto flex-grow bg-white dark:bg-darkbg pb-20"></div>
+            
+            <div class="p-5 bg-gray-50 dark:bg-gray-800 border-t dark:border-gray-700 space-y-4">
+                <div class="flex items-center bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#00839b] shadow-sm">
+                    <input type="text" id="coupon-input" placeholder="أدخل كود الخصم (إن وجد)" class="flex-grow p-3 outline-none text-sm bg-transparent w-full font-bold dark:text-white">
                     <button onclick="window.applyCoupon()" class="bg-[#002d74] text-white px-6 py-3 font-bold text-sm hover:bg-[#001c4a] transition-colors h-full shrink-0">تطبيق</button>
                 </div>
                 <div id="coupon-message" class="hidden text-xs font-bold text-center"></div>
 
-                <!-- Totals -->
-                <div class="space-y-1.5 text-sm font-medium border-b border-gray-200 pb-3">
-                    <div class="flex justify-between text-gray-500"><span>المجموع:</span><span id="cart-subtotal">0.00 د.أ</span></div>
-                    <div class="flex justify-between text-green-600"><span>الخصم:</span><span id="cart-discount">0.00 د.أ</span></div>
-                    <div class="flex justify-between text-gray-500"><span>التوصيل:</span><span id="cart-delivery">0.00 د.أ</span></div>
-                    <div class="flex justify-between text-gray-500"><span>الخدمة:</span><span id="cart-service">0.00 د.أ</span></div>
-                    <div class="flex justify-between pt-2 text-lg font-black text-[#002d74]"><span>الكلي:</span><span id="cart-total">0.00 د.أ</span></div>
+                <div class="space-y-1.5 text-sm font-medium border-b border-gray-200 dark:border-gray-700 pb-3">
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400"><span>المجموع:</span><span id="cart-subtotal">0.00 د.أ</span></div>
+                    <div class="flex justify-between text-green-600 dark:text-green-400"><span>الخصم:</span><span id="cart-discount">0.00 د.أ</span></div>
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400"><span>التوصيل:</span><span id="cart-delivery">0.00 د.أ</span></div>
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400"><span>الخدمة:</span><span id="cart-service">0.00 د.أ</span></div>
+                    <div class="flex justify-between pt-2 text-lg font-black text-[#002d74] dark:text-blue-300"><span>الكلي:</span><span id="cart-total">0.00 د.أ</span></div>
                 </div>
 
                 <button onclick="window.openCheckout()" id="checkout-btn" class="w-full py-3.5 rounded-xl font-black text-lg bg-[#00839b] text-white hover:bg-[#005f73] shadow-md flex items-center justify-center gap-2 disabled:opacity-50">
@@ -362,74 +423,82 @@
 
     <!-- Checkout Modal -->
     <div id="checkout-modal" class="modal fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 max-h-[90vh] overflow-y-auto">
-            <button class="close-modal absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <h2 class="text-xl font-bold text-[#002d74] text-center mb-5 border-b pb-3">تأكيد إرسال الطلب</h2>
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 max-h-[90vh] overflow-y-auto">
+            <button class="close-modal absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
+            <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 text-center mb-5 border-b dark:border-gray-700 pb-3">تأكيد إرسال الطلب</h2>
             
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">الاسم الكامل</label>
-                    <input type="text" id="customer-name" placeholder="أدخل اسمك" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] font-bold bg-gray-50">
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">الاسم الكامل</label>
+                    <input type="text" id="customer-name" placeholder="أدخل اسمك" class="w-full p-3 border dark:border-gray-600 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] font-bold bg-gray-50 dark:bg-gray-800 dark:text-white">
                 </div>
                 
-                <!-- Saved Addresses Section -->
-                <div id="addresses-section" class="space-y-3 mb-4">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">اختر عنوان التوصيل</label>
+                <div id="addresses-section" class="space-y-3 mb-2">
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">اختر عنوان التوصيل</label>
                     <div id="saved-addresses-container" class="space-y-2 max-h-[150px] overflow-y-auto pr-1 no-scrollbar"></div>
                     
-                    <button id="show-new-address-btn" onclick="window.showNewAddressForm()" class="w-full py-3 border-2 border-dashed border-[#00839b] text-[#00839b] rounded-xl font-bold hover:bg-[#f0f9fa] transition-colors flex justify-center items-center gap-2">
+                    <button id="show-new-address-btn" onclick="window.showNewAddressForm()" class="w-full py-3 border-2 border-dashed border-[#00839b] text-[#00839b] dark:text-cyan-400 dark:border-cyan-600 rounded-xl font-bold hover:bg-[#f0f9fa] dark:hover:bg-gray-800 transition-colors flex justify-center items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> إضافة موقع جديد
                     </button>
 
-                    <!-- New Address Form -->
-                    <div id="new-address-form" class="hidden bg-gray-50 p-4 rounded-xl border border-gray-200 mt-2">
-                        <h3 class="text-sm font-bold text-[#002d74] mb-3">عنوان جديد</h3>
+                    <div id="new-address-form" class="hidden bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 mt-2">
+                        <h3 class="text-sm font-bold text-[#002d74] dark:text-blue-300 mb-3">عنوان جديد</h3>
                         
-                        <button id="get-location-btn" onclick="window.requestLocation()" class="w-full flex items-center justify-center gap-2 py-3 border-2 border-[#00839b] bg-white text-[#00839b] rounded-xl font-bold hover:bg-[#f0f9fa] transition-colors mb-3">
+                        <button id="get-location-btn" onclick="window.requestLocation()" class="w-full flex items-center justify-center gap-2 py-3 border-2 border-[#00839b] bg-white dark:bg-gray-800 text-[#00839b] dark:text-cyan-400 dark:border-cyan-600 rounded-xl font-bold hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-colors mb-3">
                             <i data-lucide="crosshair" class="w-5 h-5"></i> <span id="get-location-text">تحديد موقعك الحالي (GPS)</span>
                         </button>
 
                         <div id="address-details-sec" class="hidden">
-                            <label class="block text-xs font-bold text-gray-700 mb-2 text-center">تفاصيل العنوان (أرقام فقط)</label>
+                            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 text-center">تفاصيل العنوان (أرقام فقط)</label>
                             <div class="grid grid-cols-3 gap-2 mb-3">
                                 <div>
                                     <label class="text-[10px] text-gray-500 font-bold block mb-1 text-center">عمارة</label>
-                                    <input type="number" id="bldg-no" class="w-full p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold bg-white">
+                                    <input type="number" id="bldg-no" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold bg-white dark:bg-gray-700 dark:text-white">
                                 </div>
                                 <div>
                                     <label class="text-[10px] text-gray-500 font-bold block mb-1 text-center">طابق</label>
-                                    <input type="number" id="floor-no" class="w-full p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold bg-white">
+                                    <input type="number" id="floor-no" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold bg-white dark:bg-gray-700 dark:text-white">
                                 </div>
                                 <div>
                                     <label class="text-[10px] text-gray-500 font-bold block mb-1 text-center">شقة</label>
-                                    <input type="number" id="apt-no" class="w-full p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold bg-white">
+                                    <input type="number" id="apt-no" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-[#00839b] text-center font-bold bg-white dark:bg-gray-700 dark:text-white">
                                 </div>
                             </div>
                             <div class="flex gap-2">
                                 <button onclick="window.saveNewAddress()" class="flex-1 bg-[#00839b] text-white py-2 rounded-lg font-bold hover:bg-[#005f73] transition-colors text-xs">حفظ الموقع</button>
-                                <button onclick="window.hideNewAddressForm()" class="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-bold hover:bg-gray-300 transition-colors text-xs">إلغاء</button>
+                                <button onclick="window.hideNewAddressForm()" class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 rounded-lg font-bold hover:bg-gray-300 transition-colors text-xs">إلغاء</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Schedule Section -->
+                <div class="border-t border-b border-gray-100 dark:border-gray-700 py-3 mb-2">
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">موعد التوصيل</label>
+                    <div class="flex gap-2 mb-2">
+                        <button id="btn-time-asap" class="flex-1 py-2.5 border-2 border-[#00839b] bg-[#f0f9fa] dark:bg-[#00839b]/20 text-[#00839b] dark:text-cyan-400 font-bold rounded-xl text-sm transition-colors" onclick="window.setScheduleType('asap')">في أسرع وقت</button>
+                        <button id="btn-time-later" class="flex-1 py-2.5 border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 font-bold rounded-xl text-sm transition-colors" onclick="window.setScheduleType('later')">جدولة موعد</button>
+                    </div>
+                    <input type="datetime-local" id="schedule-time" class="hidden w-full p-3 border border-gray-200 dark:border-gray-600 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] text-sm font-bold bg-white dark:bg-gray-800 dark:text-white">
+                </div>
+
                 <!-- Payment Options -->
                 <div id="payment-options-grid" class="grid grid-cols-2 gap-2 mt-2">
-                    <label id="lbl-wallet" class="relative flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 rounded-xl cursor-pointer transition-colors col-span-1 flex">
+                    <label id="lbl-wallet" class="relative flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-600 rounded-xl cursor-pointer transition-colors col-span-1 flex">
                         <input type="radio" name="payment_method" value="wallet" checked onchange="window.updateCheckoutTotal()" class="absolute top-2 right-2 w-4 h-4 text-[#00839b]">
-                        <i data-lucide="wallet" class="w-6 h-6 mb-1 text-[#002d74]"></i>
-                        <span class="text-xs font-bold text-[#002d74]">استخدام المحفظة</span>
+                        <i data-lucide="wallet" class="w-6 h-6 mb-1 text-[#002d74] dark:text-blue-300"></i>
+                        <span class="text-xs font-bold text-[#002d74] dark:text-blue-300">استخدام المحفظة</span>
                     </label>
-                    <label id="lbl-cash" class="relative flex-col items-center justify-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors col-span-1 flex">
+                    <label id="lbl-cash" class="relative flex-col items-center justify-center p-3 border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors col-span-1 flex">
                         <input type="radio" name="payment_method" value="cash" onchange="window.updateCheckoutTotal()" class="absolute top-2 right-2 w-4 h-4 text-gray-500">
-                        <i data-lucide="banknote" class="w-6 h-6 mb-1 text-gray-500"></i>
-                        <span class="text-xs font-bold text-gray-600">الدفع كاش</span>
+                        <i data-lucide="banknote" class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400"></i>
+                        <span class="text-xs font-bold text-gray-600 dark:text-gray-300">الدفع كاش</span>
                     </label>
                 </div>
 
-                <div class="p-3 bg-[#f0f9fa] rounded-xl text-center border border-[#00839b]/20">
-                    <p class="text-xs text-[#00839b] font-bold" id="checkout-payment-msg">المطلوب دفعه كاش</p>
-                    <p class="text-2xl font-black text-[#002d74]" id="checkout-final-total">0.00 د.أ</p>
+                <div class="p-3 bg-[#f0f9fa] dark:bg-blue-900/20 rounded-xl text-center border border-[#00839b]/20 dark:border-blue-800/50">
+                    <p class="text-xs text-[#00839b] dark:text-cyan-400 font-bold" id="checkout-payment-msg">المطلوب دفعه كاش</p>
+                    <p class="text-2xl font-black text-[#002d74] dark:text-blue-300" id="checkout-final-total">0.00 د.أ</p>
                 </div>
 
                 <button id="submit-order-btn" onclick="window.submitOrder()" class="w-full py-4 rounded-xl font-black text-lg bg-[#002d74] text-white hover:shadow-lg transition-all flex items-center justify-center gap-2">
@@ -441,12 +510,12 @@
 
     <!-- Success Modal -->
     <div id="success-modal" class="modal fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-xs overflow-hidden shadow-2xl relative p-8 text-center">
-            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
-                <i data-lucide="check" class="w-12 h-12 text-green-500"></i>
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-xs overflow-hidden shadow-2xl relative p-8 text-center">
+            <div class="w-24 h-24 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center mx-auto mb-5">
+                <i data-lucide="check" class="w-12 h-12 text-green-500 dark:text-green-400"></i>
             </div>
-            <h2 class="text-2xl font-extrabold text-[#002d74] mb-2">تم الإرسال بنجاح!</h2>
-            <p class="text-gray-500 text-sm mb-8 font-medium">لقد تم استلام طلبك وهو الآن قيد المراجعة. يمكنك متابعة حالته من قسم (طلباتي).</p>
+            <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-2">تم الإرسال بنجاح!</h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mb-8 font-medium">لقد تم استلام طلبك وهو الآن قيد المراجعة. يمكنك متابعة حالته من قسم (طلباتي).</p>
             <button onclick="window.toggleModal('success', false)" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-lg hover:bg-[#005f73] transition-colors text-lg">
                 حسناً
             </button>
@@ -457,6 +526,13 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, runTransaction, updateDoc, serverTimestamp, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Dark Mode Init ---
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
 
         const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'farah-snacks-v3';
         const FIREBASE_CONFIG = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
@@ -513,14 +589,12 @@
             send(empToken, empChatId);
         };
 
-        // Initial Hardcoded Lists
         const RESTAURANTS = [
             { name: 'مطعم سلمة', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg', desc: 'شاورما ووجبات سريعة', bg: 'bg-white' },
             { name: 'سناكات', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Gemini_Generated_Image_5h65xw5h65xw5h65.png', desc: 'شيبس، شوكولاتة، بسكويت', bg: 'bg-white' }
         ];
         
         const PRODUCTS = [
-            // مطعم سلمة
             { id: '21', name: 'شاورما عادي', price: 2.00, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'مع بطاطا ومخلل' },
             { id: '22', name: 'شاورما سوبر', price: 2.60, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'حجم سوبر' },
             { id: '23', name: 'ساندويشة شاورما صغير', price: 0.60, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/xxxxxxxxxx80-1024x1024.jpg' },
@@ -528,8 +602,6 @@
             { id: 'zinger', name: 'ساندويشة زنجر', price: 1.50, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png', ingredients: 'اختر بين سندويشة أو وجبة' },
             { id: 'shawarma_italy', name: 'وجبة شاورما ايطالي', price: 3.75, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B4%D8%A7%D9%88%D8%B1%D9%85%D8%A7-%D8%A7%D9%8A%D8%B7%D8%A7%D9%84%D9%8A-copy-removebg-preview.png', ingredients: 'تقدم مع بطاطا و مخلل و مايونيز' },
             { id: '34_salma', name: 'ماتريكس', price: 0, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
-
-            // سناكات - شوكولاتة
             { id: '30', name: 'شوكلاته فيوري', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Xrv1gtMvDtRtqoQfh00kvW4blvOZvPPZeOpnPb3G-removebg-preview.png' },
             { id: '29', name: 'بريك تايم الدائرية', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/download-removebg-preview.png' },
             { id: '19', name: 'بسكوت ستارز', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png' },
@@ -538,8 +610,6 @@
             { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png' },
             { id: '32', name: 'كيكة باندا', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/dDO9Oaz1v5uKg37U5G6O6ZfoizHABoS9OMoGJhnc-removebg-preview.png' },
             { id: '33', name: 'ميني بوند كيك', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mini-pound-cake-776x743-removebg-preview.png' },
-
-            // سناكات - شيبس
             { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/IMG-7394_370x370-removebg-preview.png' },
             { id: '12', name: 'شيبس روكي', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png' },
             { id: '9', name: 'شيبس سناك ميكس', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png' },
@@ -550,29 +620,19 @@
             { id: '14', name: 'شيبس ريلاكس', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png' },
             { id: '35', name: 'شيبس بوشار', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/IMG-7377_800x-removebg-preview.png' },
             { id: '37', name: 'شيبس بيتزا', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/64cb5965b860eb3a86cd83b7-removebg-preview.png' },
-
-            // سناكات - مواد تموينية 
             { id: '28', name: 'شنينه', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
             { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/catalog_yogert_Baladna+Yogurt+With+Cream+200gm-removebg-preview.png' },
             { id: '38', name: 'علبة لبن', price: 1.00, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D9%84%D8%A8%D9%86-removebg-preview.png' },
             { id: '39', name: 'بيض', price: 0, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
-
-            // سناكات - مشروبات غازية
             { id: '34', name: 'ماتريكس', price: 0, restaurant: 'سناكات', subCategory: 'مشروبات غازية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
-            
-            // سناكات - قهوة وعلكة
             { id: '17', name: 'قهوة العميد 2/1', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png' },
             { id: 'good_day', name: 'كابتشينو Good day', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/IMG-3584_800x-removebg-preview.png' },
             { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, restaurant: 'سناكات', subCategory: 'علكة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png' },
-
-            // سناكات - ايس كريم
             { id: 'boza_iceberg', name: 'بوظة ايس بيرج', price: 0.35, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/ds5a4564sda564sda_800x-removebg-preview.png' },
             { id: 'boza_spiral', name: 'بوظة سبيرال', price: 0.15, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.51.53AM-removebg-preview.png' },
             { id: 'boza_wave', name: 'بوظة ويف', price: 0.10, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.53.39AM-removebg-preview.png' },
             { id: 'boza_sandwich', name: 'بوظة ساندويش', price: 0.10, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/04-26-2025_0652am335b39568640d7622323.png' },
             { id: 'boza_mini', name: 'بوظة ميني', price: 0.35, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/101211-removebg-preview.png' },
-
-            // سناكات - اندومي
             { id: 'indomie_curry', name: 'اندومي بنكهة الكاري', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/NDVdVrd9IkDQzcBQIp2HfltGgEkaZSlJsEKE9dVX-removebg-preview.png' },
             { id: 'indomie_chicken', name: 'اندومي نكهة الدجاج', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/SPECIALCHICKEN-removebg-preview.png' },
             { id: 'indomie_veg', name: 'اندومي بنكهة الخضار', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/0809f08c-aacf-4882-9674-155b5cb5e790-removebg-preview.png' },
@@ -590,11 +650,12 @@
             products: PRODUCTS,
             restaurants: RESTAURANTS,
             cart: {}, customOrder: '',
-            category: 'الكل', currentRestaurant: null, search: '',
+            category: 'الكل', currentRestaurant: null, search: '', sortOrder: 'default',
             appliedCoupon: null, appliedCouponCode: '',
             selectedAddressId: null,
             exactLocationLink: null, locationFailCount: 0, exactLocationBypassed: false,
-            myOrders: [], feedback: [], currentFeedbackType: 'suggestion',
+            scheduleType: 'asap', scheduleTime: null,
+            myOrders: [], prevOrderStatuses: {}, feedback: [], currentFeedbackType: 'suggestion',
             potatoNoKetchup: false, potatoNoMayo: false 
         };
 
@@ -618,16 +679,16 @@
         window.toggleModal = toggleModal;
         document.querySelectorAll('.close-modal').forEach(b => b.onclick = (e) => toggleModal(e.target.closest('.modal').id.replace('-modal',''), false));
 
+        window.toggleDarkMode = () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-icon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            if(window.lucide) lucide.createIcons();
+        };
+
         const loadLocalCart = () => { try { return JSON.parse(localStorage.getItem(LS_CART_KEY)) || {}; } catch (e) { return {}; } };
         const saveLocalCart = () => localStorage.setItem(LS_CART_KEY, JSON.stringify(appState.cart));
-
-        const checkLocation = () => {
-            if (!appState.location) {
-                window.setLocation('ضاحية الاستقلال');
-            } else {
-                document.getElementById('current-location-display').textContent = appState.location;
-            }
-        };
 
         const listenToProfile = () => {
             onSnapshot(doc(appState.db, PATH_PROFILES, appState.user.uid), (snap) => {
@@ -635,6 +696,7 @@
                     appState.profile = snap.data();
                     if(!appState.profile.points) appState.profile.points = 0;
                     if(!appState.profile.addresses) appState.profile.addresses = [];
+                    if(!appState.profile.favorites) appState.profile.favorites = [];
                     updateAuthUI();
                     
                     if (appState.profile.debt && appState.profile.debt > 0 && !appState.debtAlertShown) {
@@ -647,7 +709,7 @@
 
                     if(!document.getElementById('auth-step-3').classList.contains('hidden')) toggleModal('auth', false);
                 } else {
-                    appState.profile = snap.exists() ? snap.data() : { balance: 0, debt: 0, points: 0, addresses: [] };
+                    appState.profile = snap.exists() ? snap.data() : { balance: 0, debt: 0, points: 0, addresses: [], favorites: [] };
                     if(appState.user.displayName) document.getElementById('new-user-name').value = appState.user.displayName;
                     document.getElementById('auth-step-1').classList.add('hidden');
                     document.getElementById('auth-profile').classList.add('hidden');
@@ -672,6 +734,17 @@
                 appState.myOrders = all.filter(o => o.uid === appState.user.uid && (o.createdAt?.toMillis ? o.createdAt.toMillis() : Date.now()) > ago).sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
                 window.renderMyOrders();
                 window.renderActiveOrderBanner();
+
+                // Web Push Notification Logic
+                appState.myOrders.forEach(o => {
+                    const prevStatus = appState.prevOrderStatuses[o.id];
+                    if (prevStatus && prevStatus !== 'المندوب في الطريق إليك' && o.status === 'المندوب في الطريق إليك') {
+                        if ("Notification" in window && Notification.permission === "granted") {
+                            new Notification("فرح سناكس", { body: `طلبك #${o.id.substring(0,6)} في الطريق إليك الآن 🛵!` });
+                        }
+                    }
+                    appState.prevOrderStatuses[o.id] = o.status;
+                });
 
                 if(document.getElementById('loyalty-modal').classList.contains('active')) {
                     window.openLoyalty(); 
@@ -733,6 +806,11 @@
                         appState.userId = user.uid;
                         document.getElementById('auth-close-btn').classList.remove('hidden');
                         
+                        // Request notification permission if not granted
+                        if ("Notification" in window && Notification.permission === "default") {
+                            Notification.requestPermission();
+                        }
+
                         if (!appState.listenersInitialized) {
                             initDataListeners();
                             appState.listenersInitialized = true;
@@ -770,7 +848,7 @@
             if(name.length < 3) return showToast("أدخل اسم صحيح", "error");
             if(phone.length < 9) return showToast("أدخل رقم هاتف صحيح", "error");
             try {
-                await setDoc(doc(appState.db, PATH_PROFILES, appState.user.uid), { email: appState.user.email||'', name: name, phone: phone, balance: appState.profile?.balance||0, debt: appState.profile?.debt||0, points: appState.profile?.points||0, freeDelivery: appState.profile?.freeDelivery||false, addresses: appState.profile?.addresses||[], customDelivery: appState.profile?.customDelivery||'' }, { merge: true });
+                await setDoc(doc(appState.db, PATH_PROFILES, appState.user.uid), { email: appState.user.email||'', name: name, phone: phone, balance: appState.profile?.balance||0, debt: appState.profile?.debt||0, points: appState.profile?.points||0, freeDelivery: appState.profile?.freeDelivery||false, addresses: appState.profile?.addresses||[], favorites: appState.profile?.favorites||[], customDelivery: appState.profile?.customDelivery||'' }, { merge: true });
                 showToast("تم الحفظ", "success"); toggleModal('auth', false);
                 
                 if (deferredPrompt) {
@@ -834,6 +912,32 @@
                     debtContainer.classList.add('hidden');
                 }
             }
+        };
+
+        // --- Favorites Feature ---
+        window.toggleFavorite = async (id) => {
+            if (!appState.user || appState.user.isAnonymous) return showToast("قم بتسجيل الدخول أولاً", "error");
+            let favs = appState.profile?.favorites || [];
+            if (favs.includes(id)) {
+                favs = favs.filter(f => f !== id);
+                showToast("تم الإزالة من المفضلة", "success");
+            } else {
+                favs.push(id);
+                showToast("تم الإضافة للمفضلة ❤️", "success");
+            }
+            appState.profile.favorites = favs;
+            if (appState.db !== 'LOCAL') {
+                await updateDoc(doc(appState.db, PATH_PROFILES, appState.user.uid), { favorites: favs });
+            }
+            window.renderApp();
+        };
+
+        window.openFavoritesView = () => {
+            appState.currentRestaurant = 'favorites';
+            appState.category = 'الكل';
+            window.renderApp();
+            toggleModal('auth', false);
+            window.scrollTo({top: 0, behavior: 'smooth'});
         };
 
         // Loyalty Points Logic
@@ -927,6 +1031,11 @@
             btn.disabled = false; btn.innerHTML = 'إرسال التقييم';
         };
 
+        window.openFAQ = () => {
+            toggleModal('auth', false);
+            toggleModal('faq', true);
+        };
+
         window.openFeedback = () => {
             toggleModal('auth', false); window.renderFeedbackList();
             document.getElementById('feedback-form-sec').classList.add('hidden');
@@ -973,16 +1082,16 @@
             const sorted = [...appState.feedback].sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
             container.innerHTML = sorted.map(f => {
                 const isResolved = f.status === 'تم حلها';
-                const statusColor = isResolved ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
+                const statusColor = isResolved ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
                 const typeLabel = f.type === 'complaint' ? 'شكوى' : (f.type === 'rating' ? 'تقييم' : 'اقتراح');
-                return `<div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl mb-2 text-right relative">
+                return `<div class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 p-4 rounded-2xl mb-2 text-right relative">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="font-bold text-[#002d74] text-sm">${typeLabel} ${f.rating ? `<i data-lucide="star" class="w-3 h-3 inline fill-yellow-400 text-yellow-400"></i> ${f.rating}` : ''}</span>
+                        <span class="font-bold text-[#002d74] dark:text-blue-300 text-sm">${typeLabel} ${f.rating ? `<i data-lucide="star" class="w-3 h-3 inline fill-yellow-400 text-yellow-400"></i> ${f.rating}` : ''}</span>
                         <div class="flex items-center gap-2">
                             ${f.type !== 'rating' ? `<span class="text-xs font-bold px-3 py-1 rounded-full ${statusColor}">${f.status || 'يتم حلها'}</span>` : ''}
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600 line-clamp-2 font-medium">${f.content || 'بدون تعليق'}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 font-medium">${f.content || 'بدون تعليق'}</p>
                 </div>`;
             }).join('');
             if(window.lucide) lucide.createIcons();
@@ -995,28 +1104,24 @@
             
             const isFreeDelivery = appState.profile?.freeDelivery || false;
             
-            // تحديد المطعم الحالي لمعرفة رسوم التوصيل والخدمة
             let currentRest = null;
             if (items.length > 0) {
                 currentRest = items[0].product.restaurant;
-            } else if (appState.currentRestaurant) {
+            } else if (appState.currentRestaurant && appState.currentRestaurant !== 'favorites') {
                 currentRest = appState.currentRestaurant;
             }
 
             let baseDelivery = 0;
             let service = 0;
 
-            // تحديد الأسعار بناءً على المطعم الافتراضية
             if (currentRest === 'مطعم سلمة' || currentRest === 'الحموي' || currentRest === 'انكل اوساكا') {
                 baseDelivery = 0.25;
                 service = 0.15;
             } else {
-                // سناكات (الافتراضي)
                 baseDelivery = 0.20;
                 service = 0.00;
             }
             
-            // تطبيق السعر المخصص إن وجد بناءً على الهدف المحدد
             if (appState.profile?.customDelivery !== undefined && appState.profile.customDelivery !== '') {
                 const target = appState.profile.customDeliveryTarget || 'all';
                 if (target === 'all' || target === currentRest) {
@@ -1033,6 +1138,7 @@
         };
 
         window.setCategory = (c) => { appState.category = c; window.renderApp(); window.scrollTo({top: 0, behavior: 'smooth'}); };
+        window.setSortOrder = (v) => { appState.sortOrder = v; window.renderApp(); };
         
         window.goBack = () => { 
             if (appState.currentRestaurant === 'سناكات' && appState.category !== 'الكل' && !appState.search) {
@@ -1070,7 +1176,7 @@
                     id: customId,
                     name: text,
                     price: price,
-                    restaurant: appState.currentRestaurant || 'سناكات',
+                    restaurant: appState.currentRestaurant && appState.currentRestaurant !== 'favorites' ? appState.currentRestaurant : 'سناكات',
                     image: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png',
                     hideFromMenu: true
                 };
@@ -1123,24 +1229,34 @@
             document.getElementById('loading-indicator').classList.add('hidden');
             let contentHtml = '', backHtml = '', customOrderHtml = '';
             
-            if (appState.currentRestaurant && ['سناكات', 'مطعم سلمة', 'الحموي', 'انكل اوساكا'].includes(appState.currentRestaurant)) {
-                customOrderHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 mt-6 bg-[#f0f9fa] rounded-3xl border border-[#00839b]/20 p-5 shadow-sm"><h3 class="font-bold text-[#002d74] text-base mb-3 flex items-center gap-2"><i data-lucide="help-circle" class="w-5 h-5 text-[#00839b]"></i> هل الذي تبحث عنه غير موجود؟</h3><textarea id="custom-order-input" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00839b] outline-none text-sm mb-3" rows="2" placeholder="اكتب اسم المنتج الذي تريده هنا..."></textarea><input type="number" id="custom-order-price" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00839b] outline-none text-sm mb-3 font-bold" placeholder="السعر التقريبي (د.أ) - يجب إدخال سعر" step="0.05" min="0"><button onclick="window.confirmCustomOrder()" class="w-full bg-[#00839b] text-white py-3 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-sm">تأكيد اختيار المنتج الإضافي للسلة</button></div>`;
+            const sortContainer = document.getElementById('sort-container');
+            if (appState.currentRestaurant) {
+                sortContainer.classList.remove('hidden');
+            } else {
+                sortContainer.classList.add('hidden');
+            }
+
+            if (appState.currentRestaurant && appState.currentRestaurant !== 'favorites' && ['سناكات', 'مطعم سلمة', 'الحموي', 'انكل اوساكا'].includes(appState.currentRestaurant)) {
+                customOrderHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 mt-6 bg-[#f0f9fa] dark:bg-gray-800 rounded-3xl border border-[#00839b]/20 dark:border-gray-700 p-5 shadow-sm"><h3 class="font-bold text-[#002d74] dark:text-blue-300 text-base mb-3 flex items-center gap-2"><i data-lucide="help-circle" class="w-5 h-5 text-[#00839b] dark:text-cyan-400"></i> هل الذي تبحث عنه غير موجود؟</h3><textarea id="custom-order-input" class="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#00839b] outline-none text-sm mb-3 dark:bg-gray-700 dark:text-white" rows="2" placeholder="اكتب اسم المنتج الذي تريده هنا..."></textarea><input type="number" id="custom-order-price" class="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#00839b] outline-none text-sm mb-3 font-bold dark:bg-gray-700 dark:text-white" placeholder="السعر التقريبي (د.أ) - يجب إدخال سعر" step="0.05" min="0"><button onclick="window.confirmCustomOrder()" class="w-full bg-[#00839b] text-white py-3 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-sm">تأكيد اختيار المنتج الإضافي للسلة</button></div>`;
             }
 
             const visibleRest = appState.restaurants;
 
             if (appState.currentRestaurant) {
-                const r = appState.restaurants.find(x => x.name === appState.currentRestaurant);
-                let titleText = appState.currentRestaurant;
-                if(appState.currentRestaurant === 'سناكات' && appState.category !== 'الكل') {
-                    titleText = appState.category;
+                if (appState.currentRestaurant === 'favorites') {
+                     backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white dark:bg-darkcard rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex justify-center items-center bg-pink-50 dark:bg-pink-900/30"><i data-lucide="heart" class="w-6 h-6 text-pink-500 fill-pink-500"></i></div><div><h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300">مفضلاتي</h2><p class="text-xs text-gray-500 dark:text-gray-400">منتجاتك المفضلة للوصول السريع</p></div><button class="mr-auto bg-gray-50 dark:bg-gray-800 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 border dark:border-gray-700 text-gray-700 dark:text-gray-300" onclick="window.goBack()"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
+                } else {
+                    const r = appState.restaurants.find(x => x.name === appState.currentRestaurant);
+                    let titleText = appState.currentRestaurant;
+                    if(appState.currentRestaurant === 'سناكات' && appState.category !== 'الكل') {
+                        titleText = appState.category;
+                    }
+                    backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white dark:bg-darkcard rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300">${titleText}</h2><p class="text-xs text-gray-500 dark:text-gray-400">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 dark:bg-gray-800 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 border dark:border-gray-700 text-gray-700 dark:text-gray-300" onclick="window.goBack()"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
                 }
-
-                backHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center gap-4 bg-white rounded-3xl shadow-sm border border-gray-100 p-4 mb-4"><div class="h-14 w-14 rounded-full border border-gray-100 shadow-sm overflow-hidden flex justify-center items-center ${r?.bg||'bg-white'}"><img src="${r?.image}" class="max-h-full max-w-full object-contain ${r?.bg==='bg-black'?'p-1':''}"></div><div><h2 class="text-xl font-bold text-[#002d74]">${titleText}</h2><p class="text-xs text-gray-500">${r?.desc || ''}</p></div><button class="mr-auto bg-gray-50 p-2 md:px-4 md:py-2 rounded-xl hover:bg-gray-100 flex items-center gap-2 border" onclick="window.goBack()"><span class="font-bold text-xs hidden md:block">رجوع</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button></div>`;
             }
 
             if (!appState.currentRestaurant && !appState.search) {
-                contentHtml += visibleRest.map(r => `<div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 flex flex-col items-center justify-center hover:shadow-lg cursor-pointer transition-shadow" onclick="window.openRestaurant('${r.name}')"><div class="h-24 w-24 mb-3 rounded-full border-4 border-gray-50 shadow-inner flex items-center justify-center overflow-hidden ${r.bg}"><img src="${r.image}" class="max-h-full max-w-full object-contain ${r.bg==='bg-black'?'p-2':''}"></div><h3 class="font-bold text-[#002d74] text-lg">${r.name}</h3><p class="text-xs text-gray-400 mt-1">${r.desc || ''}</p></div>`).join('');
+                contentHtml += visibleRest.map(r => `<div class="bg-white dark:bg-darkcard rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-5 flex flex-col items-center justify-center hover:shadow-lg cursor-pointer transition-shadow" onclick="window.openRestaurant('${r.name}')"><div class="h-24 w-24 mb-3 rounded-full border-4 border-gray-50 dark:border-gray-700 shadow-inner flex items-center justify-center overflow-hidden ${r.bg}"><img src="${r.image}" class="max-h-full max-w-full object-contain ${r.bg==='bg-black'?'p-2':''}"></div><h3 class="font-bold text-[#002d74] dark:text-blue-300 text-lg">${r.name}</h3><p class="text-xs text-gray-400 mt-1">${r.desc || ''}</p></div>`).join('');
                 document.getElementById('products-grid').innerHTML = contentHtml; 
                 document.getElementById('empty-state').classList.add('hidden');
                 if(window.lucide) lucide.createIcons(); 
@@ -1159,11 +1275,11 @@
                     { name: 'علكة', image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png' }
                 ];
                 contentHtml += cats.map(c => `
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-3 flex flex-col items-center justify-center hover:shadow-md cursor-pointer transition-all hover:-translate-y-1" onclick="window.setCategory('${c.name}')">
-                    <div class="w-full aspect-square mb-2 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden p-3">
+                <div class="bg-white dark:bg-darkcard rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-3 flex flex-col items-center justify-center hover:shadow-md cursor-pointer transition-all hover:-translate-y-1" onclick="window.setCategory('${c.name}')">
+                    <div class="w-full aspect-square mb-2 bg-gray-50 dark:bg-gray-700/50 rounded-2xl flex items-center justify-center overflow-hidden p-3">
                         <img src="${c.image}" class="w-full h-full object-contain drop-shadow-sm">
                     </div>
-                    <h3 class="font-bold text-gray-800 text-sm text-center">${c.name}</h3>
+                    <h3 class="font-bold text-gray-800 dark:text-gray-200 text-sm text-center">${c.name}</h3>
                 </div>`).join('');
                 
                 document.getElementById('products-grid').innerHTML = backHtml + contentHtml + customOrderHtml;
@@ -1176,12 +1292,12 @@
                 if (p.hideFromMenu) return false;
                 const m = p.name.includes(appState.search);
                 if (appState.currentRestaurant) {
+                    if (appState.currentRestaurant === 'favorites') {
+                        return appState.profile?.favorites?.includes(p.id) && m;
+                    }
                     if (p.restaurant !== appState.currentRestaurant) return false;
                     
                     let targetCat = appState.category;
-                    // تطابق الاسم مع التصنيف بالمنتجات
-                    if (targetCat === 'ايس كريم') targetCat = 'ايس كريم';
-
                     if (appState.category !== 'الكل' && p.subCategory !== targetCat) return false;
                     return m;
                 }
@@ -1189,8 +1305,17 @@
                 return false;
             });
 
+            // Sorting logic
+            if (appState.sortOrder === 'price_asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (appState.sortOrder === 'price_desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            }
+
             document.getElementById('empty-state').classList.toggle('hidden', filtered.length > 0 || contentHtml || backHtml);
             
+            const favIds = appState.profile?.favorites || [];
+
             contentHtml += filtered.map(p => {
                 let qty = 0;
                 if (hasDynamicOptions(p.id)) {
@@ -1198,30 +1323,34 @@
                 } else qty = appState.cart[p.id]?.quantity || 0;
 
                 const isOutOfStock = p.outOfStock === true;
+                const isFav = favIds.includes(p.id);
                 let action = '';
                 
                 if (isOutOfStock) {
-                     action = `<button disabled class="bg-gray-200 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 cursor-not-allowed" onclick="event.stopPropagation();"><i data-lucide="x" class="w-5 h-5"></i></button>`;
+                     action = `<button disabled class="bg-gray-200 dark:bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 dark:text-gray-500 cursor-not-allowed" onclick="event.stopPropagation();"><i data-lucide="x" class="w-5 h-5"></i></button>`;
                 } else if (hasDynamicOptions(p.id)) {
-                    action = `<button class="bg-[#002d74] w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md hover:scale-105 transition-transform" onclick="event.stopPropagation(); window.addItem('${p.id}')"><i data-lucide="plus" class="w-5 h-5"></i></button>`;
+                    action = `<button class="bg-[#002d74] dark:bg-blue-600 w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md hover:scale-105 transition-transform" onclick="event.stopPropagation(); window.addItem('${p.id}')"><i data-lucide="plus" class="w-5 h-5"></i></button>`;
                 } else {
                     if (qty > 0) {
-                        action = `<div class="flex items-center justify-between bg-[#f3f4f6] rounded-full w-[100px] h-[40px] p-1 shadow-inner border border-gray-200" onclick="event.stopPropagation()">
-                            <button class="text-red-500 font-bold text-2xl w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;" onclick="window.updateQty('${p.id}', -1)">-</button>
-                            <span class="font-extrabold text-[#002d74] text-lg">${qty}</span>
-                            <button class="text-[#00839b] font-bold text-2xl w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;" onclick="window.updateQty('${p.id}', 1)">+</button>
+                        action = `<div class="flex items-center justify-between bg-[#f3f4f6] dark:bg-gray-700 rounded-full w-[100px] h-[40px] p-1 shadow-inner border border-gray-200 dark:border-gray-600" onclick="event.stopPropagation()">
+                            <button class="text-red-500 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;" onclick="window.updateQty('${p.id}', -1)">-</button>
+                            <span class="font-extrabold text-[#002d74] dark:text-white text-lg">${qty}</span>
+                            <button class="text-[#00839b] dark:text-cyan-400 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;" onclick="window.updateQty('${p.id}', 1)">+</button>
                         </div>`;
                     } else {
-                        action = `<button class="bg-[#002d74] w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md hover:scale-105 transition-transform" onclick="event.stopPropagation(); window.addItem('${p.id}')"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>`;
+                        action = `<button class="bg-[#002d74] dark:bg-blue-600 w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md hover:scale-105 transition-transform" onclick="event.stopPropagation(); window.addItem('${p.id}')"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>`;
                     }
                 }
 
-                const priceDisplay = isOutOfStock ? `<span class="text-red-500 font-bold text-xs bg-red-50 px-2 py-1 rounded">نفذ المنتج</span>` : `<span class="font-black text-[#00839b] text-sm">${p.price>0?p.price.toFixed(2)+' د.أ':'خيارات'}</span>`;
+                const priceDisplay = isOutOfStock ? `<span class="text-red-500 dark:text-red-400 font-bold text-xs bg-red-50 dark:bg-red-900/30 px-2 py-1 rounded">نفذ المنتج</span>` : `<span class="font-black text-[#00839b] dark:text-cyan-400 text-sm">${p.price>0?p.price.toFixed(2)+' د.أ':'خيارات'}</span>`;
                 const imgStyle = isOutOfStock ? `opacity-50 grayscale` : ``;
 
-                return `<div class="bg-white rounded-3xl p-3 shadow-sm hover:shadow-md border border-transparent hover:border-[#00839b]/20 cursor-pointer flex flex-col relative" onclick="if(!${isOutOfStock}) window.openDetails('${p.id}')">
+                return `<div class="bg-white dark:bg-darkcard rounded-3xl p-3 shadow-sm hover:shadow-md border border-transparent hover:border-[#00839b]/20 dark:border-gray-800 dark:hover:border-cyan-700/30 cursor-pointer flex flex-col relative" onclick="if(!${isOutOfStock}) window.openDetails('${p.id}')">
+                    <button class="absolute top-2 right-2 p-1.5 bg-white/80 dark:bg-gray-800/80 rounded-full text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 transition-colors z-10" onclick="event.stopPropagation(); window.toggleFavorite('${p.id}')">
+                        <i data-lucide="heart" class="w-5 h-5 ${isFav ? 'fill-red-500 text-red-500 dark:fill-red-500 dark:text-red-500' : ''}"></i>
+                    </button>
                     <img src="${p.image}" class="h-28 object-contain mb-3 drop-shadow-sm ${imgStyle}">
-                    <h3 class="font-bold text-gray-800 text-sm mb-1 truncate ${isOutOfStock ? 'text-gray-400' : ''}">${p.name}</h3>
+                    <h3 class="font-bold text-gray-800 dark:text-gray-200 text-sm mb-1 truncate ${isOutOfStock ? 'text-gray-400 dark:text-gray-500' : ''}">${p.name}</h3>
                     <div class="mt-auto flex justify-between items-center w-full pt-2">
                         ${priceDisplay}
                         <div>${action}</div>
@@ -1309,16 +1438,16 @@
             const qty = appState.cart[k]?.quantity || 0;
             
             return `
-            <div class="flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl shadow-sm mb-3">
+            <div class="flex justify-between items-center py-4 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm mb-3">
                 <div class="text-right">
-                    <span class="font-bold text-[#002d74] block text-sm">${optName}</span>
-                    <span class="text-gray-500 font-bold text-xs mt-1 block">${price.toFixed(2)} د.أ</span>
+                    <span class="font-bold text-[#002d74] dark:text-blue-300 block text-sm">${optName}</span>
+                    <span class="text-gray-500 dark:text-gray-400 font-bold text-xs mt-1 block">${price.toFixed(2)} د.أ</span>
                 </div>
                 ${qty > 0 ? 
-                    `<div class="flex items-center justify-between bg-[#f3f4f6] rounded-full w-[90px] h-[36px] p-1 border border-gray-200 shadow-inner">
-                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, -1, ${isPotato})" class="text-red-500 font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">-</button>
-                        <span class="font-extrabold text-[#002d74] text-base">${qty}</span>
-                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, 1, ${isPotato})" class="text-[#00839b] font-bold text-xl w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100" style="line-height: 0; padding-bottom: 2px;">+</button>
+                    `<div class="flex items-center justify-between bg-[#f3f4f6] dark:bg-gray-700 rounded-full w-[90px] h-[36px] p-1 border border-gray-200 dark:border-gray-600 shadow-inner">
+                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, -1, ${isPotato})" class="text-red-500 font-bold text-xl w-7 h-7 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">-</button>
+                        <span class="font-extrabold text-[#002d74] dark:text-white text-base">${qty}</span>
+                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, 1, ${isPotato})" class="text-[#00839b] dark:text-cyan-400 font-bold text-xl w-7 h-7 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">+</button>
                     </div>`
                     : `<button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, 1, ${isPotato})" class="bg-[#00839b] text-white px-5 py-2 rounded-xl font-bold text-sm shadow-md hover:bg-[#005f73] transition-colors">إضافة</button>`
                 }
@@ -1349,13 +1478,25 @@
 
             if(validCoupon) {
                 appState.appliedCoupon = validCoupon; appState.appliedCouponCode = c;
-                msg.textContent = 'تم تطبيق الخصم بنجاح!'; msg.className = 'text-xs text-green-600 bg-green-50 p-2 mt-2 rounded-lg block font-bold border border-green-200';
+                msg.textContent = 'تم تطبيق الخصم بنجاح!'; msg.className = 'text-xs text-green-600 bg-green-50 dark:bg-green-900/30 p-2 mt-2 rounded-lg block font-bold border border-green-200 dark:border-green-800/50';
             } else {
                 appState.appliedCoupon = null; appState.appliedCouponCode = '';
-                msg.textContent = 'كود غير صحيح أو منتهي الصلاحية'; msg.className = 'text-xs text-red-600 bg-red-50 p-2 mt-2 rounded-lg block font-bold border border-red-200';
+                msg.textContent = 'كود غير صحيح أو منتهي الصلاحية'; msg.className = 'text-xs text-red-600 bg-red-50 dark:bg-red-900/30 p-2 mt-2 rounded-lg block font-bold border border-red-200 dark:border-red-800/50';
             }
             updateCartUI();
             window.updateCheckoutTotal(); 
+        };
+
+        window.shareCart = () => {
+            const items = Object.values(appState.cart);
+            if (items.length === 0) return showToast("السلة فارغة", "error");
+            let text = "مرحباً، هذه سلتي من فرح سناكس:\n\n";
+            items.forEach(i => {
+                text += `- ${i.quantity}x ${i.product.name} ${i.option ? '('+i.option+')' : ''}\n`;
+            });
+            const totals = calculateTotals();
+            text += `\nالإجمالي: ${totals.total.toFixed(2)} د.أ\n\nللطلب، قم بزيارة الموقع!`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
         };
 
         const updateCartUI = () => {
@@ -1368,15 +1509,15 @@
 
             const c = document.getElementById('cart-items-container');
             if(c) c.innerHTML = items.length ? items.map(i => `
-                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-center bg-gray-50 dark:bg-gray-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
                     <div>
-                        <p class="font-bold text-sm text-[#002d74]">${i.product.name} ${i.option?`<span class="text-[#00839b]">(${i.option})</span>`:''}</p>
-                        <p class="text-xs font-bold text-gray-500 mt-1">${i.product.price.toFixed(2)} د.أ</p>
+                        <p class="font-bold text-sm text-[#002d74] dark:text-blue-300">${i.product.name} ${i.option?`<span class="text-[#00839b] dark:text-cyan-400">(${i.option})</span>`:''}</p>
+                        <p class="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">${i.product.price.toFixed(2)} د.أ</p>
                     </div>
-                    <div class="flex items-center justify-between bg-[#f3f4f6] rounded-full w-[90px] h-10 p-1 shadow-inner border border-gray-200">
-                        <button onclick="window.updateQty('${i.option?i.product.id+'_'+i.option:i.product.id}', -1)" class="text-red-500 font-bold text-2xl w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">-</button>
-                        <span class="font-extrabold text-[#002d74] text-lg">${i.quantity}</span>
-                        <button onclick="window.updateQty('${i.option?i.product.id+'_'+i.option:i.product.id}', 1)" class="text-[#00839b] font-bold text-2xl w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">+</button>
+                    <div class="flex items-center justify-between bg-[#f3f4f6] dark:bg-gray-700 rounded-full w-[90px] h-10 p-1 shadow-inner border border-gray-200 dark:border-gray-600">
+                        <button onclick="window.updateQty('${i.option?i.product.id+'_'+i.option:i.product.id}', -1)" class="text-red-500 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">-</button>
+                        <span class="font-extrabold text-[#002d74] dark:text-white text-lg">${i.quantity}</span>
+                        <button onclick="window.updateQty('${i.option?i.product.id+'_'+i.option:i.product.id}', 1)" class="text-[#00839b] dark:text-cyan-400 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">+</button>
                     </div>
                 </div>`).join('') : '<p class="text-center py-8 font-bold text-gray-400 flex flex-col items-center gap-2"><i data-lucide="shopping-cart" class="w-8 h-8 opacity-50"></i> السلة فارغة</p>';
             
@@ -1386,7 +1527,7 @@
             elsIds.forEach((id, idx) => { const e = document.getElementById(id); if(e) e.textContent = vals[idx].toFixed(2) + ' د.أ'; });
             
             document.getElementById('cart-delivery').innerHTML = t.isFreeDelivery && t.originalDelivery > 0 
-                ? `<span class="line-through text-red-400 mr-1 text-xs font-normal">${t.originalDelivery.toFixed(2)}</span> <span class="text-green-600 font-bold">0.00 د.أ</span>` 
+                ? `<span class="line-through text-red-400 mr-1 text-xs font-normal">${t.originalDelivery.toFixed(2)}</span> <span class="text-green-600 dark:text-green-400 font-bold">0.00 د.أ</span>` 
                 : t.deliveryFee.toFixed(2) + ' د.أ';
 
             const sticky = document.getElementById('sticky-cart');
@@ -1414,11 +1555,11 @@
                 document.getElementById('show-new-address-btn').classList.remove('hidden');
                 document.getElementById('new-address-form').classList.add('hidden');
                 container.innerHTML = addrs.map((a, idx) => `
-                    <label class="flex items-start gap-3 p-3 border ${appState.selectedAddressId === a.id ? 'border-[#00839b] bg-[#f0f9fa]' : 'border-gray-200 bg-white'} rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                    <label class="flex items-start gap-3 p-3 border ${appState.selectedAddressId === a.id ? 'border-[#00839b] bg-[#f0f9fa] dark:bg-gray-800' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'} rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
                         <input type="radio" name="selected_address" value="${a.id}" class="mt-1 w-4 h-4 text-[#00839b]" ${appState.selectedAddressId === a.id ? 'checked' : ''} onchange="window.selectAddress('${a.id}')">
                         <div class="flex-grow">
-                            <p class="text-sm font-bold text-[#002d74]">موقع ${idx + 1}</p>
-                            <p class="text-xs text-gray-600 mt-1">${a.fullAddress}</p>
+                            <p class="text-sm font-bold text-[#002d74] dark:text-blue-300">موقع ${idx + 1}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">${a.fullAddress}</p>
                         </div>
                         <button onclick="window.deleteAddress('${a.id}', event)" class="text-red-400 hover:text-red-600 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </label>
@@ -1440,7 +1581,7 @@
             document.getElementById('new-address-form').classList.remove('hidden');
             document.getElementById('show-new-address-btn').classList.add('hidden');
             appState.exactLocationLink = null;
-            document.getElementById('get-location-btn').className = "w-full flex items-center justify-center gap-2 py-3 border-2 border-[#00839b] bg-white text-[#00839b] rounded-xl font-bold hover:bg-[#f0f9fa] transition-colors mb-3";
+            document.getElementById('get-location-btn').className = "w-full flex items-center justify-center gap-2 py-3 border-2 border-[#00839b] bg-white dark:bg-gray-800 text-[#00839b] dark:text-cyan-400 dark:border-cyan-600 rounded-xl font-bold hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-colors mb-3";
             document.getElementById('get-location-text').textContent = "تحديد موقعك الحالي (GPS)";
             document.getElementById('address-details-sec').classList.add('hidden');
             document.getElementById('bldg-no').value = '';
@@ -1496,11 +1637,30 @@
             } catch(e) { showToast("حدث خطأ أثناء الحذف", "error"); }
         };
 
+        window.setScheduleType = (type) => {
+            appState.scheduleType = type;
+            const btnAsap = document.getElementById('btn-time-asap');
+            const btnLater = document.getElementById('btn-time-later');
+            const inputTime = document.getElementById('schedule-time');
+            
+            if (type === 'asap') {
+                btnAsap.className = "flex-1 py-2.5 border-2 border-[#00839b] bg-[#f0f9fa] dark:bg-[#00839b]/20 text-[#00839b] dark:text-cyan-400 font-bold rounded-xl text-sm transition-colors";
+                btnLater.className = "flex-1 py-2.5 border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 font-bold rounded-xl text-sm transition-colors";
+                inputTime.classList.add('hidden');
+                appState.scheduleTime = null;
+            } else {
+                btnLater.className = "flex-1 py-2.5 border-2 border-[#00839b] bg-[#f0f9fa] dark:bg-[#00839b]/20 text-[#00839b] dark:text-cyan-400 font-bold rounded-xl text-sm transition-colors";
+                btnAsap.className = "flex-1 py-2.5 border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 font-bold rounded-xl text-sm transition-colors";
+                inputTime.classList.remove('hidden');
+            }
+        };
+
         window.openCheckout = () => {
             toggleModal('cart', false); 
             if(appState.profile?.name) document.getElementById('customer-name').value = appState.profile.name;
             
             window.renderAddresses();
+            window.setScheduleType('asap');
             
             const bal = appState.profile?.balance || 0;
             const walletLabel = document.getElementById('lbl-wallet');
@@ -1532,11 +1692,11 @@
             const cashLabel = document.getElementById('lbl-cash');
             
             if(payMethod === 'wallet') {
-                walletLabel.className = "relative flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 rounded-xl cursor-pointer transition-colors col-span-1 " + (walletBal <= 0 ? 'hidden' : 'flex');
-                cashLabel.className = "relative flex-col items-center justify-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors " + (walletBal <= 0 ? 'col-span-2 flex' : 'col-span-1 flex');
+                walletLabel.className = "relative flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-600 rounded-xl cursor-pointer transition-colors col-span-1 " + (walletBal <= 0 ? 'hidden' : 'flex');
+                cashLabel.className = "relative flex-col items-center justify-center p-3 border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors " + (walletBal <= 0 ? 'col-span-2 flex' : 'col-span-1 flex');
             } else {
-                walletLabel.className = "relative flex-col items-center justify-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-blue-50 transition-colors col-span-1 " + (walletBal <= 0 ? 'hidden' : 'flex');
-                cashLabel.className = "relative flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 rounded-xl cursor-pointer transition-colors " + (walletBal <= 0 ? 'col-span-2 flex' : 'col-span-1 flex');
+                walletLabel.className = "relative flex-col items-center justify-center p-3 border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors col-span-1 " + (walletBal <= 0 ? 'hidden' : 'flex');
+                cashLabel.className = "relative flex-col items-center justify-center p-3 border-2 border-blue-400 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-600 rounded-xl cursor-pointer transition-colors " + (walletBal <= 0 ? 'col-span-2 flex' : 'col-span-1 flex');
             }
 
             let displayTotal = totals.total;
@@ -1565,7 +1725,7 @@
             
             navigator.geolocation.getCurrentPosition(p => {
                 appState.exactLocationLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                t.textContent = "تم تحديد الموقع بنجاح ✓"; btn.className = "w-full py-3 bg-green-100 text-green-700 border border-green-300 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm mb-3";
+                t.textContent = "تم تحديد الموقع بنجاح ✓"; btn.className = "w-full py-3 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-800/50 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm mb-3";
                 btn.disabled = false; btn.classList.remove('opacity-50');
                 document.getElementById('address-details-sec').classList.remove('hidden');
                 
@@ -1578,7 +1738,7 @@
                         appState.exactLocationBypassed = true;
                         appState.exactLocationLink = "سيتم الاتصال بالعميل لمعرفة الموقع";
                         t.textContent = "تم الموافقة على الاتصال لمعرفة الموقع ✓";
-                        btn.className = "w-full py-3 bg-yellow-100 text-yellow-700 border border-yellow-300 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm mb-3";
+                        btn.className = "w-full py-3 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-800/50 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm mb-3";
                         document.getElementById('address-details-sec').classList.remove('hidden');
                     } else {
                         t.textContent = "تحديد موقعك الحالي (GPS)";
@@ -1598,6 +1758,13 @@
             if(!appState.selectedAddressId) return showToast("الرجاء اختيار موقع التوصيل أو إضافة موقع جديد", "error");
             const selectedAddr = appState.profile?.addresses?.find(a => a.id === appState.selectedAddressId);
             if(!selectedAddr) return showToast("حدث خطأ في جلب العنوان", "error");
+
+            let scheduledFor = 'ASAP';
+            if (appState.scheduleType === 'later') {
+                const timeVal = document.getElementById('schedule-time').value;
+                if (!timeVal) return showToast("الرجاء تحديد موعد التوصيل", "error");
+                scheduledFor = new Date(timeVal).toLocaleString('ar-EG');
+            }
 
             const payMethodEl = document.querySelector('input[name="payment_method"]:checked');
             const pay = payMethodEl ? payMethodEl.value : 'cash';
@@ -1636,7 +1803,7 @@
                         uid: appState.user.uid, customerName: name, phone: appState.profile.phone||'',
                         location: 'موقع محدد عبر الـ GPS', exactLocation: selectedAddr.gpsLink, addressDetails: selectedAddr.fullAddress, customOrder: '',
                         items: Object.values(appState.cart), total: totals.total, deductedFromWallet: amountToDeduct, cashToCollect: cashRequired, fees: { delivery: totals.deliveryFee, service: totals.serviceFee, discount: totals.discount, coupon: appState.appliedCouponCode, isFreeDelivery: totals.isFreeDelivery, originalDelivery: totals.originalDelivery },
-                        paymentMethod: pay, status: 'بانتظار قبول الطلب', createdAt: serverTimestamp(), rated: false
+                        paymentMethod: pay, status: 'بانتظار قبول الطلب', scheduledFor: scheduledFor, createdAt: serverTimestamp(), rated: false
                     });
                     if(amountToDeduct > 0) {
                         t.update(doc(appState.db, PATH_PROFILES, appState.user.uid), { balance: walletBal - amountToDeduct });
@@ -1688,7 +1855,7 @@
             document.getElementById('product-modal-body').innerHTML = `
                 <div class="p-6 text-center">
                     <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
-                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">ساندويشة زنجر</h2>
+                    <h2 class="text-2xl font-bold text-[#002d74] dark:text-blue-300 mb-6">ساندويشة زنجر</h2>
                     <div class="space-y-3" dir="rtl">
                         ${buildOptionRow('zinger', 'ساندويشة زنجر', 1.50)}
                         ${buildOptionRow('zinger', 'وجبة زنجر', 2.50)}
@@ -1699,12 +1866,12 @@
 
         window.openCoffeeOptions = () => {
             const p = appState.products.find(x => x.id === '24'); if(!p) return;
-            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p.image}" class="h-40 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-6">${p.name}</h2><div class="space-y-3" dir="rtl"><button onclick="window.addToCartWithOption('24', 'سادة')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>قهوة سادة</span><span class="text-gray-500">${p.price.toFixed(2)} د.أ</span></button><button onclick="window.addToCartWithOption('24', 'حلوة')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>قهوة حلوة</span><span class="text-gray-500">${p.price.toFixed(2)} د.أ</span></button><button onclick="window.addToCartWithOption('24', 'سكر خفيف')" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>سكر خفيف</span><span class="text-gray-500">${p.price.toFixed(2)} د.أ</span></button></div></div>`;
+            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p.image}" class="h-40 mx-auto mb-4 object-contain"><h2 class="text-2xl font-bold text-[#002d74] dark:text-blue-300 mb-6">${p.name}</h2><div class="space-y-3" dir="rtl"><button onclick="window.addToCartWithOption('24', 'سادة')" class="w-full flex justify-between items-center py-4 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-[#002d74] dark:text-blue-300 shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-all"><span>قهوة سادة</span><span class="text-gray-500">${p.price.toFixed(2)} د.أ</span></button><button onclick="window.addToCartWithOption('24', 'حلوة')" class="w-full flex justify-between items-center py-4 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-[#002d74] dark:text-blue-300 shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-all"><span>قهوة حلوة</span><span class="text-gray-500">${p.price.toFixed(2)} د.أ</span></button><button onclick="window.addToCartWithOption('24', 'سكر خفيف')" class="w-full flex justify-between items-center py-4 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-[#002d74] dark:text-blue-300 shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-all"><span>سكر خفيف</span><span class="text-gray-500">${p.price.toFixed(2)} د.أ</span></button></div></div>`;
             toggleModal('product', true);
         };
 
         window.openOsakaOptions = () => {
-            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg" class="h-40 mx-auto mb-4 rounded-xl object-contain"><h2 class="text-2xl font-bold text-[#002d74] mb-6">انكل اوساكا</h2><div class="space-y-3" dir="ltr"><button onclick="window.addItem('osaka_1');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Spanish latte</span><span class="text-gray-500">2.00 د.أ</span></button><button onclick="window.addItem('osaka_2');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Caramel Latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_3');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Vanilla Latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_4');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Hazelnut latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_5');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white border border-gray-200 rounded-2xl font-bold text-[#002d74] shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] transition-all"><span>Pistachio Latte</span><span class="text-gray-500">2.95 د.أ</span></button></div></div>`;
+            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="https://uncleosaka.com/wp-content/uploads/2024/02/testing2.jpg" class="h-40 mx-auto mb-4 rounded-xl object-contain"><h2 class="text-2xl font-bold text-[#002d74] dark:text-blue-300 mb-6">انكل اوساكا</h2><div class="space-y-3" dir="ltr"><button onclick="window.addItem('osaka_1');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-[#002d74] dark:text-blue-300 shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-all"><span>Spanish latte</span><span class="text-gray-500">2.00 د.أ</span></button><button onclick="window.addItem('osaka_2');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-[#002d74] dark:text-blue-300 shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-all"><span>Caramel Latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_3');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-[#002d74] dark:text-blue-300 shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-all"><span>Vanilla Latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_4');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-[#002d74] dark:text-blue-300 shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-all"><span>Hazelnut latte</span><span class="text-gray-500">2.50 د.أ</span></button><button onclick="window.addItem('osaka_5');window.toggleModal('product',false)" class="w-full flex justify-between items-center py-4 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-[#002d74] dark:text-blue-300 shadow-sm hover:border-[#00839b] hover:bg-[#f0f9fa] dark:hover:bg-gray-700 transition-all"><span>Pistachio Latte</span><span class="text-gray-500">2.95 د.أ</span></button></div></div>`;
             toggleModal('product', true);
         };
 
@@ -1713,7 +1880,7 @@
             document.getElementById('product-modal-body').innerHTML = `
                 <div class="p-6 text-center">
                     <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
-                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">مشروبات ماتريكس</h2>
+                    <h2 class="text-2xl font-bold text-[#002d74] dark:text-blue-300 mb-6">مشروبات ماتريكس</h2>
                     <div class="space-y-3" dir="rtl">
                         ${buildOptionRow(id, 'ماتريكس كولا', 0.25)}
                         ${buildOptionRow(id, 'ماتريكس اب', 0.25)}
@@ -1728,8 +1895,8 @@
             document.getElementById('product-modal-body').innerHTML = `
                 <div class="p-6 text-center">
                     <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
-                    <h2 class="text-2xl font-bold text-[#002d74] mb-2">شنينه</h2>
-                    <p class="text-sm font-bold text-gray-500 mb-6">الرجاء اختيار الحجم/السعر:</p>
+                    <h2 class="text-2xl font-bold text-[#002d74] dark:text-blue-300 mb-2">شنينه</h2>
+                    <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-6">الرجاء اختيار الحجم/السعر:</p>
                     <div class="space-y-3" dir="rtl">
                         ${buildOptionRow('28', 'شنينه 0.50', 0.50)}
                         ${buildOptionRow('28', 'شنينه 0.75', 0.75)}
@@ -1745,17 +1912,17 @@
             document.getElementById('product-modal-body').innerHTML = `
                 <div class="p-6 text-center">
                     <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
-                    <h2 class="text-2xl font-bold text-[#002d74] mb-4">سندويشة بطاطا</h2>
+                    <h2 class="text-2xl font-bold text-[#002d74] dark:text-blue-300 mb-4">سندويشة بطاطا</h2>
                     
-                    <div class="text-right mb-5 border-b pb-4">
-                        <h2 class="text-sm font-bold mb-3 text-[#002d74]">إضافات (اختياري)</h2>
-                        <label class="flex items-center gap-3 mb-2 p-3 bg-white border border-gray-200 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50">
+                    <div class="text-right mb-5 border-b dark:border-gray-700 pb-4">
+                        <h2 class="text-sm font-bold mb-3 text-[#002d74] dark:text-blue-300">إضافات (اختياري)</h2>
+                        <label class="flex items-center gap-3 mb-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                             <input type="checkbox" id="no-ketchup" class="w-5 h-5 text-[#00839b] rounded" onchange="window.togglePotatoMod('ketchup')" ${appState.potatoNoKetchup?'checked':''}> 
-                            <span class="font-bold text-gray-700 text-sm">بدون كتشب</span>
+                            <span class="font-bold text-gray-700 dark:text-gray-300 text-sm">بدون كتشب</span>
                         </label>
-                        <label class="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50">
+                        <label class="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                             <input type="checkbox" id="no-mayo" class="w-5 h-5 text-[#00839b] rounded" onchange="window.togglePotatoMod('mayo')" ${appState.potatoNoMayo?'checked':''}> 
-                            <span class="font-bold text-gray-700 text-sm">بدون ميونيز</span>
+                            <span class="font-bold text-gray-700 dark:text-gray-300 text-sm">بدون ميونيز</span>
                         </label>
                     </div>
 
@@ -1778,7 +1945,7 @@
             document.getElementById('product-modal-body').innerHTML = `
                 <div class="p-6 text-center">
                     <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
-                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">${p?.name}</h2>
+                    <h2 class="text-2xl font-bold text-[#002d74] dark:text-blue-300 mb-6">${p?.name}</h2>
                     <div class="space-y-3" dir="rtl">
                         ${buildOptionRow(id, 'بكيت واحد', 0.25)}
                         ${buildOptionRow(id, '5 بكيتات', 1.00)}
@@ -1792,7 +1959,7 @@
             document.getElementById('product-modal-body').innerHTML = `
                 <div class="p-6 text-center">
                     <img src="${p?.image}" class="h-40 mx-auto mb-4 object-contain">
-                    <h2 class="text-2xl font-bold text-[#002d74] mb-6">بيض</h2>
+                    <h2 class="text-2xl font-bold text-[#002d74] dark:text-blue-300 mb-6">بيض</h2>
                     <div class="space-y-3" dir="rtl">
                         ${buildOptionRow('39', 'كرتونة بيض', 3.15)}
                         ${buildOptionRow('39', 'بيضة واحدة', 0.15)}
@@ -1805,7 +1972,38 @@
             const p = appState.products.find(x => x.id === id); if(!p) return;
             if(p.outOfStock) return;
             if(hasDynamicOptions(id)) { window.addItem(id); return; }
-            document.getElementById('product-modal-body').innerHTML = `<div class="p-6 text-center"><img src="${p.image}" class="h-48 mx-auto mb-4 object-contain ${p.outOfStock ? 'opacity-50 grayscale' : ''}"><h2 class="text-2xl font-bold text-[#002d74] mb-2">${p.name}</h2><p class="font-black text-[#00839b] text-xl mb-4">${p.price.toFixed(2)} د.أ</p><p class="text-sm text-gray-500 mb-6 leading-relaxed">${p.ingredients||''}</p><button onclick="window.addItem('${id}');window.toggleModal('product',false)" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-lg flex justify-center items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> إضافة للسلة</button></div>`;
+            
+            // Cross Selling Logic
+            const related = appState.products.filter(x => x.restaurant === p.restaurant && x.id !== p.id && !x.hideFromMenu).sort(() => 0.5 - Math.random()).slice(0, 4);
+            let relatedHtml = '';
+            if (related.length > 0) {
+                relatedHtml = `
+                    <div class="mt-6 text-right border-t dark:border-gray-700 pt-4">
+                        <h4 class="font-bold text-sm text-[#002d74] dark:text-blue-300 mb-3">غالباً ما يُشترى مع هذا المنتج:</h4>
+                        <div class="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
+                            ${related.map(r => `
+                                <div class="min-w-[110px] w-[110px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl p-2 cursor-pointer flex-shrink-0 flex flex-col items-center hover:shadow-md transition-shadow" onclick="window.openDetails('${r.id}')">
+                                    <img src="${r.image}" class="h-12 w-12 object-contain mb-2">
+                                    <span class="text-[11px] font-bold text-gray-800 dark:text-gray-200 truncate w-full text-center">${r.name}</span>
+                                    <span class="text-[10px] text-[#00839b] dark:text-cyan-400 font-black mt-1">${r.price.toFixed(2)} د.أ</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('product-modal-body').innerHTML = `
+                <div class="p-6 text-center">
+                    <img src="${p.image}" class="h-48 mx-auto mb-4 object-contain ${p.outOfStock ? 'opacity-50 grayscale' : ''}">
+                    <h2 class="text-2xl font-bold text-[#002d74] dark:text-blue-300 mb-2">${p.name}</h2>
+                    <p class="font-black text-[#00839b] dark:text-cyan-400 text-xl mb-4">${p.price.toFixed(2)} د.أ</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">${p.ingredients||''}</p>
+                    <button onclick="window.addItem('${id}');window.toggleModal('product',false)" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-lg flex justify-center items-center gap-2 mb-2">
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i> إضافة للسلة
+                    </button>
+                    ${relatedHtml}
+                </div>`;
             toggleModal('product', true);
             if(window.lucide) lucide.createIcons();
         };
@@ -1865,11 +2063,11 @@
                 const iconElement = s.iframeAnim ? getIframeAnimation(s.iframeAnim, 'banner') : `<div class="${s.bg} p-3 rounded-full animate-pulse text-2xl">${s.icon}</div>`;
                 
                 banner.innerHTML = `
-                    <div onclick="window.showMyOrderDetails('${activeOrder.id}')" class="bg-white border-2 border-[#00839b]/20 rounded-2xl p-4 flex justify-between items-center cursor-pointer shadow-md hover:shadow-lg transition-all">
+                    <div onclick="window.showMyOrderDetails('${activeOrder.id}')" class="bg-white dark:bg-darkcard border-2 border-[#00839b]/20 dark:border-gray-700 rounded-2xl p-4 flex justify-between items-center cursor-pointer shadow-md hover:shadow-lg transition-all">
                         <div class="flex items-center gap-3">
                             ${iconElement}
                             <div>
-                                <h3 class="font-bold text-[#002d74]">طلبك الحالي قيد التنفيذ</h3>
+                                <h3 class="font-bold text-[#002d74] dark:text-blue-300">طلبك الحالي قيد التنفيذ</h3>
                                 <p class="text-sm font-bold ${s.color} mt-0.5">${s.text}</p>
                             </div>
                         </div>
@@ -1888,7 +2086,7 @@
             container.innerHTML = appState.myOrders.map(o => {
                 const s = getStatusData(o.status);
                 const iconElement = s.iframeAnim ? getIframeAnimation(s.iframeAnim, 'list') : `<span class="text-lg ${s.anim}">${s.icon}</span>`;
-                return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden cursor-pointer hover:border-[#00839b]/30 transition-colors flex flex-col" onclick="window.showMyOrderDetails('${o.id}')"><div class="flex justify-between items-center mb-3 border-b border-gray-50 pb-2"><span class="text-xs text-gray-400 font-bold">طلب #${o.id.substring(0,6)}</span><div class="flex items-center gap-2 px-3 py-1 ${s.iframeAnim ? 'rounded-xl' : 'rounded-full'} ${s.bg} ${s.color} text-xs font-bold">${iconElement} ${s.text}</div></div><div class="text-xs space-y-1.5 mb-3 text-gray-600 font-medium">${o.items.map(i => `<div class="${i.isAvailable === false ? 'line-through text-red-400' : ''}">${i.quantity}x ${i.product?.name||'منتج'} ${i.option?`(${i.option})`:''}</div>`).join('')}</div><div class="flex justify-between items-center pt-2"><span class="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded text-gray-500">الدفع: ${o.paymentMethod==='wallet'?'محفظة':'كاش'}</span><span class="font-black text-[#002d74] text-lg">${(o.total || 0).toFixed(2)} د.أ</span></div></div>`;
+                return `<div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden cursor-pointer hover:border-[#00839b]/30 transition-colors flex flex-col" onclick="window.showMyOrderDetails('${o.id}')"><div class="flex justify-between items-center mb-3 border-b border-gray-50 dark:border-gray-700 pb-2"><span class="text-xs text-gray-400 font-bold">طلب #${o.id.substring(0,6)}</span><div class="flex items-center gap-2 px-3 py-1 ${s.iframeAnim ? 'rounded-xl' : 'rounded-full'} ${s.bg} ${s.color} text-xs font-bold">${iconElement} ${s.text}</div></div><div class="text-xs space-y-1.5 mb-3 text-gray-600 dark:text-gray-300 font-medium">${o.items.map(i => `<div class="${i.isAvailable === false ? 'line-through text-red-400' : ''}">${i.quantity}x ${i.product?.name||'منتج'} ${i.option?`(${i.option})`:''}</div>`).join('')}</div><div class="flex justify-between items-center pt-2"><span class="text-[10px] font-bold bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-gray-500 dark:text-gray-300">الدفع: ${o.paymentMethod==='wallet'?'محفظة':'كاش'}</span><span class="font-black text-[#002d74] dark:text-blue-300 text-lg">${(o.total || 0).toFixed(2)} د.أ</span></div></div>`;
             }).join('');
         };
 
@@ -1897,13 +2095,13 @@
             if(!o) return;
             
             const itemsHtml = o.items.map(i => `
-                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border ${i.isAvailable === false ? 'border-red-200 bg-red-50 opacity-60' : 'border-gray-100'} mb-2 shadow-sm">
-                    <img src="${i.product?.image||''}" class="w-14 h-14 object-contain rounded-xl bg-gray-50 p-1 ${i.isAvailable === false ? 'grayscale' : ''}">
+                <div class="flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-2xl border ${i.isAvailable === false ? 'border-red-200 bg-red-50 dark:bg-red-900/20 opacity-60' : 'border-gray-100 dark:border-gray-700'} mb-2 shadow-sm">
+                    <img src="${i.product?.image||''}" class="w-14 h-14 object-contain rounded-xl bg-gray-50 dark:bg-gray-700 p-1 ${i.isAvailable === false ? 'grayscale' : ''}">
                     <div class="flex-grow">
-                        <p class="font-bold text-sm ${i.isAvailable === false ? 'text-gray-500 line-through' : 'text-[#002d74]'}">${i.product?.name||'منتج'} ${i.option ? `<span class="text-[#00839b]">(${i.option})</span>` : ''} ${i.isAvailable === false ? '<span class="text-xs text-red-500 block mt-1">غير متوفر (تم حذفه من الفاتورة)</span>' : ''}</p>
-                        <p class="text-xs text-gray-500 font-bold mt-1">الكمية: <span class="text-gray-800 bg-gray-100 px-2 py-0.5 rounded">${i.quantity}</span></p>
+                        <p class="font-bold text-sm ${i.isAvailable === false ? 'text-gray-500 line-through' : 'text-[#002d74] dark:text-blue-300'}">${i.product?.name||'منتج'} ${i.option ? `<span class="text-[#00839b] dark:text-cyan-400">(${i.option})</span>` : ''} ${i.isAvailable === false ? '<span class="text-xs text-red-500 block mt-1">غير متوفر (تم حذفه من الفاتورة)</span>' : ''}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 font-bold mt-1">الكمية: <span class="text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-600 px-2 py-0.5 rounded">${i.quantity}</span></p>
                     </div>
-                    <div class="font-black ${i.isAvailable === false ? 'text-gray-400 line-through' : 'text-[#00839b]'} text-lg">${(i.quantity * (i.product?.price||0)).toFixed(2)}</div>
+                    <div class="font-black ${i.isAvailable === false ? 'text-gray-400 line-through' : 'text-[#00839b] dark:text-cyan-400'} text-lg">${(i.quantity * (i.product?.price||0)).toFixed(2)}</div>
                 </div>
             `).join('');
 
@@ -1915,42 +2113,48 @@
                 paymentDetailStr = `مخصوم: ${o.deductedFromWallet?.toFixed(2)} / كاش: ${o.cashToCollect?.toFixed(2)}`;
             }
 
-            let deliveryRowHtml = `<div class="flex justify-between text-gray-600"><span>سعر التوصيل:</span><span>+ ${(o.fees?.delivery||0).toFixed(2)} د.أ</span></div>`;
+            let deliveryRowHtml = `<div class="flex justify-between text-gray-600 dark:text-gray-400"><span>سعر التوصيل:</span><span>+ ${(o.fees?.delivery||0).toFixed(2)} د.أ</span></div>`;
             if(o.fees?.isFreeDelivery) {
-                deliveryRowHtml = `<div class="flex justify-between text-gray-600"><span>سعر التوصيل:</span><span><span class="line-through text-red-400 mr-1 text-xs font-normal">${(o.fees?.originalDelivery||0.10).toFixed(2)}</span> <span class="text-green-600 font-bold">+ 0.00 د.أ</span></span></div>`;
+                deliveryRowHtml = `<div class="flex justify-between text-gray-600 dark:text-gray-400"><span>سعر التوصيل:</span><span><span class="line-through text-red-400 mr-1 text-xs font-normal">${(o.fees?.originalDelivery||0.10).toFixed(2)}</span> <span class="text-green-600 font-bold">+ 0.00 د.أ</span></span></div>`;
             }
 
-            const reorderBtn = o.status === 'تم توصيل الطلب بنجاح' ? `<button onclick="window.reorder('${o.id}')" class="absolute top-3 right-3 text-sm bg-blue-50 text-[#002d74] px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 hover:bg-blue-100 transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i> إعادة الطلب</button>` : '';
+            const reorderBtn = o.status === 'تم توصيل الطلب بنجاح' ? `<button onclick="window.reorder('${o.id}')" class="absolute top-3 right-3 text-sm bg-blue-50 dark:bg-blue-900/30 text-[#002d74] dark:text-blue-300 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i> إعادة الطلب</button>` : '';
 
             const iconElement = s.iframeAnim ? `<div class="flex justify-center mt-6 mb-4 w-full">${getIframeAnimation(s.iframeAnim, 'details')}</div>` : `<div class="inline-block ${s.bg} p-3 rounded-full mb-2 mt-8 text-3xl ${s.anim}">${s.icon}</div>`;
 
+            let scheduledText = '';
+            if (o.scheduledFor && o.scheduledFor !== 'ASAP') {
+                 scheduledText = `<div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border border-blue-200 dark:border-blue-800/50 text-sm mt-3 text-center"><span class="font-bold text-blue-700 dark:text-blue-300 flex items-center justify-center gap-1"><i data-lucide="calendar" class="w-4 h-4"></i> طلب مجدول مسبقاً:</span> <p class="text-blue-900 dark:text-blue-200 mt-1">${o.scheduledFor}</p></div>`;
+            }
+
             const content = `
                 <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm text-center relative">
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm text-center relative">
                         ${reorderBtn}
                         ${iconElement}
                         <h3 class="font-bold text-lg ${s.color} mb-1">${s.text}</h3>
                         <p class="text-xs text-gray-400">طلب #${o.id.substring(0,8)} • ${dateStr}</p>
+                        ${scheduledText}
                     </div>
                     
                     <div>
-                        <h4 class="font-bold text-sm text-gray-500 mb-3 flex items-center gap-2"><i data-lucide="shopping-bag" class="w-4 h-4"></i> تفاصيل المنتجات</h4>
+                        <h4 class="font-bold text-sm text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2"><i data-lucide="shopping-bag" class="w-4 h-4"></i> تفاصيل المنتجات</h4>
                         ${itemsHtml}
-                        ${o.customOrder ? `<div class="bg-orange-50 p-4 rounded-2xl border border-orange-200 text-sm mt-3"><span class="font-bold text-orange-700 flex items-center gap-1 mb-2"><i data-lucide="message-square" class="w-4 h-4"></i> ملاحظاتك الإضافية:</span> <p class="text-orange-900 leading-relaxed">${o.customOrder}</p></div>` : ''}
+                        ${o.customOrder ? `<div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-2xl border border-orange-200 dark:border-orange-800/50 text-sm mt-3"><span class="font-bold text-orange-700 dark:text-orange-400 flex items-center gap-1 mb-2"><i data-lucide="message-square" class="w-4 h-4"></i> ملاحظاتك الإضافية:</span> <p class="text-orange-900 dark:text-orange-200 leading-relaxed">${o.customOrder}</p></div>` : ''}
                     </div>
 
-                    <div class="bg-[#f0f9fa] p-5 rounded-2xl border border-[#00839b]/20 shadow-sm text-sm space-y-3 font-medium">
-                        <div class="flex justify-between text-gray-600"><span>سعر المنتجات:</span><span>${(o.total - (o.fees?.delivery||0) - (o.fees?.service||0) + (o.fees?.discount||0)).toFixed(2)} د.أ</span></div>
+                    <div class="bg-[#f0f9fa] dark:bg-gray-800 p-5 rounded-2xl border border-[#00839b]/20 dark:border-gray-700 shadow-sm text-sm space-y-3 font-medium">
+                        <div class="flex justify-between text-gray-600 dark:text-gray-400"><span>سعر المنتجات:</span><span>${(o.total - (o.fees?.delivery||0) - (o.fees?.service||0) + (o.fees?.discount||0)).toFixed(2)} د.أ</span></div>
                         ${deliveryRowHtml}
-                        <div class="flex justify-between text-gray-600"><span>رسوم الخدمة:</span><span>+ ${(o.fees?.service||0).toFixed(2)} د.أ</span></div>
-                        ${o.fees?.coupon ? `<div class="flex justify-between text-green-600 font-bold bg-green-50 p-2 rounded-lg mt-1"><span>خصم (${o.fees.coupon}):</span><span>- ${(o.fees?.discount||0).toFixed(2)} د.أ</span></div>` : ''}
-                        <div class="flex justify-between border-t border-[#00839b]/20 pt-3 mt-2 font-black text-2xl text-[#002d74] items-center">
+                        <div class="flex justify-between text-gray-600 dark:text-gray-400"><span>رسوم الخدمة:</span><span>+ ${(o.fees?.service||0).toFixed(2)} د.أ</span></div>
+                        ${o.fees?.coupon ? `<div class="flex justify-between text-green-600 font-bold bg-green-50 dark:bg-green-900/30 p-2 rounded-lg mt-1"><span>خصم (${o.fees.coupon}):</span><span>- ${(o.fees?.discount||0).toFixed(2)} د.أ</span></div>` : ''}
+                        <div class="flex justify-between border-t border-[#00839b]/20 dark:border-gray-600 pt-3 mt-2 font-black text-2xl text-[#002d74] dark:text-blue-300 items-center">
                             <span>الإجمالي الكلي</span>
-                            <span class="text-[#00839b]">${(o.total || 0).toFixed(2)} د.أ</span>
+                            <span class="text-[#00839b] dark:text-cyan-400">${(o.total || 0).toFixed(2)} د.أ</span>
                         </div>
                     </div>
                     <div class="text-center">
-                         <span class="text-xs ${o.paymentMethod === 'wallet' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'} px-4 py-2 rounded-full font-bold inline-flex items-center gap-1">
+                         <span class="text-xs ${o.paymentMethod === 'wallet' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'} px-4 py-2 rounded-full font-bold inline-flex items-center gap-1">
                                 <i data-lucide="${o.paymentMethod === 'wallet' ? 'wallet' : 'banknote'}" class="w-4 h-4"></i> 
                                 ${paymentDetailStr}
                         </span>
