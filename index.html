@@ -483,9 +483,6 @@
                 <button onclick="window.shareGroupLink()" id="btn-share-group" class="hidden text-green-600 dark:text-green-400 font-bold text-sm flex items-center gap-1 hover:opacity-80 transition-opacity bg-green-100 dark:bg-green-900/30 px-3 py-1.5 rounded-full">
                     <i data-lucide="share-2" class="w-4 h-4"></i> دعوة الأصدقاء للطلب
                 </button>
-                <button onclick="window.shareCart()" id="btn-share-normal" class="text-[#00839b] dark:text-cyan-400 font-bold text-sm flex items-center gap-1 hover:opacity-80 transition-opacity bg-cyan-100 dark:bg-cyan-900/30 px-3 py-1.5 rounded-full">
-                    <i data-lucide="share-2" class="w-4 h-4"></i> مشاركة السلة عبر واتساب
-                </button>
             </div>
 
             <div id="cart-items-container" class="p-4 space-y-3 overflow-y-auto flex-grow bg-white dark:bg-darkbg pb-20"></div>
@@ -771,7 +768,8 @@
             myOrders: [], prevOrderStatuses: {}, feedback: [], currentFeedbackType: 'suggestion',
             potatoNoKetchup: false, potatoNoMayo: false, 
             appSettings: { terms: '', isStoreOpen: true },
-            activeGroupId: null, groupCartData: null, isGroupHost: false
+            activeGroupId: null, groupCartData: null, isGroupHost: false,
+            prevParticipants: {}
         };
 
         const getOrderDateStr = (createdAt) => {
@@ -855,15 +853,40 @@
                 const groupRef = doc(appState.db, `artifacts/${APP_ID}/public/data/groupCarts`, appState.activeGroupId);
                 cartUnsubscribe = onSnapshot(groupRef, (snap) => {
                     if (snap.exists() && snap.data().active) {
-                        appState.groupCartData = snap.data();
-                        appState.cart = snap.data().items || {};
-                        appState.isGroupHost = snap.data().hostId === appState.user.uid;
+                        const data = snap.data();
+                        appState.groupCartData = data;
+                        appState.cart = data.items || {};
+                        appState.isGroupHost = data.hostId === appState.user.uid;
+
+                        if (!appState.isGroupHost && appState.user && (!data.participants || !data.participants[appState.user.uid])) {
+                             updateDoc(groupRef, {
+                                 [`participants.${appState.user.uid}`]: { name: appState.profile?.name || 'صديق', status: 'pending' }
+                             });
+                        }
+
+                        if (appState.isGroupHost && data.participants) {
+                             Object.keys(data.participants).forEach(uid => {
+                                 const p = data.participants[uid];
+                                 const prev = appState.prevParticipants[uid];
+                                 
+                                 if (!prev && p.status === 'pending' && uid !== appState.user.uid) {
+                                     showToast(`انضم ${p.name} إلى الطلب الجماعي`, 'success');
+                                 } else if (prev && prev.status === 'pending' && p.status === 'confirmed') {
+                                     showToast(`قام ${p.name} بتأكيد طلبه`, 'success');
+                                 } else if (prev && p.status === 'left' && prev.status !== 'left') {
+                                     showToast(`غادر ${p.name} الطلب الجماعي`, 'error');
+                                 }
+                             });
+                             appState.prevParticipants = JSON.parse(JSON.stringify(data.participants)); 
+                        }
+
                         updateCartUI();
                         renderGroupBanner();
                     } else {
                         appState.activeGroupId = null;
                         appState.groupCartData = null;
                         appState.isGroupHost = false;
+                        appState.prevParticipants = {};
                         showToast("الطلب الجماعي غير متاح أو تم إنهاؤه من الهوست", "error");
                         window.history.replaceState({}, document.title, window.location.pathname);
                         listenToCart(); 
@@ -1519,7 +1542,8 @@
             if (appState.activeGroupId) {
                 const uniqueKey = `${appState.user.uid}_${logicalKey}`;
                 await setDoc(doc(appState.db, `artifacts/${APP_ID}/public/data/groupCarts`, appState.activeGroupId), {
-                    [`items.${uniqueKey}`]: item
+                    [`items.${uniqueKey}`]: item,
+                    [`participants.${appState.user.uid}.status`]: appState.isGroupHost ? 'host' : 'pending'
                 }, { merge: true });
             } else {
                 if (appState.db === 'LOCAL') { appState.cart[logicalKey] = item; saveLocalCart(); updateCartUI(); }
@@ -1536,7 +1560,10 @@
             if (appState.activeGroupId) {
                 const uniqueKey = `${appState.user.uid}_${logicalKey}`;
                 const item = { product: p, quantity: (appState.cart[uniqueKey]?.quantity||0) + 1, option: opt, addedBy: appState.profile?.name || 'مستخدم' };
-                await setDoc(doc(appState.db, `artifacts/${APP_ID}/public/data/groupCarts`, appState.activeGroupId), { [`items.${uniqueKey}`]: item }, { merge: true });
+                await setDoc(doc(appState.db, `artifacts/${APP_ID}/public/data/groupCarts`, appState.activeGroupId), { 
+                    [`items.${uniqueKey}`]: item,
+                    [`participants.${appState.user.uid}.status`]: appState.isGroupHost ? 'host' : 'pending' 
+                }, { merge: true });
             } else {
                 const item = { product: p, quantity: (appState.cart[logicalKey]?.quantity||0) + 1, option: opt };
                 if (appState.db === 'LOCAL') { appState.cart[logicalKey] = item; saveLocalCart(); updateCartUI(); }
@@ -1615,8 +1642,18 @@
                 }
                 const q = item.quantity + d;
                 const groupRef = doc(appState.db, `artifacts/${APP_ID}/public/data/groupCarts`, appState.activeGroupId);
-                if (q <= 0) await updateDoc(groupRef, { [`items.${k}`]: deleteField() });
-                else await updateDoc(groupRef, { [`items.${k}.quantity`]: q });
+                
+                if (q <= 0) {
+                    await updateDoc(groupRef, { 
+                        [`items.${k}`]: deleteField(),
+                        [`participants.${appState.user.uid}.status`]: appState.isGroupHost ? 'host' : 'pending' 
+                    });
+                } else {
+                    await updateDoc(groupRef, { 
+                        [`items.${k}.quantity`]: q,
+                        [`participants.${appState.user.uid}.status`]: appState.isGroupHost ? 'host' : 'pending'
+                    });
+                }
             } else {
                 const q = item.quantity + d;
                 if (appState.db === 'LOCAL') { if(q <= 0) delete appState.cart[k]; else appState.cart[k].quantity = q; saveLocalCart(); updateCartUI(); renderProducts(); }
@@ -1657,7 +1694,14 @@
 
             try {
                 await setDoc(doc(appState.db, `artifacts/${APP_ID}/public/data/groupCarts`, groupId), {
-                    hostId: appState.user.uid, hostName: appState.profile?.name || 'صديق', items: groupItems, active: true, createdAt: serverTimestamp()
+                    hostId: appState.user.uid, 
+                    hostName: appState.profile?.name || 'صديق', 
+                    items: groupItems, 
+                    participants: {
+                        [appState.user.uid]: { name: appState.profile?.name || 'الهوست', status: 'host' }
+                    },
+                    active: true, 
+                    createdAt: serverTimestamp()
                 });
 
                 if(!appState.activeGroupId && appState.db !== 'LOCAL') {
@@ -1687,19 +1731,31 @@
                  }
              } else {
                  if(confirm("هل تريد مغادرة الطلب الجماعي؟")) {
+                     updateDoc(doc(appState.db, `artifacts/${APP_ID}/public/data/groupCarts`, appState.activeGroupId), {
+                         [`participants.${appState.user.uid}.status`]: 'left'
+                     });
+                     
+                     const itemsToRemove = {};
+                     Object.keys(appState.cart).forEach(k => {
+                         if (k.startsWith(appState.user.uid + '_')) itemsToRemove[`items.${k}`] = deleteField();
+                     });
+                     if (Object.keys(itemsToRemove).length > 0) {
+                         updateDoc(doc(appState.db, `artifacts/${APP_ID}/public/data/groupCarts`, appState.activeGroupId), itemsToRemove);
+                     }
+
                      appState.activeGroupId = null; window.history.pushState({}, '', window.location.pathname); listenToCart();
                  }
              }
         };
 
-        window.shareCart = () => {
-            const items = Object.values(appState.cart);
-            if (items.length === 0) return showToast("السلة فارغة", "error");
-            let text = "مرحباً، هذه سلتي من فرح سناكس:\n\n";
-            items.forEach(i => { text += `- ${i.quantity}x ${i.product.name} ${i.option ? '('+i.option+')' : ''}\n`; });
-            const totals = calculateTotals();
-            text += `\nالإجمالي: ${totals.total.toFixed(2)} د.أ\n\nللطلب، قم بزيارة الموقع!`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+        window.confirmMyGroupItems = async () => {
+            if(!appState.activeGroupId) return;
+            try {
+                await updateDoc(doc(appState.db, `artifacts/${APP_ID}/public/data/groupCarts`, appState.activeGroupId), {
+                    [`participants.${appState.user.uid}.status`]: 'confirmed'
+                });
+                showToast("تم تأكيد منتجاتك للهوست", "success");
+            } catch(e) { showToast("حدث خطأ", "error");}
         };
 
         const renderGroupBanner = () => {
@@ -1708,20 +1764,6 @@
                  banner.classList.remove('hidden');
                  const isHost = appState.isGroupHost;
                  document.getElementById('group-cart-text').innerHTML = isHost ? `<i data-lucide="users" class="w-5 h-5"></i> أنت تدير طلباً جماعياً` : `<i data-lucide="users" class="w-5 h-5"></i> أنت في طلب جماعي مع ${appState.groupCartData.hostName}`;
-                 
-                 const cb = document.getElementById('checkout-btn');
-                 if(cb) {
-                     if(!isHost) {
-                         cb.disabled = true;
-                         cb.innerHTML = '<i data-lucide="clock" class="w-5 h-5"></i> بانتظار تأكيد الهوست...';
-                         cb.classList.replace('bg-[#00839b]', 'bg-gray-500');
-                         cb.classList.replace('hover:bg-[#005f73]', 'hover:bg-gray-600');
-                     } else {
-                         cb.innerHTML = 'متابعة الطلب الجماعي';
-                         cb.classList.replace('bg-gray-500', 'bg-[#00839b]');
-                         cb.classList.replace('hover:bg-gray-600', 'hover:bg-[#005f73]');
-                     }
-                 }
              } else {
                  banner.classList.add('hidden');
              }
@@ -1738,14 +1780,38 @@
             const cb = document.getElementById('checkout-btn');
             
             if (cb) {
+                cb.onclick = () => window.openCheckout(); // default
+                
                 if (!isStoreOpen) {
                     cb.disabled = true;
                     cb.innerHTML = '<i data-lucide="lock" class="w-5 h-5"></i> المطعم مغلق حالياً';
                     cb.classList.replace('bg-[#00839b]', 'bg-gray-500');
                     cb.classList.replace('hover:bg-[#005f73]', 'hover:bg-gray-600');
-                } else if (!appState.activeGroupId || appState.isGroupHost) {
+                } else if (appState.activeGroupId) {
+                    if (appState.isGroupHost) {
+                        cb.disabled = (count === 0);
+                        cb.innerHTML = 'متابعة الطلب الجماعي';
+                        cb.classList.replace('bg-gray-500', 'bg-[#00839b]');
+                        cb.classList.replace('hover:bg-gray-600', 'hover:bg-[#005f73]');
+                    } else {
+                        const myStatus = appState.groupCartData?.participants?.[appState.user.uid]?.status;
+                        if (myStatus === 'confirmed') {
+                            cb.disabled = true;
+                            cb.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i> بانتظار تأكيد الهوست...';
+                            cb.classList.replace('bg-[#00839b]', 'bg-gray-500');
+                            cb.classList.replace('hover:bg-[#005f73]', 'hover:bg-gray-600');
+                        } else {
+                            const myItemsCount = items.filter(i => Object.keys(appState.cart).find(k => appState.cart[k] === i && k.startsWith(appState.user.uid + '_'))).length;
+                            cb.disabled = (myItemsCount === 0);
+                            cb.innerHTML = 'تأكيد منتجاتي';
+                            cb.classList.replace('bg-gray-500', 'bg-[#00839b]');
+                            cb.classList.replace('hover:bg-gray-600', 'hover:bg-[#005f73]');
+                            cb.onclick = () => window.confirmMyGroupItems();
+                        }
+                    }
+                } else {
                     cb.disabled = (count === 0);
-                    cb.innerHTML = appState.activeGroupId ? 'متابعة الطلب الجماعي' : 'متابعة الطلب';
+                    cb.innerHTML = 'متابعة الطلب';
                     cb.classList.replace('bg-gray-500', 'bg-[#00839b]');
                     cb.classList.replace('hover:bg-gray-600', 'hover:bg-[#005f73]');
                 }
@@ -1753,11 +1819,9 @@
 
             if (appState.activeGroupId) {
                  document.getElementById('btn-group-cart')?.classList.add('hidden');
-                 document.getElementById('btn-share-normal')?.classList.add('hidden');
                  document.getElementById('btn-share-group')?.classList.remove('hidden');
             } else {
                  document.getElementById('btn-group-cart')?.classList.remove('hidden');
-                 document.getElementById('btn-share-normal')?.classList.remove('hidden');
                  document.getElementById('btn-share-group')?.classList.add('hidden');
             }
 
