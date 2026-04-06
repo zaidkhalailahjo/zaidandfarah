@@ -991,7 +991,7 @@
         const calculateTotals = () => {
             const items = Object.values(appState.cart);
             const sub = items.reduce((sum, i) => sum + (i.product.price * i.quantity), 0);
-            const hasItems = items.length > 0 || appState.customOrder.trim() !== '';
+            const hasItems = items.length > 0;
             
             const isFreeDelivery = appState.profile?.freeDelivery || false;
             
@@ -1032,7 +1032,7 @@
             return { subtotal: sub, discount, deliveryFee: delivery, originalDelivery, isFreeDelivery, serviceFee: service, total: (sub + delivery + service) - discount };
         };
 
-        window.setCategory = (c) => { appState.category = c; window.renderApp(); };
+        window.setCategory = (c) => { appState.category = c; window.renderApp(); window.scrollTo({top: 0, behavior: 'smooth'}); };
         
         window.goBack = () => { 
             if (appState.currentRestaurant === 'سناكات' && appState.category !== 'الكل' && !appState.search) {
@@ -1045,11 +1045,55 @@
             if(document.getElementById('desktop-search')) document.getElementById('desktop-search').value = '';
             if(document.getElementById('mobile-search')) document.getElementById('mobile-search').value = '';
             window.renderApp(); 
+            window.scrollTo({top: 0, behavior: 'smooth'});
         };
         
-        window.openRestaurant = (n) => { appState.currentRestaurant = n; appState.category = 'الكل'; window.renderApp(); };
-        window.updateCustomOrder = (v) => { appState.customOrder = v; updateCartUI(); };
-        window.confirmCustomOrder = () => { appState.customOrder = document.getElementById('custom-order-input').value; updateCartUI(); showToast("تم تأكيد الإضافة للسلة!", "success"); };
+        window.openRestaurant = (n) => { appState.currentRestaurant = n; appState.category = 'الكل'; window.renderApp(); window.scrollTo({top: 0, behavior: 'smooth'}); };
+        
+        window.confirmCustomOrder = async () => {
+            const textEl = document.getElementById('custom-order-input');
+            const priceEl = document.getElementById('custom-order-price');
+            const text = textEl.value.trim();
+            const priceStr = priceEl.value.trim();
+            
+            if (!text) return showToast("الرجاء كتابة اسم المنتج", "error");
+            if (!priceStr || parseFloat(priceStr) <= 0) return showToast("الرجاء إدخال السعر التقريبي", "error");
+            
+            const price = parseFloat(priceStr);
+
+            if (confirm("السعر الذي أدخلته هو سعر تقريبي، وقد يتم تعديله من قبل الإدارة بناءً على السعر الفعلي للمنتج. هل أنت موافق؟")) {
+                const loggedIn = appState.user && !appState.user.isAnonymous;
+                if(!loggedIn && appState.db !== 'LOCAL') return showToast("قم بتسجيل الدخول أولاً", "error");
+
+                const customId = 'custom_' + Date.now();
+                const p = {
+                    id: customId,
+                    name: text,
+                    price: price,
+                    restaurant: appState.currentRestaurant || 'سناكات',
+                    image: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png',
+                    hideFromMenu: true
+                };
+                
+                appState.products.push(p);
+
+                window.checkRestaurantConflict(customId, async () => {
+                    const k = customId;
+                    const item = { product: p, quantity: 1, option: 'طلب خاص' };
+                    
+                    if (appState.db === 'LOCAL') {
+                        appState.cart[k] = item;
+                        saveLocalCart();
+                        updateCartUI();
+                    } else {
+                        await setDoc(doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k), item);
+                    }
+                    showToast("تم إضافة المنتج المخصص للسلة بنجاح!", "success");
+                    textEl.value = '';
+                    priceEl.value = '';
+                });
+            }
+        };
 
         const hasDynamicOptions = (id) => ['24','27','28','31','zinger', '39', 'indomie_curry', 'indomie_chicken', 'indomie_veg', '34', '34_salma'].includes(id);
 
@@ -1080,7 +1124,7 @@
             let contentHtml = '', backHtml = '', customOrderHtml = '';
             
             if (appState.currentRestaurant && ['سناكات', 'مطعم سلمة', 'الحموي', 'انكل اوساكا'].includes(appState.currentRestaurant)) {
-                customOrderHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 mt-6 bg-[#f0f9fa] rounded-3xl border border-[#00839b]/20 p-5 shadow-sm"><h3 class="font-bold text-[#002d74] text-base mb-3 flex items-center gap-2"><i data-lucide="help-circle" class="w-5 h-5 text-[#00839b]"></i> هل الذي تبحث عنه غير موجود؟</h3><textarea id="custom-order-input" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00839b] outline-none text-sm mb-3" rows="2" placeholder="اكتب المنتج الذي تريده هنا...">${appState.customOrder}</textarea><button onclick="window.confirmCustomOrder()" class="w-full bg-[#00839b] text-white py-3 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-sm">تأكيد اختيار المنتج الإضافي للسلة</button></div>`;
+                customOrderHtml = `<div class="col-span-2 md:col-span-3 lg:col-span-4 mt-6 bg-[#f0f9fa] rounded-3xl border border-[#00839b]/20 p-5 shadow-sm"><h3 class="font-bold text-[#002d74] text-base mb-3 flex items-center gap-2"><i data-lucide="help-circle" class="w-5 h-5 text-[#00839b]"></i> هل الذي تبحث عنه غير موجود؟</h3><textarea id="custom-order-input" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00839b] outline-none text-sm mb-3" rows="2" placeholder="اكتب اسم المنتج الذي تريده هنا..."></textarea><input type="number" id="custom-order-price" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00839b] outline-none text-sm mb-3 font-bold" placeholder="السعر التقريبي (د.أ) - يجب إدخال سعر" step="0.05" min="0"><button onclick="window.confirmCustomOrder()" class="w-full bg-[#00839b] text-white py-3 rounded-xl font-bold shadow-md hover:bg-[#005f73] transition-colors text-sm">تأكيد اختيار المنتج الإضافي للسلة</button></div>`;
             }
 
             const visibleRest = appState.restaurants;
@@ -1320,7 +1364,7 @@
             const cc = document.getElementById('cart-count');
             if(cc) { cc.textContent = count; cc.classList.toggle('hidden', count===0); }
             const cb = document.getElementById('checkout-btn');
-            if(cb) cb.disabled = (count===0 && appState.customOrder.trim()==='');
+            if(cb) cb.disabled = (count===0);
 
             const c = document.getElementById('cart-items-container');
             if(c) c.innerHTML = items.length ? items.map(i => `
@@ -1346,7 +1390,7 @@
                 : t.deliveryFee.toFixed(2) + ' د.أ';
 
             const sticky = document.getElementById('sticky-cart');
-            if (count > 0 || appState.customOrder.trim() !== '') {
+            if (count > 0) {
                 sticky.classList.remove('hidden');
                 setTimeout(() => sticky.classList.remove('translate-y-full'), 10);
                 document.getElementById('sticky-cart-total').textContent = t.total.toFixed(2) + ' د.أ';
@@ -1412,7 +1456,7 @@
         };
 
         window.saveNewAddress = async () => {
-            if(!appState.exactLocationLink) return showToast("الرجاء تحديد الموقع الحالي أولاً", "error");
+            if(!appState.exactLocationLink && !appState.exactLocationBypassed) return showToast("الرجاء تحديد الموقع الحالي أولاً", "error");
             const bldg = document.getElementById('bldg-no').value.trim();
             const floor = document.getElementById('floor-no').value.trim();
             const apt = document.getElementById('apt-no').value.trim();
@@ -1421,7 +1465,7 @@
             const fullAddress = `عمارة: ${bldg}، طابق: ${floor}، شقة: ${apt}`;
             const newAddr = {
                 id: Date.now().toString(),
-                gpsLink: appState.exactLocationLink,
+                gpsLink: appState.exactLocationLink || 'سيتم الاتصال بالعميل',
                 bldg, floor, apt, fullAddress
             };
             
@@ -1516,14 +1560,33 @@
             const t = document.getElementById('get-location-text'), btn = document.getElementById('get-location-btn');
             if(!navigator.geolocation) return showToast("جهازك لا يدعم تحديد الموقع", "error");
             t.textContent = "جاري التحديد..."; btn.disabled = true; btn.classList.add('opacity-50');
+            
+            appState.locationFailCount = appState.locationFailCount || 0;
+            
             navigator.geolocation.getCurrentPosition(p => {
                 appState.exactLocationLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                 t.textContent = "تم تحديد الموقع بنجاح ✓"; btn.className = "w-full py-3 bg-green-100 text-green-700 border border-green-300 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm mb-3";
                 btn.disabled = false; btn.classList.remove('opacity-50');
                 document.getElementById('address-details-sec').classList.remove('hidden');
+                
+                appState.locationFailCount = 0; 
+                appState.exactLocationBypassed = false;
             }, e => {
-                showToast("حدث خطأ في تحديد الموقع. يرجى تفعيل الـ GPS في هاتفك والمحاولة مجدداً.", "error");
-                t.textContent = "حاول مرة أخرى (تأكد من تفعيل GPS)";
+                appState.locationFailCount++;
+                if (appState.locationFailCount >= 3) {
+                    if (confirm("تعذر تحديد موقعك بدقة. سيقوم المندوب بالاتصال بك على رقمك لمعرفة موقعك الصحيح. هل توافق؟")) {
+                        appState.exactLocationBypassed = true;
+                        appState.exactLocationLink = "سيتم الاتصال بالعميل لمعرفة الموقع";
+                        t.textContent = "تم الموافقة على الاتصال لمعرفة الموقع ✓";
+                        btn.className = "w-full py-3 bg-yellow-100 text-yellow-700 border border-yellow-300 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm mb-3";
+                        document.getElementById('address-details-sec').classList.remove('hidden');
+                    } else {
+                        t.textContent = "تحديد موقعك الحالي (GPS)";
+                    }
+                } else {
+                    showToast("حدث خطأ في تحديد الموقع. يرجى تفعيل الـ GPS في هاتفك والمحاولة مجدداً.", "error");
+                    t.textContent = "حاول مرة أخرى (تأكد من تفعيل GPS)";
+                }
                 btn.disabled = false; btn.classList.remove('opacity-50');
             }, { enableHighAccuracy: true, timeout: 10000 });
         };
@@ -1571,7 +1634,7 @@
                     const oRef = doc(collection(appState.db, PATH_ORDERS));
                     t.set(oRef, {
                         uid: appState.user.uid, customerName: name, phone: appState.profile.phone||'',
-                        location: 'موقع محدد عبر الـ GPS', exactLocation: selectedAddr.gpsLink, addressDetails: selectedAddr.fullAddress, customOrder: appState.customOrder,
+                        location: 'موقع محدد عبر الـ GPS', exactLocation: selectedAddr.gpsLink, addressDetails: selectedAddr.fullAddress, customOrder: '',
                         items: Object.values(appState.cart), total: totals.total, deductedFromWallet: amountToDeduct, cashToCollect: cashRequired, fees: { delivery: totals.deliveryFee, service: totals.serviceFee, discount: totals.discount, coupon: appState.appliedCouponCode, isFreeDelivery: totals.isFreeDelivery, originalDelivery: totals.originalDelivery },
                         paymentMethod: pay, status: 'بانتظار قبول الطلب', createdAt: serverTimestamp(), rated: false
                     });
