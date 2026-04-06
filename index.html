@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فرح سناكس</title>
+    <title>فرح سناكس - ألذ السناكات والوجبات</title>
+    <meta name="description" content="اطلب أشهى الوجبات السريعة والسناكات والحلويات مع توصيل سريع وموثوق.">
+    <!-- SEO Icons -->
+    <link rel="icon" href="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" type="image/png">
+    <meta property="og:image" content="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -68,8 +73,8 @@
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <!-- Logo Area -->
             <div class="flex items-center gap-3">
-                <img src="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" alt="فرح سناكس" class="h-20 md:h-28 w-auto object-contain drop-shadow-xl" onerror="this.outerHTML='<div class=\'text-[#00839b] font-bold text-2xl\'>F</div>'">
-                <div class="flex flex-col">
+                <img src="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" alt="فرح سناكس" class="h-28 md:h-36 w-auto max-w-[200px] md:max-w-[300px] object-contain drop-shadow-xl" onerror="this.outerHTML='<div class=\'text-[#00839b] font-bold text-2xl\'>F</div>'">
+                <div class="flex flex-col hidden sm:flex">
                     <h1 class="text-xl md:text-2xl font-extrabold tracking-tight mt-1">فرح سناكس</h1>
                     <div id="wallet-display" class="hidden text-xs text-green-300 font-bold flex flex-col gap-0.5 mt-1">
                         <span class="flex items-center gap-1"><i data-lucide="wallet" class="w-3 h-3"></i> الرصيد: <span id="header-balance">0.00</span> د.أ</span>
@@ -107,7 +112,7 @@
                 </button>
             </div>
         </div>
-        <div class="md:hidden px-4 pb-3 flex gap-2">
+        <div class="md:hidden px-4 pb-3 flex gap-2 mt-2">
            <div class="relative flex-grow">
                <input type="text" id="mobile-search" placeholder="ابحث عن منتج..." class="w-full py-2.5 px-4 pr-10 rounded-full text-gray-800 dark:text-gray-100 dark:bg-gray-800 dark:border-gray-700 border focus:outline-none focus:ring-2 focus:ring-[#00839b] text-sm shadow-inner transition-colors">
                <i data-lucide="search" class="absolute right-3 top-2.5 text-gray-400 w-5 h-5"></i>
@@ -170,6 +175,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" class="w-6 h-6">
                     دخول باستخدام جوجل
                 </button>
+                <button onclick="window.openTerms()" class="text-xs text-gray-400 hover:text-[#00839b] underline mt-4">بالتسجيل، أنت توافق على الشروط والأحكام</button>
             </div>
 
             <!-- Profile Name Step -->
@@ -207,12 +213,15 @@
                     <i data-lucide="heart" class="w-5 h-5"></i> مفضلاتي
                 </button>
 
-                <div class="grid grid-cols-2 gap-2 mt-2">
-                    <button onclick="window.openFeedback()" class="bg-blue-50 dark:bg-blue-900/20 text-[#002d74] dark:text-blue-300 py-3 rounded-xl font-bold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors flex flex-col items-center justify-center gap-1 border border-blue-200 dark:border-blue-800/50 text-xs">
+                <div class="grid grid-cols-3 gap-2 mt-2">
+                    <button onclick="window.openFeedback()" class="bg-blue-50 dark:bg-blue-900/20 text-[#002d74] dark:text-blue-300 py-3 rounded-xl font-bold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors flex flex-col items-center justify-center gap-1 border border-blue-200 dark:border-blue-800/50 text-[11px]">
                         <i data-lucide="message-square" class="w-5 h-5"></i> الشكاوي
                     </button>
-                    <button onclick="window.openFAQ()" class="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-3 rounded-xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex flex-col items-center justify-center gap-1 border border-gray-200 dark:border-gray-700 text-xs">
-                        <i data-lucide="help-circle" class="w-5 h-5"></i> الأسئلة الشائعة
+                    <button onclick="window.openSupport()" class="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 py-3 rounded-xl font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors flex flex-col items-center justify-center gap-1 border border-indigo-200 dark:border-indigo-800/50 text-[11px]">
+                        <i data-lucide="headset" class="w-5 h-5"></i> الدعم الفني
+                    </button>
+                    <button onclick="window.openFAQ()" class="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-3 rounded-xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex flex-col items-center justify-center gap-1 border border-gray-200 dark:border-gray-700 text-[11px]">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i> الأسئلة
                     </button>
                 </div>
 
@@ -224,10 +233,45 @@
         </div>
     </div>
 
+    <!-- Terms Modal -->
+    <div id="terms-modal" class="modal fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 text-right max-h-[85vh] overflow-y-auto">
+            <button onclick="window.toggleModal('terms', false); window.toggleModal('auth', true)" class="absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="arrow-right" class="w-5 h-5 dark:text-white"></i></button>
+            <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-6 text-center border-b dark:border-gray-700 pb-3">الشروط والأحكام</h2>
+            
+            <div class="space-y-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p>مرحباً بك في فرح سناكس. باستخدامك لهذا التطبيق، فإنك توافق على الشروط التالية:</p>
+                <ul class="list-disc pr-5 space-y-2">
+                    <li>يجب تقديم معلومات اتصال صحيحة لتسهيل عملية التوصيل.</li>
+                    <li>قد تختلف الأسعار التقريبية للمنتجات الإضافية وسيتم تأكيد السعر النهائي من الإدارة.</li>
+                    <li>يتم خصم الرصيد المحفظة تلقائياً في حال توفره عند اختيار وسيلة الدفع المناسبة.</li>
+                    <li>الأسعار المعروضة تشمل ضريبة المبيعات وتكاليف الخدمة إن وجدت، وسيظهر لك السعر النهائي قبل تأكيد الطلب.</li>
+                    <li>يحق للإدارة التواصل معك هاتفياً لتأكيد العنوان إذا لزم الأمر.</li>
+                </ul>
+                <p class="pt-4 text-center font-bold text-[#00839b] dark:text-cyan-400">نتمنى لك تجربة لذيذة معنا!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div id="support-modal" class="modal fixed inset-0 z-[125] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6">
+            <div class="flex items-center mb-5 border-b dark:border-gray-700 pb-3">
+                <button onclick="window.toggleModal('support', false); window.toggleModal('auth', true)" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full mr-2"><i data-lucide="arrow-right" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i></button>
+                <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-400 mx-auto pr-6 flex items-center gap-2"><i data-lucide="headset" class="w-5 h-5"></i> الدعم الفني</h2>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 text-center">اكتب رسالتك وسنقوم بالرد عليك في أقرب وقت ممكن.</p>
+            <textarea id="support-text" class="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-800 dark:text-white text-sm mb-4 font-medium" rows="5" placeholder="كيف يمكننا مساعدتك اليوم؟"></textarea>
+            <button onclick="window.submitSupport()" class="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-md hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="send" class="w-5 h-5"></i> إرسال الرسالة
+            </button>
+        </div>
+    </div>
+
     <!-- FAQ Modal -->
     <div id="faq-modal" class="modal fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 text-right max-h-[85vh] overflow-y-auto">
-            <button class="close-modal absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
+            <button onclick="window.toggleModal('faq', false); window.toggleModal('auth', true)" class="absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="arrow-right" class="w-5 h-5 dark:text-white"></i></button>
             <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-6 text-center border-b dark:border-gray-700 pb-3">الأسئلة الشائعة</h2>
             
             <div class="space-y-4">
@@ -237,11 +281,11 @@
                 </div>
                 <div class="border-b dark:border-gray-700 pb-3">
                     <h3 class="font-bold text-[#00839b] dark:text-cyan-400 text-sm mb-1">كيف أستفيد من نقاط الولاء؟</h3>
-                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">كل 4 طلبات مكتملة تمنحك 10 نقاط. يمكنك تحويل كل 10 نقاط إلى 0.25 د.أ رصيد في محفظتك لاستخدامه في الشراء.</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">كل طلبان من سناكات وطلبان من مطعم سلمة يتم تحويلها تلقائياً إلى رصيد 0.25 د.أ في محفظتك!</p>
                 </div>
                 <div class="border-b dark:border-gray-700 pb-3">
                     <h3 class="font-bold text-[#00839b] dark:text-cyan-400 text-sm mb-1">ماذا أفعل إذا طلبت منتجاً ولم أجده في القائمة؟</h3>
-                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">يمكنك كتابة اسم المنتج والسعر التقريبي في صندوق "طلب خاص" المتاح في كل قسم، وسنقوم بإحضاره لك!</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">يمكنك كتابة اسم المنتج والسعر التقريبي في صندوق "هل الذي تبحث عنه غير موجود" المتاح في كل قسم، وسنقوم بإحضاره لك!</p>
                 </div>
                 <div class="border-b dark:border-gray-700 pb-3">
                     <h3 class="font-bold text-[#00839b] dark:text-cyan-400 text-sm mb-1">هل يمكنني جدولة طلب لوقت لاحق؟</h3>
@@ -254,32 +298,40 @@
     <!-- Loyalty Points Modal -->
     <div id="loyalty-modal" class="modal fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6 text-center">
-            <button class="close-modal absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
+            <button onclick="window.toggleModal('loyalty', false); window.toggleModal('auth', true)" class="absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="arrow-right" class="w-5 h-5 dark:text-white"></i></button>
             <div class="w-20 h-20 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-yellow-50 dark:border-yellow-800/50">
                 <i data-lucide="gift" class="w-10 h-10"></i>
             </div>
-            <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-2">نقاط الولاء</h2>
-            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 font-medium">لكل <span class="font-bold text-[#002d74] dark:text-blue-300">4 طلبات</span> مكتملة تمنحك <span class="font-bold text-yellow-600 dark:text-yellow-400">10 نقاط</span> تلقائياً في رصيدك!</p>
+            <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-2">نقاط الولاء التلقائية</h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 font-medium">اطلب <span class="font-bold text-[#00839b] dark:text-cyan-400">مرتين من سناكات</span> و <span class="font-bold text-[#00839b] dark:text-cyan-400">مرتين من مطعم سلمة</span> وسنقوم بتقديم <span class="font-bold text-yellow-600 dark:text-yellow-400">0.25 د.أ</span> تضاف لمحفظتك تلقائياً!</p>
             
-            <div class="mb-5 text-right px-2">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400">الطلبات المنجزة</span>
-                    <span class="text-xs font-bold text-[#00839b] dark:text-cyan-400" id="loyalty-progress-text">0 / 4</span>
+            <!-- Progress Bars -->
+            <div class="space-y-4 mb-6">
+                <div class="text-right px-2">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-gray-500 dark:text-gray-400">طلبات سناكات</span>
+                        <span class="text-xs font-bold text-[#00839b] dark:text-cyan-400" id="loyalty-snacks-text">0 / 2</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                        <div id="loyalty-snacks-bar" class="bg-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
                 </div>
-                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                    <div id="loyalty-progress-bar" class="bg-green-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                
+                <div class="text-right px-2">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-gray-500 dark:text-gray-400">طلبات مطعم سلمة</span>
+                        <span class="text-xs font-bold text-[#00839b] dark:text-cyan-400" id="loyalty-salma-text">0 / 2</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                        <div id="loyalty-salma-bar" class="bg-green-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 mb-6">
-                <p class="text-sm font-bold text-gray-600 dark:text-gray-300 mb-1">رصيد نقاطك الحالي</p>
-                <p class="text-4xl font-black text-yellow-600 dark:text-yellow-400 mb-2" id="loyalty-current-points">0</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">يمكنك تحويل كل 10 نقاط إلى 0.25 د.أ رصيد إضافي في محفظتك لاستخدامه في الطلبات القادمة.</p>
+            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+                <p class="text-sm font-bold text-gray-600 dark:text-gray-300 mb-1">مكافآت الولاء المكتسبة حتى الآن</p>
+                <p class="text-4xl font-black text-yellow-600 dark:text-yellow-400 mb-2"><span id="loyalty-total-rewards">0</span> <span class="text-lg">د.أ</span></p>
             </div>
-
-            <button id="convert-points-btn" onclick="window.convertPoints()" class="w-full bg-[#00839b] text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:bg-[#005f73] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
-                <i data-lucide="refresh-cw" class="w-5 h-5"></i> تحويل 10 نقاط
-            </button>
         </div>
     </div>
 
@@ -312,7 +364,7 @@
     <!-- Feedback Modal -->
     <div id="feedback-modal" class="modal fixed inset-0 z-[125] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
          <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6">
-            <button class="close-modal absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
+            <button onclick="window.toggleModal('feedback', false); window.toggleModal('auth', true)" class="absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="arrow-right" class="w-5 h-5 dark:text-white"></i></button>
             
             <div id="feedback-list-sec">
                 <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 text-center mb-5 border-b dark:border-gray-700 pb-3">الاقتراحات والشكاوي</h2>
@@ -695,6 +747,7 @@
                 if(snap.exists() && snap.data().phone && snap.data().name) {
                     appState.profile = snap.data();
                     if(!appState.profile.points) appState.profile.points = 0;
+                    if(!appState.profile.loyaltyCyclesRewarded) appState.profile.loyaltyCyclesRewarded = 0;
                     if(!appState.profile.addresses) appState.profile.addresses = [];
                     if(!appState.profile.favorites) appState.profile.favorites = [];
                     updateAuthUI();
@@ -709,7 +762,7 @@
 
                     if(!document.getElementById('auth-step-3').classList.contains('hidden')) toggleModal('auth', false);
                 } else {
-                    appState.profile = snap.exists() ? snap.data() : { balance: 0, debt: 0, points: 0, addresses: [], favorites: [] };
+                    appState.profile = snap.exists() ? snap.data() : { balance: 0, debt: 0, points: 0, loyaltyCyclesRewarded: 0, addresses: [], favorites: [] };
                     if(appState.user.displayName) document.getElementById('new-user-name').value = appState.user.displayName;
                     document.getElementById('auth-step-1').classList.add('hidden');
                     document.getElementById('auth-profile').classList.add('hidden');
@@ -745,6 +798,44 @@
                     }
                     appState.prevOrderStatuses[o.id] = o.status;
                 });
+
+                // Auto Loyalty Conversion
+                if (appState.profile) {
+                    let snacksOrdersCount = 0;
+                    let salmaOrdersCount = 0;
+                    
+                    appState.myOrders.forEach(o => {
+                        if (o.status === 'تم توصيل الطلب بنجاح') {
+                            if (o.items.some(i => i.product.restaurant === 'سناكات')) snacksOrdersCount++;
+                            if (o.items.some(i => i.product.restaurant === 'مطعم سلمة')) salmaOrdersCount++;
+                        }
+                    });
+
+                    const earnedCycles = Math.floor(Math.min(snacksOrdersCount / 2, salmaOrdersCount / 2));
+                    const rewardedCycles = appState.profile.loyaltyCyclesRewarded || 0;
+
+                    if (earnedCycles > rewardedCycles) {
+                        const diff = earnedCycles - rewardedCycles;
+                        const bonusAmount = diff * 0.25;
+                        const newBal = (appState.profile.balance || 0) + bonusAmount;
+                        
+                        if (appState.db !== 'LOCAL') {
+                            updateDoc(doc(appState.db, PATH_PROFILES, appState.user.uid), {
+                                balance: newBal,
+                                loyaltyCyclesRewarded: earnedCycles
+                            }).then(() => {
+                                showToast(`تهانينا! اكتملت شروط الولاء وتم إضافة ${bonusAmount} د.أ لمحفظتك تلقائياً 🎁`, "success");
+                            });
+                        }
+                    }
+                    
+                    // Save stats for UI
+                    appState.loyaltyStats = {
+                        snacks: snacksOrdersCount,
+                        salma: salmaOrdersCount,
+                        rewarded: rewardedCycles
+                    };
+                }
 
                 if(document.getElementById('loyalty-modal').classList.contains('active')) {
                     window.openLoyalty(); 
@@ -842,13 +933,39 @@
             signInWithPopup(appState.auth, provider).then(() => showToast('تم تسجيل الدخول بنجاح!', 'success')).catch(() => showToast('خطأ بالدخول', 'error'));
         };
 
+        window.openTerms = () => {
+            toggleModal('auth', false);
+            toggleModal('terms', true);
+        };
+
+        window.openSupport = () => {
+            toggleModal('auth', false);
+            toggleModal('support', true);
+            document.getElementById('support-text').value = '';
+        };
+
+        window.submitSupport = async () => {
+            const text = document.getElementById('support-text').value.trim();
+            if(!text) return showToast("الرجاء كتابة رسالتك", "error");
+            
+            try {
+                await addDoc(collection(appState.db, PATH_FEEDBACK), {
+                    uid: appState.user.uid, customerName: appState.profile?.name || 'بدون اسم', phone: appState.profile?.phone || '',
+                    type: 'support', content: text, status: 'يتم حلها', createdAt: serverTimestamp()
+                });
+                showToast("سيتم التواصل معك قريباً", "success");
+                toggleModal('support', false);
+                toggleModal('auth', true);
+            } catch(e) { showToast("حدث خطأ", "error"); }
+        };
+
         window.saveUserProfile = async () => {
             const name = document.getElementById('new-user-name').value.trim();
             const phone = document.getElementById('new-user-phone').value.trim();
             if(name.length < 3) return showToast("أدخل اسم صحيح", "error");
             if(phone.length < 9) return showToast("أدخل رقم هاتف صحيح", "error");
             try {
-                await setDoc(doc(appState.db, PATH_PROFILES, appState.user.uid), { email: appState.user.email||'', name: name, phone: phone, balance: appState.profile?.balance||0, debt: appState.profile?.debt||0, points: appState.profile?.points||0, freeDelivery: appState.profile?.freeDelivery||false, addresses: appState.profile?.addresses||[], favorites: appState.profile?.favorites||[], customDelivery: appState.profile?.customDelivery||'' }, { merge: true });
+                await setDoc(doc(appState.db, PATH_PROFILES, appState.user.uid), { email: appState.user.email||'', name: name, phone: phone, balance: appState.profile?.balance||0, debt: appState.profile?.debt||0, points: appState.profile?.points||0, loyaltyCyclesRewarded: appState.profile?.loyaltyCyclesRewarded||0, freeDelivery: appState.profile?.freeDelivery||false, addresses: appState.profile?.addresses||[], favorites: appState.profile?.favorites||[], customDelivery: appState.profile?.customDelivery||'' }, { merge: true });
                 showToast("تم الحفظ", "success"); toggleModal('auth', false);
                 
                 if (deferredPrompt) {
@@ -942,39 +1059,27 @@
 
         // Loyalty Points Logic
         window.openLoyalty = () => {
-            const completedOrders = appState.myOrders.filter(o => o.status === 'تم توصيل الطلب بنجاح').length;
-            const progress = completedOrders % 4;
-            const progressPercent = (progress / 4) * 100;
-
-            document.getElementById('loyalty-current-points').textContent = appState.profile?.points || 0;
-            document.getElementById('loyalty-progress-text').textContent = `${progress} / 4`;
-            document.getElementById('loyalty-progress-bar').style.width = `${progressPercent}%`;
+            const stats = appState.loyaltyStats || { snacks: 0, salma: 0, rewarded: 0 };
             
-            document.getElementById('convert-points-btn').disabled = (appState.profile?.points || 0) < 10;
+            const snacksProgress = stats.snacks % 2;
+            const salmaProgress = stats.salma % 2;
+            
+            const totalRewarded = (stats.rewarded || 0) * 0.25;
+
+            document.getElementById('loyalty-snacks-text').textContent = `${snacksProgress} / 2`;
+            document.getElementById('loyalty-salma-text').textContent = `${salmaProgress} / 2`;
+            
+            document.getElementById('loyalty-snacks-bar').style.width = `${(snacksProgress / 2) * 100}%`;
+            document.getElementById('loyalty-salma-bar').style.width = `${(salmaProgress / 2) * 100}%`;
+            
+            document.getElementById('loyalty-total-rewards').textContent = totalRewarded.toFixed(2);
+
             toggleModal('auth', false);
             toggleModal('loyalty', true);
         };
 
         window.convertPoints = async () => {
-            if ((appState.profile.points || 0) < 10) return;
-            const newPoints = (appState.profile.points || 0) - 10;
-            const newBal = parseFloat(appState.profile.balance || 0) + 0.25;
-            
-            const btn = document.getElementById('convert-points-btn');
-            btn.disabled = true;
-            try {
-                if (appState.db !== 'LOCAL') {
-                    await updateDoc(doc(appState.db, PATH_PROFILES, appState.user.uid), { points: newPoints, balance: newBal });
-                }
-                showToast("تم تحويل النقاط بنجاح وإضافة 0.25 د.أ لرصيدك!", "success");
-                appState.profile.points = newPoints;
-                appState.profile.balance = newBal;
-                window.openLoyalty(); 
-                updateAuthUI();
-            } catch(e) {
-                showToast("حدث خطأ", "error");
-                btn.disabled = false;
-            }
+            // Unused as it's now automated, but kept for fallback or legacy code.
         };
 
         // Rating Logic
@@ -1075,20 +1180,23 @@
 
         window.renderFeedbackList = () => {
             const container = document.getElementById('feedback-items');
-            if(!appState.feedback || appState.feedback.length === 0) {
+            const validTypes = ['suggestion', 'complaint'];
+            const relevantFeedbacks = appState.feedback?.filter(f => validTypes.includes(f.type)) || [];
+            
+            if(relevantFeedbacks.length === 0) {
                 container.innerHTML = '<p class="text-center text-gray-500 py-6 text-sm font-bold">لا يوجد سجل سابق</p>';
                 return;
             }
-            const sorted = [...appState.feedback].sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
+            const sorted = [...relevantFeedbacks].sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
             container.innerHTML = sorted.map(f => {
                 const isResolved = f.status === 'تم حلها';
                 const statusColor = isResolved ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
-                const typeLabel = f.type === 'complaint' ? 'شكوى' : (f.type === 'rating' ? 'تقييم' : 'اقتراح');
+                const typeLabel = f.type === 'complaint' ? 'شكوى' : 'اقتراح';
                 return `<div class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 p-4 rounded-2xl mb-2 text-right relative">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="font-bold text-[#002d74] dark:text-blue-300 text-sm">${typeLabel} ${f.rating ? `<i data-lucide="star" class="w-3 h-3 inline fill-yellow-400 text-yellow-400"></i> ${f.rating}` : ''}</span>
+                        <span class="font-bold text-[#002d74] dark:text-blue-300 text-sm">${typeLabel}</span>
                         <div class="flex items-center gap-2">
-                            ${f.type !== 'rating' ? `<span class="text-xs font-bold px-3 py-1 rounded-full ${statusColor}">${f.status || 'يتم حلها'}</span>` : ''}
+                            <span class="text-xs font-bold px-3 py-1 rounded-full ${statusColor}">${f.status || 'يتم حلها'}</span>
                         </div>
                     </div>
                     <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 font-medium">${f.content || 'بدون تعليق'}</p>
@@ -1265,7 +1373,7 @@
 
             if (appState.currentRestaurant === 'سناكات' && appState.category === 'الكل' && !appState.search) {
                 const cats = [
-                    { name: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85%20%D8%A8%D8%AF%D9%88%D9%86%20%D8%B9%D9%86%D9%88%D8%A7%D9%86%20(12).png' },
+                    { name: 'شيبس', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__12_-removebg-preview.png' },
                     { name: 'شوكلاته', image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png' },
                     { name: 'مواد تموينية', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
                     { name: 'مشروبات غازية', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
@@ -1298,6 +1406,9 @@
                     if (p.restaurant !== appState.currentRestaurant) return false;
                     
                     let targetCat = appState.category;
+                    // تطابق الاسم مع التصنيف بالمنتجات
+                    if (targetCat === 'ايس كريم') targetCat = 'ايس كريم';
+
                     if (appState.category !== 'الكل' && p.subCategory !== targetCat) return false;
                     return m;
                 }
@@ -1332,10 +1443,11 @@
                     action = `<button class="bg-[#002d74] dark:bg-blue-600 w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md hover:scale-105 transition-transform" onclick="event.stopPropagation(); window.addItem('${p.id}')"><i data-lucide="plus" class="w-5 h-5"></i></button>`;
                 } else {
                     if (qty > 0) {
-                        action = `<div class="flex items-center justify-between bg-[#f3f4f6] dark:bg-gray-700 rounded-full w-[100px] h-[40px] p-1 shadow-inner border border-gray-200 dark:border-gray-600" onclick="event.stopPropagation()">
-                            <button class="text-red-500 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;" onclick="window.updateQty('${p.id}', -1)">-</button>
+                        action = `
+                        <div class="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-full w-[96px] h-[40px] px-1 py-1 shadow-inner border border-gray-200 dark:border-gray-600" onclick="event.stopPropagation()">
+                            <button class="text-red-500 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors" style="line-height: 0; padding-bottom: 2px;" onclick="window.updateQty('${p.id}', -1)">-</button>
                             <span class="font-extrabold text-[#002d74] dark:text-white text-lg">${qty}</span>
-                            <button class="text-[#00839b] dark:text-cyan-400 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;" onclick="window.updateQty('${p.id}', 1)">+</button>
+                            <button class="text-[#00839b] dark:text-cyan-400 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors" style="line-height: 0; padding-bottom: 2px;" onclick="window.updateQty('${p.id}', 1)">+</button>
                         </div>`;
                     } else {
                         action = `<button class="bg-[#002d74] dark:bg-blue-600 w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md hover:scale-105 transition-transform" onclick="event.stopPropagation(); window.addItem('${p.id}')"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>`;
@@ -1444,10 +1556,10 @@
                     <span class="text-gray-500 dark:text-gray-400 font-bold text-xs mt-1 block">${price.toFixed(2)} د.أ</span>
                 </div>
                 ${qty > 0 ? 
-                    `<div class="flex items-center justify-between bg-[#f3f4f6] dark:bg-gray-700 rounded-full w-[90px] h-[36px] p-1 border border-gray-200 dark:border-gray-600 shadow-inner">
-                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, -1, ${isPotato})" class="text-red-500 font-bold text-xl w-7 h-7 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">-</button>
+                    `<div class="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-full w-[96px] h-[40px] px-1 py-1 border border-gray-200 dark:border-gray-600 shadow-inner">
+                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, -1, ${isPotato})" class="text-red-500 font-bold text-xl w-7 h-7 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors" style="line-height: 0; padding-bottom: 2px;">-</button>
                         <span class="font-extrabold text-[#002d74] dark:text-white text-base">${qty}</span>
-                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, 1, ${isPotato})" class="text-[#00839b] dark:text-cyan-400 font-bold text-xl w-7 h-7 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">+</button>
+                        <button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, 1, ${isPotato})" class="text-[#00839b] dark:text-cyan-400 font-bold text-xl w-7 h-7 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors" style="line-height: 0; padding-bottom: 2px;">+</button>
                     </div>`
                     : `<button onclick="window.updateDynamicQty('${pId}', '${optName}', ${price}, 1, ${isPotato})" class="bg-[#00839b] text-white px-5 py-2 rounded-xl font-bold text-sm shadow-md hover:bg-[#005f73] transition-colors">إضافة</button>`
                 }
@@ -1463,7 +1575,7 @@
             }
             if(!item) return;
             const q = item.quantity + d;
-            if (appState.db === 'LOCAL') { if(q <= 0) delete appState.cart[k]; else appState.cart[k].quantity = q; saveLocalCart(); updateCartUI(); }
+            if (appState.db === 'LOCAL') { if(q <= 0) delete appState.cart[k]; else appState.cart[k].quantity = q; saveLocalCart(); updateCartUI(); renderProducts(); }
             else { const ref = doc(appState.db, `artifacts/${APP_ID}/users/${appState.user.uid}/cartItems`, k); if(q <= 0) await deleteDoc(ref); else await updateDoc(ref, {quantity: q}); }
         };
 
@@ -1514,10 +1626,10 @@
                         <p class="font-bold text-sm text-[#002d74] dark:text-blue-300">${i.product.name} ${i.option?`<span class="text-[#00839b] dark:text-cyan-400">(${i.option})</span>`:''}</p>
                         <p class="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">${i.product.price.toFixed(2)} د.أ</p>
                     </div>
-                    <div class="flex items-center justify-between bg-[#f3f4f6] dark:bg-gray-700 rounded-full w-[90px] h-10 p-1 shadow-inner border border-gray-200 dark:border-gray-600">
-                        <button onclick="window.updateQty('${i.option?i.product.id+'_'+i.option:i.product.id}', -1)" class="text-red-500 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">-</button>
+                    <div class="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-full w-[96px] h-[40px] px-1 py-1 shadow-inner border border-gray-200 dark:border-gray-600">
+                        <button onclick="window.updateQty('${i.option?i.product.id+'_'+i.option:i.product.id}', -1)" class="text-red-500 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors" style="line-height: 0; padding-bottom: 2px;">-</button>
                         <span class="font-extrabold text-[#002d74] dark:text-white text-lg">${i.quantity}</span>
-                        <button onclick="window.updateQty('${i.option?i.product.id+'_'+i.option:i.product.id}', 1)" class="text-[#00839b] dark:text-cyan-400 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-100 transition-colors" style="line-height: 0; padding-bottom: 2px;">+</button>
+                        <button onclick="window.updateQty('${i.option?i.product.id+'_'+i.option:i.product.id}', 1)" class="text-[#00839b] dark:text-cyan-400 font-bold text-2xl w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors" style="line-height: 0; padding-bottom: 2px;">+</button>
                     </div>
                 </div>`).join('') : '<p class="text-center py-8 font-bold text-gray-400 flex flex-col items-center gap-2"><i data-lucide="shopping-cart" class="w-8 h-8 opacity-50"></i> السلة فارغة</p>';
             
