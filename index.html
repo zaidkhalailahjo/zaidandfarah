@@ -73,7 +73,7 @@
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <!-- Logo Area -->
             <div class="flex items-center gap-3">
-                <img src="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" alt="فرح سناكس" class="h-28 md:h-36 w-auto max-w-[200px] md:max-w-[300px] object-contain drop-shadow-xl" onerror="this.outerHTML='<div class=\'text-[#00839b] font-bold text-2xl\'>F</div>'">
+                <img src="https://uploads.onecompiler.io/43n8uttmw/448872dja/WhatsApp_Image_2025-12-21_at_11.54.43_AM-removebg-preview.png" alt="فرح سناكس" class="h-20 md:h-28 w-auto max-w-[180px] md:max-w-[250px] object-contain drop-shadow-xl" onerror="this.outerHTML='<div class=\'text-[#00839b] font-bold text-2xl\'>F</div>'">
                 <div class="flex flex-col hidden sm:flex">
                     <h1 class="text-xl md:text-2xl font-extrabold tracking-tight mt-1">فرح سناكس</h1>
                     <div id="wallet-display" class="hidden text-xs text-green-300 font-bold flex flex-col gap-0.5 mt-1">
@@ -175,7 +175,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" class="w-6 h-6">
                     دخول باستخدام جوجل
                 </button>
-                <button onclick="window.openTerms()" class="text-xs text-gray-400 hover:text-[#00839b] underline mt-4">بالتسجيل، أنت توافق على الشروط والأحكام</button>
+                <button onclick="window.openTerms()" class="text-xs text-gray-400 hover:text-[#00839b] underline mt-4 block mx-auto">الشروط والأحكام</button>
             </div>
 
             <!-- Profile Name Step -->
@@ -239,33 +239,36 @@
             <button onclick="window.toggleModal('terms', false); window.toggleModal('auth', true)" class="absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="arrow-right" class="w-5 h-5 dark:text-white"></i></button>
             <h2 class="text-2xl font-extrabold text-[#002d74] dark:text-blue-300 mb-6 text-center border-b dark:border-gray-700 pb-3">الشروط والأحكام</h2>
             
-            <div class="space-y-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                <p>مرحباً بك في فرح سناكس. باستخدامك لهذا التطبيق، فإنك توافق على الشروط التالية:</p>
-                <ul class="list-disc pr-5 space-y-2">
-                    <li>يجب تقديم معلومات اتصال صحيحة لتسهيل عملية التوصيل.</li>
-                    <li>قد تختلف الأسعار التقريبية للمنتجات الإضافية وسيتم تأكيد السعر النهائي من الإدارة.</li>
-                    <li>يتم خصم الرصيد المحفظة تلقائياً في حال توفره عند اختيار وسيلة الدفع المناسبة.</li>
-                    <li>الأسعار المعروضة تشمل ضريبة المبيعات وتكاليف الخدمة إن وجدت، وسيظهر لك السعر النهائي قبل تأكيد الطلب.</li>
-                    <li>يحق للإدارة التواصل معك هاتفياً لتأكيد العنوان إذا لزم الأمر.</li>
-                </ul>
-                <p class="pt-4 text-center font-bold text-[#00839b] dark:text-cyan-400">نتمنى لك تجربة لذيذة معنا!</p>
+            <div id="dynamic-terms-content" class="space-y-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                جاري تحميل الشروط والأحكام...
             </div>
         </div>
     </div>
 
-    <!-- Support Modal -->
-    <div id="support-modal" class="modal fixed inset-0 z-[125] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6">
-            <div class="flex items-center mb-5 border-b dark:border-gray-700 pb-3">
-                <button onclick="window.toggleModal('support', false); window.toggleModal('auth', true)" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full mr-2"><i data-lucide="arrow-right" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i></button>
-                <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-400 mx-auto pr-6 flex items-center gap-2"><i data-lucide="headset" class="w-5 h-5"></i> الدعم الفني</h2>
+    <!-- Client Support Chat Modal -->
+    <div id="support-modal" class="modal fixed inset-0 z-[160] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+         <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative flex flex-col" style="height: 80vh;">
+            <div class="p-4 bg-indigo-600 text-white flex justify-between items-center z-10 shadow-md">
+                <div class="flex items-center gap-3">
+                    <button onclick="window.toggleModal('support', false); window.toggleModal('auth', true)" class="p-1.5 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><i data-lucide="arrow-right" class="w-5 h-5 text-white"></i></button>
+                    <div>
+                        <h2 class="text-lg font-bold">الدعم الفني</h2>
+                        <p class="text-xs text-indigo-200">نحن هنا لمساعدتك</p>
+                    </div>
+                </div>
             </div>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 text-center">اكتب رسالتك وسنقوم بالرد عليك في أقرب وقت ممكن.</p>
-            <textarea id="support-text" class="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-800 dark:text-white text-sm mb-4 font-medium" rows="5" placeholder="كيف يمكننا مساعدتك اليوم؟"></textarea>
-            <button onclick="window.submitSupport()" class="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-md hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
-                <i data-lucide="send" class="w-5 h-5"></i> إرسال الرسالة
-            </button>
-        </div>
+            
+            <!-- Chat History -->
+            <div class="flex-grow overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900 flex flex-col gap-3" id="client-chat-history"></div>
+            
+            <!-- Chat Input -->
+            <div class="p-4 bg-white dark:bg-darkcard border-t border-gray-100 dark:border-gray-700 flex items-center gap-2">
+                <textarea id="client-chat-input" class="flex-grow p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium resize-none no-scrollbar dark:text-white" rows="1" placeholder="اكتب رسالتك هنا..."></textarea>
+                <button onclick="window.sendClientSupportMsg()" class="bg-indigo-600 text-white p-3 rounded-full hover:bg-indigo-700 transition-colors shadow-md flex-shrink-0 transform rotate-180">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </button>
+            </div>
+         </div>
     </div>
 
     <!-- FAQ Modal -->
@@ -328,7 +331,7 @@
                 </div>
             </div>
 
-            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 mb-6">
                 <p class="text-sm font-bold text-gray-600 dark:text-gray-300 mb-1">مكافآت الولاء المكتسبة حتى الآن</p>
                 <p class="text-4xl font-black text-yellow-600 dark:text-yellow-400 mb-2"><span id="loyalty-total-rewards">0</span> <span class="text-lg">د.أ</span></p>
             </div>
@@ -361,11 +364,12 @@
         </div>
     </div>
 
-    <!-- Feedback Modal -->
+    <!-- Feedback (Suggestions & Complaints) Modal -->
     <div id="feedback-modal" class="modal fixed inset-0 z-[125] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
          <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-6">
             <button onclick="window.toggleModal('feedback', false); window.toggleModal('auth', true)" class="absolute top-4 left-4 bg-gray-100 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 z-10"><i data-lucide="arrow-right" class="w-5 h-5 dark:text-white"></i></button>
             
+            <!-- Main Feedback List -->
             <div id="feedback-list-sec">
                 <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 text-center mb-5 border-b dark:border-gray-700 pb-3">الاقتراحات والشكاوي</h2>
                 <div class="flex gap-3 mb-6">
@@ -380,6 +384,7 @@
                 <div id="feedback-items" class="max-h-[30vh] overflow-y-auto space-y-2 pr-1 no-scrollbar"></div>
             </div>
 
+            <!-- Feedback Form -->
             <div id="feedback-form-sec" class="hidden">
                 <div class="flex items-center mb-5 border-b dark:border-gray-700 pb-3">
                     <button onclick="window.openFeedback()" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full mr-2"><i data-lucide="arrow-right" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i></button>
@@ -393,7 +398,7 @@
          </div>
     </div>
 
-    <!-- Logout Modal -->
+    <!-- Logout Confirmation Modal -->
     <div id="logout-confirm-modal" class="modal fixed inset-0 z-[160] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-xs overflow-hidden shadow-2xl relative p-6 text-center">
             <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 mb-4">تسجيل الخروج</h2>
@@ -412,18 +417,22 @@
                 <h2 class="text-xl font-bold text-[#002d74] dark:text-blue-300 flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5"></i> طلباتي</h2>
                 <button class="close-modal p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i data-lucide="x" class="w-5 h-5 dark:text-white"></i></button>
             </div>
-            <div id="orders-list-container" class="p-4 space-y-4 overflow-y-auto flex-grow bg-gray-100 dark:bg-gray-900"></div>
+            <div id="orders-list-container" class="p-4 space-y-4 overflow-y-auto flex-grow bg-gray-100 dark:bg-gray-900">
+                <!-- Orders injected here -->
+            </div>
         </div>
     </div>
 
-    <!-- Order Details Modal -->
+    <!-- Order Full Details Modal (Read Only) -->
     <div id="my-order-details-modal" class="modal fixed inset-0 z-[125] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
          <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col">
             <div class="p-4 bg-[#002d74] text-white flex justify-between items-center z-10 shadow-md">
                 <h2 class="text-lg font-bold flex items-center gap-2"><i data-lucide="receipt" class="w-5 h-5"></i> تفاصيل الفاتورة</h2>
                 <button class="close-modal p-1.5 rounded-full hover:bg-white/20 bg-white/10"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="flex-grow overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900" id="my-order-details-content"></div>
+            <div class="flex-grow overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900" id="my-order-details-content">
+                <!-- Details injected here -->
+            </div>
          </div>
     </div>
 
@@ -452,12 +461,15 @@
             <div id="cart-items-container" class="p-4 space-y-3 overflow-y-auto flex-grow bg-white dark:bg-darkbg pb-20"></div>
             
             <div class="p-5 bg-gray-50 dark:bg-gray-800 border-t dark:border-gray-700 space-y-4">
+                
+                <!-- Coupon - Mobile Friendly Layout -->
                 <div class="flex items-center bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#00839b] shadow-sm">
                     <input type="text" id="coupon-input" placeholder="أدخل كود الخصم (إن وجد)" class="flex-grow p-3 outline-none text-sm bg-transparent w-full font-bold dark:text-white">
                     <button onclick="window.applyCoupon()" class="bg-[#002d74] text-white px-6 py-3 font-bold text-sm hover:bg-[#001c4a] transition-colors h-full shrink-0">تطبيق</button>
                 </div>
                 <div id="coupon-message" class="hidden text-xs font-bold text-center"></div>
 
+                <!-- Totals -->
                 <div class="space-y-1.5 text-sm font-medium border-b border-gray-200 dark:border-gray-700 pb-3">
                     <div class="flex justify-between text-gray-500 dark:text-gray-400"><span>المجموع:</span><span id="cart-subtotal">0.00 د.أ</span></div>
                     <div class="flex justify-between text-green-600 dark:text-green-400"><span>الخصم:</span><span id="cart-discount">0.00 د.أ</span></div>
@@ -485,6 +497,7 @@
                     <input type="text" id="customer-name" placeholder="أدخل اسمك" class="w-full p-3 border dark:border-gray-600 rounded-xl outline-none focus:ring-2 focus:ring-[#00839b] font-bold bg-gray-50 dark:bg-gray-800 dark:text-white">
                 </div>
                 
+                <!-- Saved Addresses Section -->
                 <div id="addresses-section" class="space-y-3 mb-2">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">اختر عنوان التوصيل</label>
                     <div id="saved-addresses-container" class="space-y-2 max-h-[150px] overflow-y-auto pr-1 no-scrollbar"></div>
@@ -493,6 +506,7 @@
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> إضافة موقع جديد
                     </button>
 
+                    <!-- New Address Form -->
                     <div id="new-address-form" class="hidden bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 mt-2">
                         <h3 class="text-sm font-bold text-[#002d74] dark:text-blue-300 mb-3">عنوان جديد</h3>
                         
@@ -601,6 +615,7 @@
         const PATH_RESTAURANTS = `artifacts/${APP_ID}/public/data/restaurants`;
         const PATH_PRODUCTS = `artifacts/${APP_ID}/public/data/menu_products`;
         const PATH_FEEDBACK = `artifacts/${APP_ID}/public/data/feedback`;
+        const PATH_SETTINGS = `artifacts/${APP_ID}/public/data/settings`;
 
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -641,12 +656,14 @@
             send(empToken, empChatId);
         };
 
+        // Initial Hardcoded Lists
         const RESTAURANTS = [
             { name: 'مطعم سلمة', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/images%20(19).jpeg', desc: 'شاورما ووجبات سريعة', bg: 'bg-white' },
             { name: 'سناكات', image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Gemini_Generated_Image_5h65xw5h65xw5h65.png', desc: 'شيبس، شوكولاتة، بسكويت', bg: 'bg-white' }
         ];
         
         const PRODUCTS = [
+            // مطعم سلمة
             { id: '21', name: 'شاورما عادي', price: 2.00, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'مع بطاطا ومخلل' },
             { id: '22', name: 'شاورما سوبر', price: 2.60, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/01-20-2022_0412pm92c68175ac858488dcf3.jpg', ingredients: 'حجم سوبر' },
             { id: '23', name: 'ساندويشة شاورما صغير', price: 0.60, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/xxxxxxxxxx80-1024x1024.jpg' },
@@ -654,6 +671,8 @@
             { id: 'zinger', name: 'ساندويشة زنجر', price: 1.50, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D8%AA%D8%B4_%D8%B2%D9%86%D8%AC%D8%B1-removebg-preview.png', ingredients: 'اختر بين سندويشة أو وجبة' },
             { id: 'shawarma_italy', name: 'وجبة شاورما ايطالي', price: 3.75, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%B4%D8%A7%D9%88%D8%B1%D9%85%D8%A7-%D8%A7%D9%8A%D8%B7%D8%A7%D9%84%D9%8A-copy-removebg-preview.png', ingredients: 'تقدم مع بطاطا و مخلل و مايونيز' },
             { id: '34_salma', name: 'ماتريكس', price: 0, restaurant: 'مطعم سلمة', category: 'المطاعم', hideFromAll: true, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
+
+            // سناكات - شوكولاتة
             { id: '30', name: 'شوكلاته فيوري', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Xrv1gtMvDtRtqoQfh00kvW4blvOZvPPZeOpnPb3G-removebg-preview.png' },
             { id: '29', name: 'بريك تايم الدائرية', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/download-removebg-preview.png' },
             { id: '19', name: 'بسكوت ستارز', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.04.11_259af214-removebg-preview.png' },
@@ -662,6 +681,8 @@
             { id: '15', name: 'شوكلاتة بريك سوبا', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tdx6b2/IMG_6071-IDX-removebg-preview.png' },
             { id: '32', name: 'كيكة باندا', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/dDO9Oaz1v5uKg37U5G6O6ZfoizHABoS9OMoGJhnc-removebg-preview.png' },
             { id: '33', name: 'ميني بوند كيك', price: 0.10, restaurant: 'سناكات', subCategory: 'شوكلاته', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/mini-pound-cake-776x743-removebg-preview.png' },
+
+            // سناكات - شيبس
             { id: '7', name: 'شيبس بيوقلز جبنة الناشو', price: 0.30, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/IMG-7394_370x370-removebg-preview.png' },
             { id: '12', name: 'شيبس روكي', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/06-18-2025_0139pm2dbfc7c21d37480d6397-removebg-preview.png' },
             { id: '9', name: 'شيبس سناك ميكس', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/sd465465f4654dfs654-removebg-preview.png' },
@@ -672,19 +693,29 @@
             { id: '14', name: 'شيبس ريلاكس', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445t3c2fr/images__15_-removebg-preview.png' },
             { id: '35', name: 'شيبس بوشار', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/IMG-7377_800x-removebg-preview.png' },
             { id: '37', name: 'شيبس بيتزا', price: 0.10, restaurant: 'سناكات', subCategory: 'شيبس', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/64cb5965b860eb3a86cd83b7-removebg-preview.png' },
+
+            // سناكات - مواد تموينية 
             { id: '28', name: 'شنينه', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/MDLNy6yzNPVuJTPuKCbOyJe6cLZQVaNd8TxHZmci-removebg-preview.png' },
             { id: '36', name: 'لبن زبادي بلدنا', price: 0.50, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/catalog_yogert_Baladna+Yogurt+With+Cream+200gm-removebg-preview.png' },
             { id: '38', name: 'علبة لبن', price: 1.00, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D9%84%D8%A8%D9%86-removebg-preview.png' },
             { id: '39', name: 'بيض', price: 0, restaurant: 'سناكات', subCategory: 'مواد تموينية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/4c3809da-a750-4fce-a82d-8b2be743e201-1000x1000-8lkOIBoffDz7ctzJYJUoagzdc4ifUdg0IwsTNyS3.webp' },
+
+            // سناكات - مشروبات غازية
             { id: '34', name: 'ماتريكس', price: 0, restaurant: 'سناكات', subCategory: 'مشروبات غازية', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/%D8%AA%D8%B5%D9%85%D9%8A%D9%85_%D8%A8%D8%AF%D9%88%D9%86_%D8%B9%D9%86%D9%88%D8%A7%D9%86__10_-removebg-preview.png' },
+            
+            // سناكات - قهوة وعلكة
             { id: '17', name: 'قهوة العميد 2/1', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/Products_Images_online_store_1-removebg-preview.png' },
             { id: 'good_day', name: 'كابتشينو Good day', price: 0.25, restaurant: 'سناكات', subCategory: 'قهوه', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/IMG-3584_800x-removebg-preview.png' },
             { id: '20', name: 'علكة نكهة النعناع برودواي', price: 0.10, restaurant: 'سناكات', subCategory: 'علكة', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/445tfdw7r/WhatsApp_Image_2025-11-27_at_15.23.18_ed77c273-removebg-preview.png' },
+
+            // سناكات - ايس كريم
             { id: 'boza_iceberg', name: 'بوظة ايس بيرج', price: 0.35, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/ds5a4564sda564sda_800x-removebg-preview.png' },
             { id: 'boza_spiral', name: 'بوظة سبيرال', price: 0.15, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.51.53AM-removebg-preview.png' },
             { id: 'boza_wave', name: 'بوظة ويف', price: 0.10, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/Screenshot2025-03-09at9.53.39AM-removebg-preview.png' },
             { id: 'boza_sandwich', name: 'بوظة ساندويش', price: 0.10, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/04-26-2025_0652am335b39568640d7622323.png' },
             { id: 'boza_mini', name: 'بوظة ميني', price: 0.35, restaurant: 'سناكات', subCategory: 'ايس كريم', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/101211-removebg-preview.png' },
+
+            // سناكات - اندومي
             { id: 'indomie_curry', name: 'اندومي بنكهة الكاري', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/NDVdVrd9IkDQzcBQIp2HfltGgEkaZSlJsEKE9dVX-removebg-preview.png' },
             { id: 'indomie_chicken', name: 'اندومي نكهة الدجاج', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/SPECIALCHICKEN-removebg-preview.png' },
             { id: 'indomie_veg', name: 'اندومي بنكهة الخضار', price: 0, restaurant: 'سناكات', subCategory: 'اندومي', hideFromAll: false, image: 'https://uploads.onecompiler.io/43n8uttmw/44hm8gjgg/0809f08c-aacf-4882-9674-155b5cb5e790-removebg-preview.png' },
@@ -708,7 +739,17 @@
             exactLocationLink: null, locationFailCount: 0, exactLocationBypassed: false,
             scheduleType: 'asap', scheduleTime: null,
             myOrders: [], prevOrderStatuses: {}, feedback: [], currentFeedbackType: 'suggestion',
-            potatoNoKetchup: false, potatoNoMayo: false 
+            potatoNoKetchup: false, potatoNoMayo: false, appSettings: { terms: '' }
+        };
+
+        const getOrderDateStr = (createdAt) => {
+            let d = new Date();
+            if (createdAt && typeof createdAt.toMillis === 'function') {
+                d = new Date(createdAt.toMillis());
+            } else if (createdAt && createdAt.seconds) {
+                d = new Date(createdAt.seconds * 1000);
+            }
+            return d.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
         };
 
         const showToast = (msg, type) => {
@@ -856,12 +897,25 @@
                 if(document.getElementById('feedback-modal') && document.getElementById('feedback-modal').classList.contains('active')){
                     window.renderFeedbackList();
                 }
+                if(document.getElementById('support-modal') && document.getElementById('support-modal').classList.contains('active')){
+                    window.renderClientSupportChat();
+                }
             }, (error) => console.log("Feedback listen err"));
         };
 
         const initDataListeners = () => {
             if (!appState.db || appState.db === 'LOCAL' || !appState.user) return;
             
+            onSnapshot(doc(appState.db, PATH_SETTINGS, 'appSettings'), (snap) => {
+                if (snap.exists()) {
+                    appState.appSettings = snap.data();
+                    const termsContainer = document.getElementById('dynamic-terms-content');
+                    if(termsContainer && appState.appSettings.terms) {
+                        termsContainer.innerHTML = appState.appSettings.terms.replace(/\n/g, '<br>');
+                    }
+                }
+            });
+
             onSnapshot(collection(appState.db, PATH_RESTAURANTS), (snap) => {
                 const dbRests = [];
                 snap.forEach(d => dbRests.push({ id: d.id, ...d.data() }));
@@ -940,24 +994,86 @@
 
         window.openSupport = () => {
             toggleModal('auth', false);
+            window.renderClientSupportChat();
             toggleModal('support', true);
-            document.getElementById('support-text').value = '';
         };
 
-        window.submitSupport = async () => {
-            const text = document.getElementById('support-text').value.trim();
-            if(!text) return showToast("الرجاء كتابة رسالتك", "error");
+        window.sendClientSupportMsg = async () => {
+            const input = document.getElementById('client-chat-input');
+            const text = input.value.trim();
+            if(!text) return;
             
+            input.value = '';
+            
+            const isFirstMessage = appState.feedback.filter(f => f.type === 'support').length === 0;
+
             try {
                 await addDoc(collection(appState.db, PATH_FEEDBACK), {
-                    uid: appState.user.uid, customerName: appState.profile?.name || 'بدون اسم', phone: appState.profile?.phone || '',
-                    type: 'support', content: text, status: 'يتم حلها', createdAt: serverTimestamp()
+                    uid: appState.user.uid, 
+                    customerName: appState.profile?.name || 'عميل', 
+                    phone: appState.profile?.phone || '',
+                    type: 'support', 
+                    content: text, 
+                    isFromAdmin: false,
+                    status: 'يتم حلها', 
+                    createdAt: serverTimestamp()
                 });
-                showToast("سيتم التواصل معك قريباً", "success");
-                toggleModal('support', false);
-                toggleModal('auth', true);
-            } catch(e) { showToast("حدث خطأ", "error"); }
+
+                if (isFirstMessage) {
+                    setTimeout(async () => {
+                        await addDoc(collection(appState.db, PATH_FEEDBACK), {
+                            uid: appState.user.uid, 
+                            customerName: appState.profile?.name || 'عميل', 
+                            phone: appState.profile?.phone || '',
+                            type: 'support', 
+                            content: 'سيتم التواصل معك قريباً 🎧', 
+                            isFromAdmin: true,
+                            status: 'يتم حلها', 
+                            createdAt: serverTimestamp()
+                        });
+                    }, 1000);
+                }
+            } catch(e) { showToast('فشل إرسال الرسالة', 'error'); }
         };
+
+        window.renderClientSupportChat = () => {
+            const container = document.getElementById('client-chat-history');
+            if(!container) return;
+            const messages = appState.feedback.filter(f => f.type === 'support').sort((a,b) => (a.createdAt?.seconds||0) - (b.createdAt?.seconds||0));
+            
+            if(messages.length === 0) {
+                container.innerHTML = '<div class="m-auto text-center text-gray-400"><i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-2 opacity-50"></i><p class="font-bold text-sm">أرسل رسالتك وسنرد عليك فوراً</p></div>';
+                if(window.lucide) lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = messages.map(m => {
+                const timeStr = getOrderDateStr(m.createdAt);
+                if (m.isFromAdmin) {
+                    return `
+                    <div class="flex flex-col items-start w-3/4 self-start">
+                        <div class="bg-indigo-600 text-white rounded-2xl rounded-tr-none p-3 shadow-sm">
+                            <p class="text-sm font-medium leading-relaxed">${m.content}</p>
+                        </div>
+                        <span class="text-[10px] text-gray-400 mt-1 ml-1">${timeStr}</span>
+                    </div>`;
+                } else {
+                    return `
+                    <div class="flex flex-col items-end w-3/4 self-end">
+                        <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-2xl rounded-tl-none p-3 shadow-sm">
+                            <p class="text-sm font-medium leading-relaxed">${m.content}</p>
+                        </div>
+                        <span class="text-[10px] text-gray-400 mt-1 mr-1">${timeStr}</span>
+                    </div>`;
+                }
+            }).join('');
+            
+            setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
+        };
+
+        document.getElementById('client-chat-input')?.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.sendClientSupportMsg(); }
+        });
 
         window.saveUserProfile = async () => {
             const name = document.getElementById('new-user-name').value.trim();
@@ -1223,18 +1339,11 @@
             let service = 0;
 
             if (currentRest === 'مطعم سلمة' || currentRest === 'الحموي' || currentRest === 'انكل اوساكا') {
-                baseDelivery = 0.25;
+                baseDelivery = appState.profile?.customDeliverySalma !== undefined && appState.profile.customDeliverySalma !== '' ? parseFloat(appState.profile.customDeliverySalma) : 0.25;
                 service = 0.15;
             } else {
-                baseDelivery = 0.20;
+                baseDelivery = appState.profile?.customDeliverySnacks !== undefined && appState.profile.customDeliverySnacks !== '' ? parseFloat(appState.profile.customDeliverySnacks) : 0.20;
                 service = 0.00;
-            }
-            
-            if (appState.profile?.customDelivery !== undefined && appState.profile.customDelivery !== '') {
-                const target = appState.profile.customDeliveryTarget || 'all';
-                if (target === 'all' || target === currentRest) {
-                    baseDelivery = parseFloat(appState.profile.customDelivery);
-                }
             }
             
             const delivery = (hasItems && !isFreeDelivery) ? baseDelivery : 0;
@@ -1512,8 +1621,8 @@
             let finalOpt = optName;
             if(isPotato) {
                 let mods = [];
-                if(appState.potatoNoKetchup) mods.push('بدون كتشب');
-                if(appState.potatoNoMayo) mods.push('بدون ميونيز');
+                if(appState.potatoNoKetchup) push('بدون كتشب');
+                if(appState.potatoNoMayo) push('بدون ميونيز');
                 if(mods.length) finalOpt += ' (' + mods.join(' و ') + ')';
             }
             
@@ -1541,8 +1650,8 @@
             let finalOpt = optName;
             let mods = [];
             if(isPotato) {
-               if(appState.potatoNoKetchup) mods.push('بدون كتشب');
-               if(appState.potatoNoMayo) mods.push('بدون ميونيز');
+               if(appState.potatoNoKetchup) push('بدون كتشب');
+               if(appState.potatoNoMayo) push('بدون ميونيز');
             }
             if(mods.length) finalOpt += ' (' + mods.join(' و ') + ')';
             
