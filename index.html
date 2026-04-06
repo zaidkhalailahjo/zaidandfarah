@@ -2285,4 +2285,44 @@
                     </div>
                     
                     <div>
-                        <h4 class="font-bold text-sm text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
+                        <h4 class="font-bold text-sm text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2"><i data-lucide="shopping-bag" class="w-4 h-4"></i> تفاصيل المنتجات</h4>
+                        ${itemsHtml}
+                        ${o.customOrder ? `<div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-2xl border border-orange-200 dark:border-orange-800/50 text-sm mt-3"><span class="font-bold text-orange-700 dark:text-orange-400 flex items-center gap-1 mb-2"><i data-lucide="message-square" class="w-4 h-4"></i> ملاحظاتك الإضافية:</span> <p class="text-orange-900 dark:text-orange-200 leading-relaxed">${o.customOrder}</p></div>` : ''}
+                    </div>
+
+                    <div class="bg-[#f0f9fa] dark:bg-gray-800 p-5 rounded-2xl border border-[#00839b]/20 dark:border-gray-700 shadow-sm text-sm space-y-3 font-medium">
+                        <div class="flex justify-between text-gray-600 dark:text-gray-400"><span>سعر المنتجات:</span><span>${(o.total - (o.fees?.delivery||0) - (o.fees?.service||0) + (o.fees?.discount||0)).toFixed(2)} د.أ</span></div>
+                        ${deliveryRowHtml}
+                        <div class="flex justify-between text-gray-600 dark:text-gray-400"><span>رسوم الخدمة:</span><span>+ ${(o.fees?.service||0).toFixed(2)} د.أ</span></div>
+                        ${o.fees?.coupon ? `<div class="flex justify-between text-green-600 font-bold bg-green-50 dark:bg-green-900/30 p-2 rounded-lg mt-1"><span>خصم (${o.fees.coupon}):</span><span>- ${(o.fees?.discount||0).toFixed(2)} د.أ</span></div>` : ''}
+                        <div class="flex justify-between border-t border-[#00839b]/20 dark:border-gray-600 pt-3 mt-2 font-black text-2xl text-[#002d74] dark:text-blue-300 items-center">
+                            <span>الإجمالي الكلي</span>
+                            <span class="text-[#00839b] dark:text-cyan-400">${(o.total || 0).toFixed(2)} د.أ</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                         <span class="text-xs ${o.paymentMethod === 'wallet' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'} px-4 py-2 rounded-full font-bold inline-flex items-center gap-1">
+                                <i data-lucide="${o.paymentMethod === 'wallet' ? 'wallet' : 'banknote'}" class="w-4 h-4"></i> 
+                                ${paymentDetailStr}
+                        </span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('my-order-details-content').innerHTML = content;
+            if(window.lucide) lucide.createIcons();
+            toggleModal('orders', false);
+            toggleModal('my-order-details', true);
+        };
+
+        // Events
+        const handleSearch = (e) => { appState.search = e.target.value.trim(); window.renderApp(); };
+        document.getElementById('desktop-search')?.addEventListener('input', handleSearch);
+        document.getElementById('mobile-search')?.addEventListener('input', handleSearch);
+
+        window.renderApp = () => { renderProducts(); if(window.lucide) lucide.createIcons(); };
+        
+        // Start
+        initFirebase();
+    </script>
+</body>
+</html>
