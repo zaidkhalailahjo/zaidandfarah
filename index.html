@@ -1751,11 +1751,17 @@
             if(status === 'بانتظار قبول الطلب') return { text: 'جاري البحث عن مندوب', color: 'text-orange-500', bg: 'bg-orange-100', anim: 'animate-pulse', icon: '🔍' };
             if(status === 'تم قبول الطلب') return { text: 'تم قبول الطلب', color: 'text-blue-500', bg: 'bg-blue-100', anim: 'anim-cooking', icon: '👨‍🍳' };
             if(status === 'قيد التنفيذ') return { text: 'طلبك قيد التجهيز', color: 'text-orange-500', bg: 'bg-orange-100', anim: 'anim-cooking', icon: '🍳' };
-            if(status === 'تم استلام الطلب') return { text: 'المندوب في الطريق إليك', color: 'text-blue-500', bg: 'bg-blue-100', anim: 'anim-driving', icon: '🛵' };
+            if(status === 'تم استلام الطلب') return { text: 'المندوب في الطريق إليك', color: 'text-blue-500', bg: 'bg-blue-50', anim: '', icon: '', isDeliveryAnim: true };
             if(status === 'تم توصيل الطلب بنجاح') return { text: 'تم التوصيل', color: 'text-green-500', bg: 'bg-green-100', anim: 'anim-done', icon: '✅' };
             if(status === 'مرفوض') return { text: 'تم الإلغاء', color: 'text-red-500', bg: 'bg-red-100', anim: '', icon: '❌' };
             return { text: status, color: 'text-gray-500', bg: 'bg-gray-200', anim: '', icon: '⏳' };
         };
+
+        const getDeliveryIframe = (sizeClass, scale, top, left) => `
+            <div class="${sizeClass} rounded-full overflow-hidden relative shadow-sm border border-blue-200 flex-shrink-0 bg-white">
+                <iframe src="https://assets.pinterest.com/ext/embed.html?id=364510163612204861" style="position:absolute; top:${top}px; left:${left}px; width:450px; height:900px; transform:scale(${scale}); transform-origin:top left; pointer-events:none;" frameborder="0" scrolling="no"></iframe>
+            </div>
+        `;
 
         window.renderActiveOrderBanner = () => {
             const banner = document.getElementById('active-order-banner');
@@ -1763,10 +1769,12 @@
             
             if (activeOrder) {
                 const s = getStatusData(activeOrder.status);
+                const iconElement = s.isDeliveryAnim ? getDeliveryIframe('w-12 h-12', 0.15, -20, -9) : `<div class="${s.bg} p-3 rounded-full animate-pulse text-2xl">${s.icon}</div>`;
+                
                 banner.innerHTML = `
                     <div onclick="window.showMyOrderDetails('${activeOrder.id}')" class="bg-white border-2 border-[#00839b]/20 rounded-2xl p-4 flex justify-between items-center cursor-pointer shadow-md hover:shadow-lg transition-all">
                         <div class="flex items-center gap-3">
-                            <div class="${s.bg} p-3 rounded-full animate-pulse text-2xl">${s.icon}</div>
+                            ${iconElement}
                             <div>
                                 <h3 class="font-bold text-[#002d74]">طلبك الحالي قيد التنفيذ</h3>
                                 <p class="text-sm font-bold ${s.color} mt-0.5">${s.text}</p>
@@ -1786,7 +1794,8 @@
             if(!appState.myOrders.length) { container.innerHTML = '<div class="text-center py-10 text-gray-400"><i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 opacity-50"></i><p>لا توجد طلبات حديثة</p></div>'; if(window.lucide) lucide.createIcons(); return; }
             container.innerHTML = appState.myOrders.map(o => {
                 const s = getStatusData(o.status);
-                return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden cursor-pointer hover:border-[#00839b]/30 transition-colors flex flex-col" onclick="window.showMyOrderDetails('${o.id}')"><div class="flex justify-between items-center mb-3 border-b border-gray-50 pb-2"><span class="text-xs text-gray-400 font-bold">طلب #${o.id.substring(0,6)}</span><div class="flex items-center gap-2 px-3 py-1 rounded-full ${s.bg} ${s.color} text-xs font-bold"><span class="text-lg ${s.anim}">${s.icon}</span> ${s.text}</div></div><div class="text-xs space-y-1.5 mb-3 text-gray-600 font-medium">${o.items.map(i => `<div class="${i.isAvailable === false ? 'line-through text-red-400' : ''}">${i.quantity}x ${i.product?.name||'منتج'} ${i.option?`(${i.option})`:''}</div>`).join('')}</div><div class="flex justify-between items-center pt-2"><span class="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded text-gray-500">الدفع: ${o.paymentMethod==='wallet'?'محفظة':'كاش'}</span><span class="font-black text-[#002d74] text-lg">${(o.total || 0).toFixed(2)} د.أ</span></div></div>`;
+                const iconElement = s.isDeliveryAnim ? getDeliveryIframe('w-6 h-6', 0.08, -10, -6) : `<span class="text-lg ${s.anim}">${s.icon}</span>`;
+                return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden cursor-pointer hover:border-[#00839b]/30 transition-colors flex flex-col" onclick="window.showMyOrderDetails('${o.id}')"><div class="flex justify-between items-center mb-3 border-b border-gray-50 pb-2"><span class="text-xs text-gray-400 font-bold">طلب #${o.id.substring(0,6)}</span><div class="flex items-center gap-2 px-3 py-1 rounded-full ${s.bg} ${s.color} text-xs font-bold">${iconElement} ${s.text}</div></div><div class="text-xs space-y-1.5 mb-3 text-gray-600 font-medium">${o.items.map(i => `<div class="${i.isAvailable === false ? 'line-through text-red-400' : ''}">${i.quantity}x ${i.product?.name||'منتج'} ${i.option?`(${i.option})`:''}</div>`).join('')}</div><div class="flex justify-between items-center pt-2"><span class="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded text-gray-500">الدفع: ${o.paymentMethod==='wallet'?'محفظة':'كاش'}</span><span class="font-black text-[#002d74] text-lg">${(o.total || 0).toFixed(2)} د.أ</span></div></div>`;
             }).join('');
         };
 
@@ -1820,11 +1829,13 @@
 
             const reorderBtn = o.status === 'تم توصيل الطلب بنجاح' ? `<button onclick="window.reorder('${o.id}')" class="absolute top-3 right-3 text-sm bg-blue-50 text-[#002d74] px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 hover:bg-blue-100 transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i> إعادة الطلب</button>` : '';
 
+            const iconElement = s.isDeliveryAnim ? `<div class="flex justify-center mt-6 mb-4">${getDeliveryIframe('w-24 h-24 border-4', 0.25, -40, -14)}</div>` : `<div class="inline-block ${s.bg} p-3 rounded-full mb-2 mt-8 text-3xl ${s.anim}">${s.icon}</div>`;
+
             const content = `
                 <div class="space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm text-center relative">
                         ${reorderBtn}
-                        <div class="inline-block ${s.bg} p-3 rounded-full mb-2 mt-8 text-3xl ${s.anim}">${s.icon}</div>
+                        ${iconElement}
                         <h3 class="font-bold text-lg ${s.color} mb-1">${s.text}</h3>
                         <p class="text-xs text-gray-400">طلب #${o.id.substring(0,8)} • ${dateStr}</p>
                     </div>
