@@ -1784,9 +1784,10 @@
             topOffset = -((origH * scale - h) / 2);
 
             return `
-                <div style="width: ${w}px; height: ${h}px; border-radius: 12px; overflow: hidden; position: relative; background: #e0f2fe; flex-shrink: 0;" class="shadow-sm border border-blue-200 mx-auto">
-                    <iframe src="https://assets.pinterest.com/ext/embed.html?id=${iframeId}&autoplay=true&muted=true&loop=true" 
-                            style="position:absolute; top:${topOffset}px; left:0; width:${origW}px; height:${origH}px; transform:scale(${scale}); transform-origin:top left; pointer-events:none;" 
+                <div style="width: ${w}px; height: ${h}px; border-radius: 12px; overflow: hidden; position: relative; background: #e0f2fe; flex-shrink: 0; pointer-events: none;" class="shadow-sm border border-blue-200 mx-auto">
+                    <iframe src="https://assets.pinterest.com/ext/embed.html?id=${iframeId}&autoplay=1&muted=1&loop=1" 
+                            allow="autoplay; fullscreen"
+                            style="position:absolute; top:${topOffset}px; left:0; width:${origW}px; height:${origH}px; transform:scale(${scale}); transform-origin:top left;" 
                             frameborder="0" scrolling="no"></iframe>
                 </div>
             `;
